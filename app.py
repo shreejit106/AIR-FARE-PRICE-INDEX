@@ -8,7 +8,7 @@ st.set_page_config(page_title="APIx Dashboard | Operate", layout="wide", initial
 # --- CUSTOM CSS: True Pastel Glassmorphism ---
 st.markdown("""
 <style>
-    /* 1. Mesh Gradient Background - Crucial for glassmorphism to show through */
+    /* 1. Base Typography & Mesh Gradient */
     .stApp {
         background-color: #fdfbfb;
         background-image: 
@@ -20,39 +20,51 @@ st.markdown("""
             radial-gradient(at 80% 100%, hsla(242, 100%, 70%, 0.45) 0px, transparent 50%),
             radial-gradient(at 0% 0%, hsla(343, 100%, 76%, 0.45) 0px, transparent 50%);
         background-attachment: fixed;
-        font-family: 'Inter', sans-serif;
+        /* Apple Typography: system fonts naturally support optical sizing */
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
     
-    /* Hide the top header bar to make it cleaner */
     header[data-testid="stHeader"] {
         background: transparent !important;
     }
 
-    /* 2. Sidebar styling - Frosted Glass */
+    /* 2. Materials & Depth (Hierarchy through Translucency) */
+    /* Sidebar: Heavier structural layer */
     [data-testid="stSidebar"] {
-        background: rgba(255, 255, 255, 0.45) !important;
-        backdrop-filter: blur(20px) saturate(180%) !important;
-        -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
-        border-right: 1px solid rgba(255, 255, 255, 0.7) !important;
+        background: rgba(255, 255, 255, 0.4) !important;
+        backdrop-filter: blur(24px) saturate(180%) !important;
+        -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
+        border-right: 1px solid rgba(255, 255, 255, 0.5) !important;
     }
 
-    /* 3. Target Streamlit's bordered containers to turn them into glass panels */
+    /* Panels: Lighter functional layer */
     [data-testid="stVerticalBlockBorderWrapper"] {
-        background: rgba(255, 255, 255, 0.55) !important;
-        backdrop-filter: blur(20px) saturate(180%) !important;
-        -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
-        border: 1px solid rgba(255, 255, 255, 0.8) !important;
+        background: rgba(255, 255, 255, 0.6) !important;
+        backdrop-filter: blur(16px) saturate(180%) !important;
+        -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
+        /* Top border catching light */
+        border: 1px solid rgba(255, 255, 255, 0.4) !important;
+        border-top: 1px solid rgba(255, 255, 255, 0.8) !important;
         border-radius: 24px !important;
-        box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.05), inset 0 1px 0 0 rgba(255, 255, 255, 0.9) !important;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
         padding: 1.5rem !important;
         margin-bottom: 1.5rem !important;
+        /* 3. Feedback: Continuous & Interruptible (Simulated via ease-out) */
+        transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease-out !important;
+        will-change: transform;
     }
     
-    /* 4. Typography Adjustments */
+    /* 1:1 Tracking & Response: Instant feedback on interaction */
+    [data-testid="stVerticalBlockBorderWrapper"]:active {
+        transform: scale(0.985) !important;
+        transition: transform 0.1s ease-out !important; /* Fast down, spring up */
+    }
+
+    /* 4. Optical Sizing & Tracking */
     .headline-title {
-        font-size: 1rem;
+        font-size: 0.9rem;
         text-transform: uppercase;
-        letter-spacing: 1.5px;
+        letter-spacing: 0.05em; /* Small text wants positive tracking */
         color: #4A5568;
         font-weight: 700;
         margin-bottom: -10px;
@@ -60,25 +72,49 @@ st.markdown("""
     .metric-value {
         font-size: 4.5rem;
         font-weight: 800;
-        line-height: 1.1;
+        line-height: 1.05; /* Large text wants tight leading */
         color: #1A202C;
-        letter-spacing: -1px;
+        letter-spacing: -0.02em; /* Large text wants negative tracking */
+        font-optical-sizing: auto;
     }
     .metric-delta {
         color: #276749;
-        font-weight: 700;
+        font-weight: 600; /* Backed off weight to establish hierarchy vs value */
         font-size: 1.25rem;
-        background: rgba(154, 230, 180, 0.4);
+        background: rgba(154, 230, 180, 0.3);
         padding: 6px 12px;
         border-radius: 20px;
-        border: 1px solid rgba(154, 230, 180, 0.6);
+        border: 1px solid rgba(154, 230, 180, 0.5);
         vertical-align: middle;
         margin-left: 10px;
     }
     
-    /* Override plotly background */
     .js-plotly-plot .plotly .bg {
         fill: transparent !important;
+    }
+
+    /* 5. Reduced Motion & Accessibility */
+    @media (prefers-reduced-motion: reduce) {
+        [data-testid="stVerticalBlockBorderWrapper"] {
+            transition: none !important;
+        }
+        [data-testid="stVerticalBlockBorderWrapper"]:active {
+            transform: none !important; /* No scaling */
+            opacity: 0.8; /* Replaced with gentle opacity feedback */
+        }
+    }
+    
+    @media (prefers-reduced-transparency: reduce) {
+        .stApp {
+            background-image: none !important;
+            background-color: #f5f5f7 !important;
+        }
+        [data-testid="stSidebar"], [data-testid="stVerticalBlockBorderWrapper"] {
+            background: #ffffff !important;
+            backdrop-filter: none !important;
+            border: 1px solid #d2d2d7 !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+        }
     }
 </style>
 """, unsafe_allow_html=True)
