@@ -462,16 +462,25 @@ if page == "Calculator":
             st.markdown("Fusing historical **Government CPI (MOSPI)** data for *'Passenger transport by air'* with live **APIx future predictions** to provide a complete macroeconomic picture.")
             
             c_yr, c_mo = st.columns(2)
+            
+            month_names = ["January", "February", "March", "April", "May", "June", 
+                           "July", "August", "September", "October", "November", "December"]
+                           
             with c_yr:
-                base_yr = st.selectbox("Historical Base Year", list(range(2010, 2025)), index=2)
+                base_yr = st.selectbox("🗓️ Historical Base Year", list(range(2010, 2025)), index=2)
             with c_mo:
-                base_mo = st.selectbox("Historical Base Month", list(range(1, 13)), index=0)
+                base_mo_name = st.selectbox("📅 Historical Base Month", month_names, index=0)
+                base_mo = month_names.index(base_mo_name) + 1
                 
             base_date_mask = (mospi_history_df['Date'].dt.year == base_yr) & (mospi_history_df['Date'].dt.month == base_mo)
+            
+            # Default to first available date if exact match not found
+            base_date = mospi_history_df['Date'].iloc[0]
             if not base_date_mask.any():
                 base_val = mospi_history_df['CPI_Index'].iloc[0]
             else:
                 base_val = mospi_history_df[base_date_mask]['CPI_Index'].values[0]
+                base_date = mospi_history_df[base_date_mask]['Date'].values[0]
                 
             rebased_mospi = mospi_history_df.copy()
             rebased_mospi['CPI_Index'] = (rebased_mospi['CPI_Index'] / base_val) * 100
@@ -487,6 +496,19 @@ if page == "Calculator":
                 name='MOSPI CPI (Historical)',
                 line=dict(color='#94A3B8', width=2),
                 hovertemplate="<b>Date:</b> %{x|%b %Y}<br><b>Index:</b> %{y:.1f}<extra></extra>"
+            ))
+            
+            # Highlight the Base Date Point (100)
+            fig_macro.add_trace(go.Scatter(
+                x=[base_date], 
+                y=[100.0],
+                mode='markers+text',
+                name='Base Period',
+                marker=dict(color='#F59E0B', size=12, symbol='star'),
+                text=["Base=100"],
+                textposition="top center",
+                textfont=dict(color='#F59E0B', size=12, weight="bold"),
+                hovertemplate="<b>Base Period:</b> %{x|%b %Y}<br><b>Index Fixed At:</b> 100<extra></extra>"
             ))
             
             # 2. The APIx Future Line (Stitch from the last MOSPI point)
