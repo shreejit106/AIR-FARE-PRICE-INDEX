@@ -1,7 +1,6 @@
-amadeus
-requests
 pandas
-numpy
-pydantic
-python-dotenv
-sqlalchemy
+requests
+beautifulsoup4
+playwright
+fastapi
+uvicorn
