@@ -34,10 +34,13 @@ async def scrape_ota_flight(origin: str, destination: str, date: str):
         
         try:
             # Wait for network to be idle to ensure JS framework has loaded
-            await page.goto(target_url, wait_until="domcontentloaded")
+            try:
+                await page.goto(target_url, wait_until="domcontentloaded", timeout=10000)
+            except Exception as e:
+                print(f"Navigation warning (expected for mock URL): {e}")
             
             # Anti-bot evasion: Simulate human-like random reading delay
-            await asyncio.sleep(random.uniform(2.0, 5.0))
+            await asyncio.sleep(random.uniform(1.0, 2.0))
             
             # In a live script, we would wait for the specific JS-rendered elements:
             # await page.wait_for_selector(".price-display-class", timeout=15000)
