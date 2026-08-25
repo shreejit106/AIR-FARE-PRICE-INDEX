@@ -37,10 +37,10 @@ Laspeyres-type, fixed-weight index — same family as CPI itself:
 |---|---|---|
 | Route/passenger weights | [Vonter/india-aviation-traffic](https://github.com/Vonter/india-aviation-traffic) (DGCA-derived) | Static CSV |
 | Airport/airline reference | OurAirports, OpenFlights | Static CSV |
-| Live fares | Amadeus for Developers — Flight Offers Search API | Free self-service/test tier |
+| Live fares | Playwright OTA Scraper | Headless Chromium + Stealth |
 | Official traffic stats (validation) | DGCA monthly/quarterly reports | Scraped — no official API exists |
 
-We deliberately did not scrape OTAs (MakeMyTrip, Cleartrip, etc.) or airline websites — their Terms of Service explicitly prohibit automated access, and a dataset positioned as a CPI-adjacent index needs to stand on defensible data provenance. Amadeus is the ToS-compliant equivalent of the same GDS-backed fare data those platforms themselves draw from.
+*Architecture Pivot Note: We initially designed the live-fare pipeline around the Amadeus Self-Service API to maintain strict ToS compliance. However, Amadeus decommissioned their free testing tier in July 2026. Rather than relying on paid enterprise tools (OAG/Travelport), we pivoted to fulfill the problem statement's explicit technical requirement: building a JS-rendering, anti-bot-evading Python web scraper using Playwright to extract live fares directly from OTA aggregators.*
 
 ## Cleaning Rules
 
@@ -72,7 +72,7 @@ Full network coverage (all routes, all five horizons, airline-level drill-down) 
 
 ## Tech Stack
 
-- **Collection**: scheduled jobs hitting the Amadeus API per route/horizon
+- **Collection**: Asynchronous Python Playwright scraper targeting OTA search results
 - **Storage**: Postgres (Supabase)
 - **Processing**: Python (pandas) — cleaning, outlier filtering, median calculation, index math
 - **Dashboard**: Streamlit
