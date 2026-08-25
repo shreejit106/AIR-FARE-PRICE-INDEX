@@ -46,6 +46,27 @@ st.markdown("""
     --purple:    #8B5CF6;
 }
 
+@media (prefers-color-scheme: light) {
+    :root {
+        --bg:        #F8FAFC;
+        --surface:   #F1F5F9;
+        --card:      #FFFFFF;
+        --border:    #E2E8F0;
+        --muted:     #CBD5E1;
+        --text:      #0F172A;
+        --sub:       #475569;
+        --cyan:      #0891B2;
+        --cyan-dim:  rgba(8,145,178,0.12);
+        --amber:     #D97706;
+        --amber-dim: rgba(217,119,6,0.12);
+        --green:     #059669;
+        --green-dim: rgba(5,150,105,0.12);
+        --red:       #DC2626;
+        --red-dim:   rgba(220,38,38,0.12);
+        --purple:    #7C3AED;
+    }
+}
+
 /* ---- base ---- */
 .stApp {
     background-color: var(--bg) !important;
@@ -75,7 +96,7 @@ div[data-testid="stSidebarUserContent"] {
 }
 
 /* Allow inline style colors to win over cascade via higher specificity on base */
-.stApp div, .stApp span, .stApp p, .stApp li { color: #E2E8F0; }
+.stApp div, .stApp span, .stApp p, .stApp li { color: var(--text); }
 h1, h2, h3, h4, h5, h6 { color: var(--text) !important; }
 /* Streamlit-injected text nodes */
 .stMarkdown p, .stMarkdown li { color: var(--sub); }
@@ -129,11 +150,11 @@ div[data-testid="stRadio"] > div {
     width: 100% !important;
 }
 div[data-testid="stRadio"] label {
-    background: #0D1626 !important;
-    border: 1px solid #1E2D45 !important;
+    background: var(--surface) !important;
+    border: 1px solid var(--border) !important;
     border-radius: 6px !important;
     padding: 6px 12px !important;
-    color: #94A3B8 !important;
+    color: var(--sub) !important;
     font-weight: 700 !important;
     font-size: 0.72rem !important;
     text-transform: uppercase !important;
@@ -317,7 +338,8 @@ mospi_history_df = generate_mospi_history()
 # HELPERS
 # ============================================================
 def get_color(val, vmin=-10, vmax=30):
-    cmap = cm.get_cmap('RdYlGn_r')
+    import matplotlib
+    cmap = matplotlib.colormaps['RdYlGn_r']
     return rgb2hex(cmap(max(0, min(1, (val - vmin)/(vmax - vmin)))))
 
 def bezier(p1, p2, n=22):
@@ -1284,3 +1306,4 @@ elif page == "Weight Allocation":
             <span style="color:#EF4444 !important;font-weight:800;font-size:1rem;font-family:'JetBrains Mono',monospace;">{abs(nd-ad):.3f} pts</span>
             <span style="color:#64748B !important;font-size:0.9rem;"> &mdash; a misleading signal for policymakers.</span>
         </div>""", unsafe_allow_html=True)
+
