@@ -355,25 +355,170 @@ def render_heatmap(fare_df, summary_df):
     fig.update_yaxes(showgrid=False, zeroline=False, row=1,col=1, tickfont=dict(size=10))
     st.plotly_chart(fig, use_container_width=True)
 
+# Initialize session states
+if 'current_page' not in st.session_state:
+    st.session_state.current_page = "Home"
+
+if st.session_state.current_page == "Home":
+    # ============================================================
+    # LANDING / HOME PAGE
+    # ============================================================
+    lh_col1, lh_col2 = st.columns([3.2, 0.8])
+    with lh_col1:
+        st.markdown(
+            '<div style="display:flex;align-items:center;gap:10px;padding-top:4px;">'
+            '<span style="font-size:1.6rem;color:#06B6D4;">&#9992;</span>'
+            '<span style="font-size:1.4rem;font-weight:900;letter-spacing:-0.5px;color:#E2E8F0;">APIx</span>'
+            '</div>',
+            unsafe_allow_html=True
+        )
+    with lh_col2:
+        if st.button("ENTER FLIGHT DECK ➔", use_container_width=True):
+            st.session_state.current_page = "Dashboard"
+            st.rerun()
+
+    # CSS Animations for the plane landing GIF & Title Card delayed reveal
+    st.markdown("""
+    <style>
+    @keyframes fade-out-gif {
+        0% { opacity: 1; transform: scale(1); filter: none; }
+        85% { opacity: 1; transform: scale(1); filter: none; }
+        100% { opacity: 0; transform: scale(0.95); filter: blur(8px); display: none; height: 0; margin: 0; padding: 0; }
+    }
+    @keyframes fade-in-title {
+        0% { opacity: 0; transform: scale(0.9) translateY(20px); filter: blur(5px); }
+        75% { opacity: 0; transform: scale(0.9) translateY(20px); filter: blur(5px); }
+        100% { opacity: 1; transform: scale(1) translateY(0); filter: none; }
+    }
+    .landing-gif-wrapper {
+        animation: fade-out-gif 4.8s forwards;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin: 60px 0;
+    }
+    .landing-title-wrapper {
+        opacity: 0;
+        animation: fade-in-title 5.6s forwards;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        margin: 80px 0 100px 0;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+    # Hero landing animation container
+    # Uses a high-quality GIPHY flight landing runway lights animation
+    st.markdown(
+        '<div class="landing-gif-wrapper">'
+        '<img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExMTh5dmwxbXpwNnM5dG5wZTFhM21idjAydTFkMGoxOHpsMzAxeTV4YSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o85xAYQLOh8T953aM/giphy.gif" '
+        'style="max-width:680px; width:100%; border-radius:14px; border:1px solid #1E2D45; box-shadow:0 10px 30px rgba(0,0,0,0.5);">'
+        '<div style="color:#64748B; font-size:0.8rem; font-family:JetBrains Mono,monospace; margin-top:12px; letter-spacing:1px;">COCKPIT HUD: APPROACHING RUNWAY 27...</div>'
+        '</div>',
+        unsafe_allow_html=True
+    )
+
+    # Title card reveal container
+    st.markdown(
+        '<div class="landing-title-wrapper">'
+        '<div style="font-size:5rem; font-weight:900; letter-spacing:-3.5px; color:#E2E8F0; line-height:1; display:flex; align-items:center; gap:20px; justify-content:center; margin-bottom:14px;">'
+        '<span style="color:#06B6D4;">&#9992;</span>APIx'
+        '</div>'
+        '<div style="font-size:0.9rem; font-weight:700; text-transform:uppercase; letter-spacing:3px; color:#06B6D4; margin-bottom:24px;">'
+        'Indian Airfare Price Index & Analytics'
+        '</div>'
+        '<div style="font-size:1.05rem; color:#94A3B8; max-width:620px; line-height:1.7; margin:0 auto 40px auto;">'
+        'A real-time aviation intelligence platform utilizing modified Laspeyres passenger-weighted indexing to track domestic fare cost structures.'
+        '</div>'
+        '</div>',
+        unsafe_allow_html=True
+    )
+
+    # Features Overview list (scroll down)
+    st.markdown("<hr style='border-color:#1E2D45;margin-bottom:40px;'>", unsafe_allow_html=True)
+    st.markdown("<div style='text-align:center;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#06B6D4;margin-bottom:10px;'>System Capabilities</div>", unsafe_allow_html=True)
+    st.markdown("<div style='text-align:center;font-size:1.8rem;font-weight:900;color:#E2E8F0;margin-bottom:40px;letter-spacing:-0.5px;'>Aviation & Financial Intelligence Overview</div>", unsafe_allow_html=True)
+
+    f_col1, f_col2, f_col3, f_col4 = st.columns([1,1,1,1])
+    with f_col1:
+        st.markdown(
+            '<div style="background:#0D1626;border:1px solid #1E2D45;border-radius:12px;padding:24px;height:100%;'
+            'box-shadow:0 4px 12px rgba(0,0,0,0.15);">'
+            '<div style="font-size:1.8rem;color:#8B5CF6;margin-bottom:12px;">&#9878;</div>'
+            '<div style="font-size:1rem;font-weight:700;color:#E2E8F0;margin-bottom:8px;">Passenger Weights</div>'
+            '<div style="color:#64748B;font-size:0.82rem;line-height:1.5;">'
+            'Integrates traffic data from the Directorate General of Civil Aviation (DGCA) to weight routes by quarterly passenger shares.'
+            '</div>'
+            '</div>',
+            unsafe_allow_html=True
+        )
+    with f_col2:
+        st.markdown(
+            '<div style="background:#0D1626;border:1px solid #1E2D45;border-radius:12px;padding:24px;height:100%;'
+            'box-shadow:0 4px 12px rgba(0,0,0,0.15);">'
+            '<div style="font-size:1.8rem;color:#F59E0B;margin-bottom:12px;">&#9660;</div>'
+            '<div style="font-size:1rem;font-weight:700;color:#E2E8F0;margin-bottom:8px;">Outlier Removal</div>'
+            '<div style="color:#64748B;font-size:0.82rem;line-height:1.5;">'
+            'Eliminates fare spikes using Interquartile Range (IQR) limits, protecting the index from last-minute surge distortions.'
+            '</div>'
+            '</div>',
+            unsafe_allow_html=True
+        )
+    with f_col3:
+        st.markdown(
+            '<div style="background:#0D1626;border:1px solid #1E2D45;border-radius:12px;padding:24px;height:100%;'
+            'box-shadow:0 4px 12px rgba(0,0,0,0.15);">'
+            '<div style="font-size:1.8rem;color:#06B6D4;margin-bottom:12px;">&#9992;</div>'
+            '<div style="font-size:1rem;font-weight:700;color:#E2E8F0;margin-bottom:8px;">Flight Map Routing</div>'
+            '<div style="color:#64748B;font-size:0.82rem;line-height:1.5;">'
+            'Maps price trends dynamically across 80 domestic lines on CartoDB Dark Matter layouts with directional flow indicators.'
+            '</div>'
+            '</div>',
+            unsafe_allow_html=True
+        )
+    with f_col4:
+        st.markdown(
+            '<div style="background:#0D1626;border:1px solid #1E2D45;border-radius:12px;padding:24px;height:100%;'
+            'box-shadow:0 4px 12px rgba(0,0,0,0.15);">'
+            '<div style="font-size:1.8rem;color:#10B981;margin-bottom:12px;">&#128200;</div>'
+            '<div style="font-size:1rem;font-weight:700;color:#E2E8F0;margin-bottom:8px;">MoSPI CPI Sync</div>'
+            '<div style="color:#64748B;font-size:0.82rem;line-height:1.5;">'
+            'Correlates domestic airfare indexes directly with official Indian Consumer Price Index (CPI) datasets for validation.'
+            '</div>'
+            '</div>',
+            unsafe_allow_html=True
+        )
+    st.stop() # Force execution to halt here for landing page
+
 # ============================================================
 # TOP NAVIGATION & HUD DASHBOARD
 # ============================================================
-h_col1, h_col2 = st.columns([1.8, 2.2])
+h_col1, h_col2 = st.columns([1.1, 2.9])
 with h_col1:
     st.markdown(
-        '<div style="display:flex;align-items:center;gap:12px;margin-bottom:4px;">'
-        '<span style="font-size:2rem;color:#06B6D4;line-height:1;">&#9992;</span>'
-        '<span style="font-size:1.8rem;font-weight:900;letter-spacing:-1px;color:#E2E8F0;line-height:1;">APIx</span>'
-        '<span style="font-size:0.68rem;background:rgba(6,182,212,0.1);color:#06B6D4;padding:3px 8px;border-radius:4px;font-family:JetBrains Mono,monospace;border:1px solid rgba(6,182,212,0.2);line-height:1;margin-top:2px;">v2.0</span>'
+        '<div style="display:flex;align-items:center;gap:12px;margin-bottom:4px;padding-top:4px;">'
+        '<span style="font-size:2.5rem;color:#06B6D4;line-height:1;">&#9992;</span>'
+        '<span style="font-size:2.4rem;font-weight:900;letter-spacing:-1.5px;color:#E2E8F0;line-height:1;">APIx</span>'
+        '<span style="font-size:0.68rem;background:rgba(6,182,212,0.1);color:#06B6D4;padding:3px 8px;border-radius:4px;font-family:JetBrains Mono,monospace;border:1px solid rgba(6,182,212,0.2);line-height:1;margin-top:6px;">v2.0</span>'
         '</div>'
-        '<div style="font-size:0.75rem;color:#64748B;text-transform:uppercase;letter-spacing:1px;font-family:JetBrains Mono,monospace;">'
-        '20 Airports &middot; 80 Domestic Routes &middot; 5 Covered Carriers'
+        '<div style="font-size:0.7rem;color:#64748B;text-transform:uppercase;letter-spacing:1px;font-family:JetBrains Mono,monospace;">'
+        '20 Airports &middot; 80 Routes &middot; 5 Carriers'
         '</div>',
         unsafe_allow_html=True
     )
 with h_col2:
-    page = st.radio("Navigation", ["Calculator", "Maths & Stats", "Weight Allocation (DGCA)"],
-                    index=0, horizontal=True, label_visibility="collapsed")
+    btn_col, rad_col = st.columns([1.1, 2.9])
+    with btn_col:
+        if st.button("✈ EXIT TO HUB", key="btn_exit_home", help="Return to Landing Page", use_container_width=True):
+            st.session_state.current_page = "Home"
+            st.rerun()
+    with rad_col:
+        page = st.radio("Navigation", ["Calculator", "Maths & Stats", "Weight Allocation"],
+                        index=0, horizontal=True, label_visibility="collapsed")
 
 # Dynamic Carrier Status Strip (Top HUD display)
 _carrier_strip = (
@@ -870,7 +1015,7 @@ elif page == "Maths & Stats":
 # ============================================================
 # PAGE: WEIGHT ALLOCATION
 # ============================================================
-elif page == "Weight Allocation (DGCA)":
+elif page == "Weight Allocation":
     srecs = []
     for r in full_fare_df['route_id'].unique():
         fr = full_fare_df[full_fare_df['route_id']==r].iloc[0]
