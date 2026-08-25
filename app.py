@@ -59,10 +59,16 @@ header[data-testid="stHeader"] { background: transparent !important; }
     background: var(--surface) !important;
     border-right: 1px solid var(--border) !important;
 }
-[data-testid="stSidebar"] * { color: var(--text) !important; }
+[data-testid="stSidebar"] .stMarkdown, [data-testid="stSidebar"] label,
+[data-testid="stSidebar"] .stRadio span, [data-testid="stSidebar"] p {
+    color: var(--text) !important;
+}
 
-/* ---- all text white ---- */
-p, span, h1, h2, h3, h4, h5, h6, li, label, div { color: var(--text) !important; }
+/* Allow inline style colors to win over cascade via higher specificity on base */
+.stApp div, .stApp span, .stApp p, .stApp li { color: #E2E8F0; }
+h1, h2, h3, h4, h5, h6 { color: var(--text) !important; }
+/* Streamlit-injected text nodes */
+.stMarkdown p, .stMarkdown li { color: var(--sub); }
 
 /* ---- streamlit defaults override ---- */
 .stMarkdown p { color: var(--text) !important; }
@@ -105,19 +111,19 @@ p, span, h1, h2, h3, h4, h5, h6, li, label, div { color: var(--text) !important;
 
 /* ---- utility classes ---- */
 .apix-hero-num {
-    font-size: 3.5rem;
-    font-weight: 900;
-    letter-spacing: -2px;
-    font-family: 'JetBrains Mono', monospace;
-    color: var(--cyan);
-    line-height: 1;
+    font-size: 3.5rem !important;
+    font-weight: 900 !important;
+    letter-spacing: -2px !important;
+    font-family: 'JetBrains Mono', monospace !important;
+    color: #06B6D4 !important;
+    line-height: 1 !important;
 }
 .apix-label {
-    font-size: 0.72rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: var(--sub);
+    font-size: 0.72rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1.5px !important;
+    color: #64748B !important;
 }
 
 /* ---- runway line at top ---- */
@@ -401,9 +407,9 @@ if page == "Calculator":
 
         def arrow(idx):
             v = idx - 100
-            if v > 0: return f"<span style='color:#EF4444;font-weight:800;font-family:JetBrains Mono,monospace;'>&#9650;&nbsp;{v:.2f}%</span>"
-            if v < 0: return f"<span style='color:#10B981;font-weight:800;font-family:JetBrains Mono,monospace;'>&#9660;&nbsp;{abs(v):.2f}%</span>"
-            return f"<span style='color:#64748B;'>0.00%</span>"
+            if v > 0: return f"<b style='color:#EF4444 !important;font-family:JetBrains Mono,monospace;font-size:1.3rem;'>&#9650; {v:.2f}%</b>"
+            if v < 0: return f"<b style='color:#10B981 !important;font-family:JetBrains Mono,monospace;font-size:1.3rem;'>&#9660; {abs(v):.2f}%</b>"
+            return "<b style='color:#64748B !important;font-size:1.3rem;'>— 0.00%</b>"
 
         st.markdown('''<div class="runway-bar"></div>''', unsafe_allow_html=True)
 
