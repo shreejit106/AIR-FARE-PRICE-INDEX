@@ -164,7 +164,7 @@ def render_route_map(summary_df):
     st_folium(m, width="100%", height=600, returned_objects=[])
 
 def render_heatmap(fare_df, summary_df):
-    top_routes = summary_df.sort_values(by='passenger_share', ascending=False).head(15)['route_id'].tolist()[::-1]
+    top_routes = summary_df.sort_values(by='passenger_share', ascending=False)['route_id'].tolist()[::-1]
     horizons = ["T+1", "T+7", "T+15", "T+30", "T+45"]
     
     z_data, text_data, hover_data = [], [], []
@@ -202,12 +202,14 @@ def render_heatmap(fare_df, summary_df):
     ), row=1, col=2)
     
     title = "Route-wise Fare Inflation Heatmap"
-    if len(summary_df) > 15: title += " (Top 15 Routes)"
+    
+    # Calculate a dynamic height based on the number of routes
+    heatmap_height = max(600, len(top_routes) * 20 + 100)
     
     fig.update_layout(
         title=title,
         plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
-        margin=dict(l=0, r=0, t=40, b=0), height=600, font_color="#F8FAFC"
+        margin=dict(l=0, r=0, t=40, b=0), height=heatmap_height, font_color="#F8FAFC"
     )
     
     fig.update_xaxes(showgrid=False, zeroline=False, showticklabels=False, row=1, col=2)
@@ -445,7 +447,7 @@ if page == "Calculator":
         st.markdown("<br>", unsafe_allow_html=True)
 
         # Use tabs for the visual components
-        tab1, tab2, tab3 = st.tabs(["🗺️ Route Map", "🔥 Heatmap", "📈 Macro View (MOSPI + APIx)"])
+        tab1, tab2, tab3 = st.tabs(["📍 Geographic Distribution", "📊 Route Heatmap Matrix", "📈 Macroeconomic Trends"])
         
         with tab1:
             st.markdown(f"#### Geographic Inflation Map ({len(route_summary_df)} Routes)")
@@ -496,7 +498,7 @@ if page == "Calculator":
                 mode='lines',
                 name='MOSPI CPI',
                 line=dict(color='#94A3B8', width=2),
-                hovertemplate="<span style='font-size:14px; color:#94A3B8'>%{x|%b %Y}</span><br><br><span style='font-size:26px; font-weight:bold; color:#F8FAFC'>%{y:.1f} Index</span><br><span style='font-size:16px; color:#38B2AC'>%{customdata:+.1f}% Inflation</span><extra></extra>"
+                hovertemplate="<span style='font-size:26px; font-weight:bold; color:#F8FAFC'>%{y:.1f} Index</span><br><span style='font-size:16px; color:#38B2AC'>%{customdata:+.2f}% Inflation</span><extra></extra>"
             ))
             
             fig_macro.update_layout(
