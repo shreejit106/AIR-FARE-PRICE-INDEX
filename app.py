@@ -276,8 +276,11 @@ def render_heatmap(fare_df, summary_df):
         colorscale=[[0,"#10B981"],[0.4,"#F59E0B"],[1,"#EF4444"]],
         zmin=-10, zmax=30, customdata=hov,
         hovertemplate="%{customdata}<extra></extra>",
-        showscale=True, colorbar=dict(title="% Change", x=0.73, thickness=12,
-            tickfont=dict(color="#94A3B8"), titlefont=dict(color="#94A3B8"))
+        showscale=True, colorbar=dict(
+            title=dict(text="% Change", font=dict(color="#94A3B8")),
+            x=0.73, thickness=12,
+            tickfont=dict(color="#94A3B8"))
+
     ), row=1,col=1)
     weights = [summary_df[summary_df['route_id']==r]['passenger_share'].values[0] for r in routes]
     fig.add_trace(go.Bar(
