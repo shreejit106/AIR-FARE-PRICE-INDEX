@@ -414,67 +414,86 @@ if page == "Calculator":
             if v < 0: return f"<b style='color:#10B981 !important;font-family:JetBrains Mono,monospace;font-size:1.3rem;'>&#9660; {abs(v):.2f}%</b>"
             return "<b style='color:#64748B !important;font-size:1.3rem;'>— 0.00%</b>"
 
-        st.markdown('''<div class="runway-bar"></div>''', unsafe_allow_html=True)
+        st.markdown('<div class="runway-bar"></div>', unsafe_allow_html=True)
 
-        st.markdown(f"""
-        <div style="background:linear-gradient(135deg,#0D1626 0%,#111827 100%);
-                    border:1px solid #1E2D45;border-radius:14px;
-                    padding:22px 32px;display:flex;align-items:center;
-                    gap:0;margin-bottom:28px;
-                    box-shadow:0 0 40px rgba(6,182,212,0.05);">
+        _m = (
+            '<div style="background:linear-gradient(135deg,#0D1626 0%,#111827 100%);'
+            'border:1px solid #1E2D45;border-radius:14px;'
+            'padding:22px 32px;display:flex;align-items:center;gap:0;'
+            'margin-bottom:28px;box-shadow:0 0 40px rgba(6,182,212,0.05);">'
 
-            <div style="border-right:1px solid #1E2D45;padding-right:32px;min-width:160px;">
-                <div class="apix-label" style="margin-bottom:6px;">APIx Live</div>
-                <div class="apix-hero-num">{ti7:.1f}</div>
-                <div style="font-size:0.78rem;color:#64748B !important;margin-top:4px;font-family:JetBrains Mono,monospace;">T+7 basis</div>
-            </div>
+            '<div style="border-right:1px solid #1E2D45;padding-right:32px;min-width:160px;">'
+            '<div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;'
+            'letter-spacing:1.5px;color:#64748B;margin-bottom:6px;">APIx Live</div>'
+            f'<div style="font-size:3.2rem;font-weight:900;letter-spacing:-2px;'
+            f'font-family:JetBrains Mono,monospace;color:#06B6D4;line-height:1;">{ti7:.1f}</div>'
+            '<div style="font-size:0.78rem;color:#64748B;margin-top:4px;font-family:JetBrains Mono,monospace;">T+7 basis</div>'
+            '</div>'
 
-            <div style="border-right:1px solid #1E2D45;padding:0 28px;">
-                <div class="apix-label" style="margin-bottom:8px;color:#06B6D4 !important;">T+7</div>
-                <div style="font-size:1.4rem;">{arrow(ti7)}</div>
-            </div>
-            <div style="border-right:1px solid #1E2D45;padding:0 28px;">
-                <div class="apix-label" style="margin-bottom:8px;">T+15</div>
-                <div style="font-size:1.4rem;">{arrow(ti15)}</div>
-            </div>
-            <div style="border-right:1px solid #1E2D45;padding:0 28px;">
-                <div class="apix-label" style="margin-bottom:8px;">T+30</div>
-                <div style="font-size:1.4rem;">{arrow(ti30)}</div>
-            </div>
-            <div style="border-right:1px solid #1E2D45;padding:0 28px;">
-                <div class="apix-label" style="margin-bottom:8px;">T+45</div>
-                <div style="font-size:1.4rem;">{arrow(ti45)}</div>
-            </div>
+            '<div style="border-right:1px solid #1E2D45;padding:0 28px;">'
+            '<div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;'
+            'letter-spacing:1.5px;color:#06B6D4;margin-bottom:8px;">T+7</div>'
+            f'<div style="font-size:1.4rem;">{arrow(ti7)}</div>'
+            '</div>'
 
-            <div style="margin-left:auto;text-align:right;padding-left:28px;border-left:1px solid #1E2D45;">
-                <div class="apix-label" style="margin-bottom:6px;">Status</div>
-                <div style="font-weight:800;font-size:1rem;color:#10B981 !important;">&#9679; LIVE</div>
-                <div style="font-size:0.75rem;color:#64748B !important;margin-top:2px;">{aggregation}</div>
-                <div style="font-size:0.75rem;color:#64748B !important;">{cabin_class} Class</div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+            '<div style="border-right:1px solid #1E2D45;padding:0 28px;">'
+            '<div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;'
+            'letter-spacing:1.5px;color:#64748B;margin-bottom:8px;">T+15</div>'
+            f'<div style="font-size:1.4rem;">{arrow(ti15)}</div>'
+            '</div>'
+
+            '<div style="border-right:1px solid #1E2D45;padding:0 28px;">'
+            '<div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;'
+            'letter-spacing:1.5px;color:#64748B;margin-bottom:8px;">T+30</div>'
+            f'<div style="font-size:1.4rem;">{arrow(ti30)}</div>'
+            '</div>'
+
+            '<div style="border-right:1px solid #1E2D45;padding:0 28px;">'
+            '<div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;'
+            'letter-spacing:1.5px;color:#64748B;margin-bottom:8px;">T+45</div>'
+            f'<div style="font-size:1.4rem;">{arrow(ti45)}</div>'
+            '</div>'
+
+            '<div style="margin-left:auto;text-align:right;padding-left:28px;border-left:1px solid #1E2D45;">'
+            '<div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;'
+            'letter-spacing:1.5px;color:#64748B;margin-bottom:6px;">Status</div>'
+            '<div style="font-weight:800;font-size:1rem;color:#10B981;">&#9679; LIVE</div>'
+            f'<div style="font-size:0.75rem;color:#64748B;margin-top:2px;">{aggregation}</div>'
+            f'<div style="font-size:0.75rem;color:#64748B;">{cabin_class} Class</div>'
+            '</div>'
+            '</div>'
+        )
+        st.markdown(_m, unsafe_allow_html=True)
 
         st.markdown('''<div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#374151 !important;margin-bottom:10px;">30-Day APIx Forward Trajectory</div>''', unsafe_allow_html=True)
 
+        _apix_vals = [ti7 - 3 + i*0.35 + np.random.normal(0,0.6) for i in range(30)]
         df_trend = pd.DataFrame({
             "Date": pd.date_range(start=base_period, periods=30, freq="D"),
-            "APIx": [ti7 - 12 + i*0.4 + np.random.normal(0,0.8) for i in range(30)]
+            "APIx": _apix_vals
         })
+        _y_lo = min(_apix_vals) - 2; _y_hi = max(_apix_vals) + 3
         fig_t = go.Figure()
+        # Baseline trace for area fill (avoids tozeroy pulling axis to 0)
+        fig_t.add_trace(go.Scatter(
+            x=df_trend["Date"], y=[_y_lo]*30,
+            mode='lines', line=dict(width=0), showlegend=False,
+            hoverinfo='skip'
+        ))
         fig_t.add_trace(go.Scatter(
             x=df_trend["Date"], y=df_trend["APIx"],
-            mode='lines', fill='tozeroy', fillcolor='rgba(6,182,212,0.06)',
+            mode='lines', fill='tonexty', fillcolor='rgba(6,182,212,0.08)',
             line=dict(color='#06B6D4', width=2.5),
             hovertemplate="<b>%{x|%d %b}</b><br>APIx: <b>%{y:.2f}</b><extra></extra>"
         ))
         fig_t.update_layout(
             plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
             font_color="#94A3B8", margin=dict(l=0,r=0,t=10,b=0), height=220,
-            hovermode="x unified"
+            hovermode="x unified", showlegend=False
         )
         fig_t.update_xaxes(showgrid=True, gridcolor='#1E2D45', zeroline=False)
-        fig_t.update_yaxes(showgrid=True, gridcolor='#1E2D45', zeroline=False)
+        fig_t.update_yaxes(showgrid=True, gridcolor='#1E2D45', zeroline=False,
+                            range=[_y_lo, _y_hi])
         st.plotly_chart(fig_t, use_container_width=True)
 
         st.markdown("<br>", unsafe_allow_html=True)
@@ -527,22 +546,31 @@ if page == "Calculator":
             rebased['Inflation']  = rebased['CPI_Index'] - 100
 
             fig_m = go.Figure()
+            _cpi_vals = rebased['CPI_Index']
+            _cpi_lo = _cpi_vals.min() * 0.985
+            _cpi_hi = _cpi_vals.max() * 1.015
+            # Baseline trace so fill doesn't anchor to y=0
             fig_m.add_trace(go.Scatter(
-                x=rebased['Date'], y=rebased['CPI_Index'],
+                x=rebased['Date'], y=[_cpi_lo]*len(rebased),
+                mode='lines', line=dict(width=0), showlegend=False, hoverinfo='skip'
+            ))
+            fig_m.add_trace(go.Scatter(
+                x=rebased['Date'], y=_cpi_vals,
                 customdata=rebased['Inflation'],
                 mode='lines', name='MOSPI CPI',
                 line=dict(color='#06B6D4', width=2.5),
-                fill='tozeroy', fillcolor='rgba(6,182,212,0.06)',
-                hovertemplate="<span style='font-size:22px;font-weight:900;color:#E2E8F0;'>%{y:.1f}</span><br><span style='color:#06B6D4;font-size:14px;'>%{customdata:+.2f}% vs base</span><extra></extra>"
+                fill='tonexty', fillcolor='rgba(6,182,212,0.07)',
+                hovertemplate="<b style='font-size:18px;color:#E2E8F0;'>%{y:.1f}</b><br><span style='color:#06B6D4;'>%{customdata:+.2f}% vs base</span><extra></extra>"
             ))
             fig_m.update_layout(
                 plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
                 font_color="#94A3B8", margin=dict(l=0,r=0,t=10,b=0), height=480,
-                hovermode="x unified"
+                hovermode="x unified", showlegend=False
             )
             fig_m.update_xaxes(showgrid=True, gridcolor='#1E2D45', showspikes=True,
                                 spikemode="across", spikethickness=1, spikedash="dash", spikecolor='#1E2D45')
-            fig_m.update_yaxes(showgrid=True, gridcolor='#1E2D45', title="Price Index (Base=100)")
+            fig_m.update_yaxes(showgrid=True, gridcolor='#1E2D45', title="Price Index (Base=100)",
+                                range=[_cpi_lo, _cpi_hi])
             st.plotly_chart(fig_m, use_container_width=True)
 
 
