@@ -821,22 +821,42 @@ elif page == "Weight Allocation (DGCA)":
 
     wf1, wf2 = st.columns([1,1])
     with wf1:
-        st.markdown("""<div style="background:linear-gradient(135deg,#0D1626,#111827);border:1px solid #1E2D45;border-left:3px solid #8B5CF6;border-radius:12px;padding:30px;text-align:center;">""", unsafe_allow_html=True)
-        st.latex(r'Q_{r,0} = \dfrac{N_r}{\displaystyle\sum_{j=1}^{R} N_j}')
-        st.markdown("</div>", unsafe_allow_html=True)
+        st.markdown(
+            '<div style="background:linear-gradient(135deg,#0D1626,#111827);'
+            'border:1px solid #1E2D45;border-left:3px solid #8B5CF6;'
+            'border-radius:12px;padding:32px;text-align:center;height:100%;'
+            'display:flex;flex-direction:column;justify-content:center;">'
+            '<div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;'
+            'letter-spacing:1.5px;color:#64748B;margin-bottom:24px;">Weight Formula</div>'
+
+            '<div style="font-size:1.15rem;font-family:JetBrains Mono,monospace;'
+            'color:#E2E8F0;letter-spacing:0.5px;">'
+            '<span style="color:#8B5CF6;font-weight:700;">Q</span>'
+            '<sub style="color:#94A3B8;font-size:0.7rem;">r,0</sub>'
+            '&nbsp;=&nbsp;'
+            '<span style="display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 6px;">'
+            '<span style="border-bottom:1.5px solid #E2E8F0;padding-bottom:4px;color:#06B6D4;">N<sub>r</sub></span>'
+            '<span style="padding-top:4px;color:#F59E0B;">&sum;&nbsp;N<sub>j</sub></span>'
+            '</span>'
+            '</div>'
+            '</div>',
+            unsafe_allow_html=True
+        )
     with wf2:
         for sym, desc, clr in [
             ("Q(r,0)", "The final dimensionless weight for route r. All weights sum to 1.0.", "#8B5CF6"),
             ("N_r",    "Total passengers flown on route r during the DGCA base quarter.", "#06B6D4"),
             ("SUM N_j","Sum of all passengers across every tracked route — the normalising denominator.", "#F59E0B"),
         ]:
-            st.markdown(f"""
-            <div style="background:#0D1626;border:1px solid #1E2D45;border-radius:8px;padding:12px 16px;
-                        display:flex;gap:12px;align-items:center;margin-bottom:8px;">
-                <div style="color:{clr} !important;font-family:'JetBrains Mono',monospace;font-weight:800;font-size:0.9rem;
-                            background:{clr}15;padding:5px 10px;border-radius:5px;white-space:nowrap;border:1px solid {clr}25;">{sym}</div>
-                <div style="color:#94A3B8 !important;font-size:0.86rem;line-height:1.5;">{desc}</div>
-            </div>""", unsafe_allow_html=True)
+            st.markdown(
+                f'<div style="background:#0D1626;border:1px solid #1E2D45;border-radius:10px;'
+                f'padding:14px 18px;display:flex;gap:14px;align-items:center;margin-bottom:8px;">'
+                f'<div style="color:{clr};font-family:JetBrains Mono,monospace;font-weight:800;font-size:0.9rem;'
+                f'background:{clr}15;padding:5px 10px;border-radius:5px;white-space:nowrap;border:1px solid {clr}25;">{sym}</div>'
+                f'<div style="color:#94A3B8;font-size:0.86rem;line-height:1.5;">{desc}</div>'
+                f'</div>',
+                unsafe_allow_html=True
+            )
 
     st.markdown("<br>", unsafe_allow_html=True)
 
@@ -856,33 +876,34 @@ elif page == "Weight Allocation (DGCA)":
     naive   = (1/len(grs))*100
     delta   = pct - naive
 
-    st.markdown(f"""
-    <div style="background:linear-gradient(135deg,#0D1626,#111827);border:1px solid #1E2D45;
-                border-radius:12px;padding:20px 28px;display:flex;gap:0;margin-bottom:24px;">
-        <div style="flex:1;border-right:1px solid #1E2D45;padding-right:24px;">
-            <div style="color:#374151 !important;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;">Route</div>
-            <div style="color:#E2E8F0 !important;font-size:1.7rem;font-weight:900;letter-spacing:1px;font-family:'JetBrains Mono',monospace;">{sel_id}</div>
-            <div style="color:#64748B !important;font-size:0.78rem;margin-top:4px;">Rank #{rank} / {len(grs)}</div>
-        </div>
-        <div style="flex:1;border-right:1px solid #1E2D45;padding:0 24px;">
-            <div style="color:#374151 !important;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;">Quarterly Passengers</div>
-            <div style="color:#E2E8F0 !important;font-size:1.7rem;font-weight:900;font-family:'JetBrains Mono',monospace;">{pcount:,}</div>
-            <div style="color:#64748B !important;font-size:0.78rem;margin-top:4px;">of {int(total):,} total</div>
-        </div>
-        <div style="flex:1;border-right:1px solid #1E2D45;padding:0 24px;">
-            <div style="color:#374151 !important;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;">DGCA Weight Q(base)</div>
-            <div style="color:#8B5CF6 !important;font-size:1.7rem;font-weight:900;font-family:'JetBrains Mono',monospace;">{pct:.3f}%</div>
-            <div style="color:#64748B !important;font-size:0.78rem;margin-top:4px;">of national air traffic</div>
-        </div>
-        <div style="flex:1;padding-left:24px;">
-            <div style="color:#374151 !important;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;">vs Equal Weight</div>
-            <div style="color:{'#10B981' if delta>0 else '#EF4444'} !important;font-size:1.7rem;font-weight:900;font-family:'JetBrains Mono',monospace;">
-                {'&#9650;' if delta>0 else '&#9660;'}&nbsp;{abs(delta):.3f}%
-            </div>
-            <div style="color:#64748B !important;font-size:0.78rem;margin-top:4px;">Naive = {naive:.3f}%</div>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+    _sel_info = (
+        '<div style="background:linear-gradient(135deg,#0D1626,#111827);border:1px solid #1E2D45;'
+        'border-radius:12px;padding:20px 28px;display:flex;gap:0;margin-bottom:24px;">'
+        '<div style="flex:1;border-right:1px solid #1E2D45;padding-right:24px;">'
+        '<div style="color:#64748B;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;">Route</div>'
+        f'<div style="color:#E2E8F0;font-size:1.7rem;font-weight:900;letter-spacing:1px;font-family:JetBrains Mono,monospace;">{sel_id}</div>'
+        f'<div style="color:#64748B;font-size:0.78rem;margin-top:4px;">Rank #{rank} / {len(grs)}</div>'
+        '</div>'
+        '<div style="flex:1;border-right:1px solid #1E2D45;padding:0 24px;">'
+        '<div style="color:#64748B;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;">Quarterly Passengers</div>'
+        f'<div style="color:#E2E8F0;font-size:1.7rem;font-weight:900;font-family:JetBrains Mono,monospace;">{pcount:,}</div>'
+        f'<div style="color:#64748B;font-size:0.78rem;margin-top:4px;">of {int(total):,} total</div>'
+        '</div>'
+        '<div style="flex:1;border-right:1px solid #1E2D45;padding:0 24px;">'
+        '<div style="color:#64748B;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;">DGCA Weight Q(base)</div>'
+        f'<div style="color:#8B5CF6;font-size:1.7rem;font-weight:900;font-family:JetBrains Mono,monospace;">{pct:.3f}%</div>'
+        f'<div style="color:#64748B;font-size:0.78rem;margin-top:4px;">of national air traffic</div>'
+        '</div>'
+        '<div style="flex:1;padding-left:24px;">'
+        '<div style="color:#64748B;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;">vs Equal Weight</div>'
+        f'<div style="color:{"#10B981" if delta>0 else "#EF4444"};font-size:1.7rem;font-weight:900;font-family:JetBrains Mono,monospace;">'
+        f'{"&#9650;" if delta>0 else "&#9660;"}&nbsp;{abs(delta):.3f}%'
+        '</div>'
+        f'<div style="color:#64748B;font-size:0.78rem;margin-top:4px;">Naive = {naive:.3f}%</div>'
+        '</div>'
+        '</div>'
+    )
+    st.markdown(_sel_info, unsafe_allow_html=True)
 
     bc, dc = st.columns([1.4,1])
     with bc:
@@ -930,19 +951,21 @@ elif page == "Weight Allocation (DGCA)":
 
         top5s  = grs.head(5)['passenger_share'].sum()*100
         top10s = grs.head(10)['passenger_share'].sum()*100
-        st.markdown(f"""
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">
-            <div style="background:#0D1626;border:1px solid #1E2D45;border-radius:8px;padding:14px;text-align:center;">
-                <div style="color:#374151 !important;font-size:0.72rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Top 5 Routes</div>
-                <div style="color:#8B5CF6 !important;font-size:1.4rem;font-weight:900;font-family:'JetBrains Mono',monospace;">{top5s:.1f}%</div>
-                <div style="color:#64748B !important;font-size:0.75rem;">of national traffic</div>
-            </div>
-            <div style="background:#0D1626;border:1px solid #1E2D45;border-radius:8px;padding:14px;text-align:center;">
-                <div style="color:#374151 !important;font-size:0.72rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Top 10 Routes</div>
-                <div style="color:#8B5CF6 !important;font-size:1.4rem;font-weight:900;font-family:'JetBrains Mono',monospace;">{top10s:.1f}%</div>
-                <div style="color:#64748B !important;font-size:0.75rem;">of national traffic</div>
-            </div>
-        </div>""", unsafe_allow_html=True)
+        _traffic_shares = (
+            '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">'
+            '<div style="background:#0D1626;border:1px solid #1E2D45;border-radius:8px;padding:14px;text-align:center;">'
+            '<div style="color:#64748B;font-size:0.72rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Top 5 Routes</div>'
+            f'<div style="color:#8B5CF6;font-size:1.4rem;font-weight:900;font-family:JetBrains Mono,monospace;">{top5s:.1f}%</div>'
+            '<div style="color:#64748B;font-size:0.75rem;">of national traffic</div>'
+            '</div>'
+            '<div style="background:#0D1626;border:1px solid #1E2D45;border-radius:8px;padding:14px;text-align:center;">'
+            '<div style="color:#64748B;font-size:0.72rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Top 10 Routes</div>'
+            f'<div style="color:#8B5CF6;font-size:1.4rem;font-weight:900;font-family:JetBrains Mono,monospace;">{top10s:.1f}%</div>'
+            '<div style="color:#64748B;font-size:0.75rem;">of national traffic</div>'
+            '</div>'
+            '</div>'
+        )
+        st.markdown(_traffic_shares, unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
     st.markdown('''<div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#374151 !important;margin-bottom:6px;">Index Impact Simulator</div>
@@ -952,19 +975,21 @@ elif page == "Weight Allocation (DGCA)":
     with sc1:
         spk = st.slider("Fare Change (%)", -50, 100, 20, 5, format="%d%%")
         nd  = spk/len(grs); ad = spk*sel_row['passenger_share']
-        st.markdown(f"""
-        <div style="display:flex;flex-direction:column;gap:12px;margin-top:18px;">
-            <div style="background:#EF444410;border:1px solid #EF444430;border-radius:10px;padding:18px;">
-                <div style="color:#FCA5A5 !important;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;">Naive Unweighted</div>
-                <div style="color:#EF4444 !important;font-size:1.9rem;font-weight:900;font-family:'JetBrains Mono',monospace;">{'+ ' if nd>0 else ''}{nd:.3f} pts</div>
-                <div style="color:#64748B !important;font-size:0.8rem;margin-top:4px;">Equally divides across {len(grs)} routes</div>
-            </div>
-            <div style="background:#8B5CF610;border:1px solid #8B5CF630;border-radius:10px;padding:18px;">
-                <div style="color:#C4B5FD !important;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;">APIx DGCA Weighted</div>
-                <div style="color:#8B5CF6 !important;font-size:1.9rem;font-weight:900;font-family:'JetBrains Mono',monospace;">{'+ ' if ad>0 else ''}{ad:.3f} pts</div>
-                <div style="color:#64748B !important;font-size:0.8rem;margin-top:4px;">Weighted at {pct:.3f}% share</div>
-            </div>
-        </div>""", unsafe_allow_html=True)
+        _sim_res = (
+            '<div style="display:flex;flex-direction:column;gap:12px;margin-top:18px;">'
+            '<div style="background:#EF444410;border:1px solid #EF444430;border-radius:10px;padding:18px;">'
+            '<div style="color:#FCA5A5;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;">Naive Unweighted</div>'
+            f'<div style="color:#EF4444;font-size:1.9rem;font-weight:900;font-family:JetBrains Mono,monospace;">{"+ " if nd>0 else ""}{nd:.3f} pts</div>'
+            f'<div style="color:#64748B;font-size:0.8rem;margin-top:4px;">Equally divides across {len(grs)} routes</div>'
+            '</div>'
+            '<div style="background:#8B5CF610;border:1px solid #8B5CF630;border-radius:10px;padding:18px;">'
+            '<div style="color:#C4B5FD;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;">APIx DGCA Weighted</div>'
+            f'<div style="color:#8B5CF6;font-size:1.9rem;font-weight:900;font-family:JetBrains Mono,monospace;">{"+ " if ad>0 else ""}{ad:.3f} pts</div>'
+            f'<div style="color:#64748B;font-size:0.8rem;margin-top:4px;">Weighted at {pct:.3f}% share</div>'
+            '</div>'
+            '</div>'
+        )
+        st.markdown(_sim_res, unsafe_allow_html=True)
     with sc2:
         fig_s = go.Figure(go.Bar(
             x=["Naive (Unweighted)", f"APIx | {sel_id}"],
