@@ -14,9 +14,9 @@ import random
 
 st.set_page_config(
     page_title="APIx | Indian Airfare Price Index",
-    page_icon="[?]",
+    page_icon="✈",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="collapsed"
 )
 
 # ============================================================
@@ -54,14 +54,24 @@ st.markdown("""
 }
 header[data-testid="stHeader"] { background: transparent !important; }
 
-/* ---- sidebar ---- */
-[data-testid="stSidebar"] {
-    background: var(--surface) !important;
-    border-right: 1px solid var(--border) !important;
+/* ---- Hide Streamlit Sidebar completely ---- */
+[data-testid="stSidebar"], [data-testid="stSidebarCollapsedControl"], [data-testid="collapsedControl"] {
+    display: none !important;
+    width: 0px !important;
 }
-[data-testid="stSidebar"] .stMarkdown, [data-testid="stSidebar"] label,
-[data-testid="stSidebar"] .stRadio span, [data-testid="stSidebar"] p {
-    color: var(--text) !important;
+section[data-testid="stSidebar"] {
+    display: none !important;
+    width: 0px !important;
+}
+div[data-testid="stSidebarUserContent"] {
+    display: none !important;
+}
+
+/* ---- style the main page wide container ---- */
+.stMainBlockContainer {
+    max-width: 1250px !important;
+    padding-top: 1.5rem !important;
+    padding-bottom: 2rem !important;
 }
 
 /* Allow inline style colors to win over cascade via higher specificity on base */
@@ -102,6 +112,52 @@ h1, h2, h3, h4, h5, h6 { color: var(--text) !important; }
     background: var(--cyan-dim) !important;
     color: var(--cyan) !important;
     border-bottom: 2px solid var(--cyan) !important;
+}
+
+/* ---- horizontal radio navigation button styling ---- */
+div[data-testid="stRadio"] > div {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 8px !important;
+    background: transparent !important;
+    padding: 0 !important;
+}
+div[data-testid="stRadio"] label {
+    background: #0D1626 !important;
+    border: 1px solid #1E2D45 !important;
+    border-radius: 8px !important;
+    padding: 8px 18px !important;
+    color: #94A3B8 !important;
+    font-weight: 700 !important;
+    font-size: 0.8rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.8px !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease-in-out !important;
+}
+div[data-testid="stRadio"] label:hover {
+    border-color: #06B6D4 !important;
+    color: #06B6D4 !important;
+    background: rgba(6,182,212,0.04) !important;
+}
+div[data-testid="stRadio"] label[data-checked="true"] {
+    background: rgba(6,182,212,0.12) !important;
+    border-color: #06B6D4 !important;
+    color: #06B6D4 !important;
+    box-shadow: 0 0 15px rgba(6,182,212,0.15) !important;
+}
+/* Hide the native radio circles inside our navigation buttons */
+div[data-testid="stRadio"] label div[role="presentation"],
+div[data-testid="stRadio"] label div[class*="RadioDot"],
+div[data-testid="stRadio"] label span[class*="RadioDot"] {
+    display: none !important;
+}
+div[data-testid="stRadio"] label div[data-testid="stMarkdownContainer"] {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+div[data-testid="stRadio"] [data-testid="stWidgetLabel"] {
+    display: none !important;
 }
 
 /* ---- scrollbar ---- */
@@ -299,88 +355,101 @@ def render_heatmap(fare_df, summary_df):
     fig.update_yaxes(showgrid=False, zeroline=False, row=1,col=1, tickfont=dict(size=10))
     st.plotly_chart(fig, use_container_width=True)
 
-
 # ============================================================
-# SIDEBAR
+# TOP NAVIGATION & HUD DASHBOARD
 # ============================================================
-with st.sidebar:
-    st.markdown("""
-    <div style="padding: 18px 0 22px 0; border-bottom: 1px solid #1E2D45; margin-bottom: 20px;">
-        <div style="display:flex; align-items:center; gap:10px; margin-bottom:6px;">
-            <div style="font-size:1.6rem;">&#9992;</div>
-            <div style="font-size:1.4rem; font-weight:900; letter-spacing:-0.5px; color:#06B6D4 !important;">APIx</div>
-        </div>
-        <div style="font-size:0.72rem; font-weight:600; text-transform:uppercase; letter-spacing:1.5px; color:#374151 !important;">
-            Indian Airfare Price Index
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-
-    st.markdown('''<div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#374151 !important;margin-bottom:8px;">Navigation</div>''', unsafe_allow_html=True)
-    page = st.radio("", ["Calculator", "Maths & Stats", "Weight Allocation (DGCA)"],
-                    index=0, label_visibility="collapsed")
-
-    st.markdown("<br>", unsafe_allow_html=True)
-
-    if page == "Calculator":
-        st.markdown('''<div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#374151 !important;margin-bottom:8px;">Control Panel</div>''', unsafe_allow_html=True)
-        base_period = st.date_input("Base Period", value=datetime.today())
-        aggregation = st.selectbox("Aggregation", ("Overall Industry", "Airline Specific", "Route Specific"))
-        airline_filter = "All"
-        if aggregation == "Airline Specific":
-            airline_filter = st.selectbox("Airline", ("IndiGo (6E)","Air India (AI)","SpiceJet (SG)","Air India Express (IX)","Akasa Air (QP)"))
-        route_filter = "All"
-        if aggregation == "Route Specific":
-            route_filter = st.selectbox("Route", sorted(full_fare_df['route_id'].unique()))
-        cabin_class = st.selectbox("Cabin Class", ("Economy","Business"))
-
-    st.markdown("<br>", unsafe_allow_html=True)
-    st.markdown('''<div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#374151 !important;margin-bottom:8px;">Live Feed Status</div>''', unsafe_allow_html=True)
-    _sidebar_status = (
-        '<div style="background:#0D1626;border:1px solid #1E2D45;border-radius:10px;padding:14px 16px;font-size:0.82rem;">'
-        '<div style="display:flex;justify-content:space-between;margin-bottom:8px;">'
-        '<span style="color:#64748B;">MOSPI Records</span>'
-        f'<span style="color:#E2E8F0;font-family:JetBrains Mono,monospace;font-weight:700;">{len(mospi_history_df):,}</span>'
+h_col1, h_col2 = st.columns([1.8, 2.2])
+with h_col1:
+    st.markdown(
+        '<div style="display:flex;align-items:center;gap:12px;margin-bottom:4px;">'
+        '<span style="font-size:2rem;color:#06B6D4;line-height:1;">&#9992;</span>'
+        '<span style="font-size:1.8rem;font-weight:900;letter-spacing:-1px;color:#E2E8F0;line-height:1;">APIx</span>'
+        '<span style="font-size:0.68rem;background:rgba(6,182,212,0.1);color:#06B6D4;padding:3px 8px;border-radius:4px;font-family:JetBrains Mono,monospace;border:1px solid rgba(6,182,212,0.2);line-height:1;margin-top:2px;">v2.0</span>'
         '</div>'
-        '<div style="display:flex;justify-content:space-between;margin-bottom:8px;">'
-        '<span style="color:#64748B;">Fare Samples</span>'
-        f'<span style="color:#E2E8F0;font-family:JetBrains Mono,monospace;font-weight:700;">{len(full_fare_df):,}</span>'
-        '</div>'
-        '<div style="display:flex;justify-content:space-between;margin-bottom:8px;">'
-        '<span style="color:#64748B;">Routes Tracked</span>'
-        '<span style="color:#06B6D4;font-family:JetBrains Mono,monospace;font-weight:700;">80</span>'
-        '</div>'
-        '<div style="display:flex;justify-content:space-between;">'
-        '<span style="color:#64748B;">Data Feed</span>'
-        '<span style="color:#10B981;font-weight:700;">&#9679; LIVE</span>'
-        '</div>'
-        '</div>'
+        '<div style="font-size:0.75rem;color:#64748B;text-transform:uppercase;letter-spacing:1px;font-family:JetBrains Mono,monospace;">'
+        '20 Airports &middot; 80 Domestic Routes &middot; 5 Covered Carriers'
+        '</div>',
+        unsafe_allow_html=True
     )
-    st.markdown(_sidebar_status, unsafe_allow_html=True)
+with h_col2:
+    page = st.radio("Navigation", ["Calculator", "Maths & Stats", "Weight Allocation (DGCA)"],
+                    index=0, horizontal=True, label_visibility="collapsed")
 
-    st.markdown("<br>", unsafe_allow_html=True)
-    st.markdown("""<div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#374151 !important;margin-bottom:10px;">Airlines Covered</div>
-    <div style="font-size:0.78rem;display:flex;flex-direction:column;gap:5px;">
-        <span>&#9992; <b style="color:#06B6D4 !important;">6E</b> IndiGo</span>
-        <span>&#9992; <b style="color:#06B6D4 !important;">AI</b> Air India</span>
-        <span>&#9992; <b style="color:#06B6D4 !important;">SG</b> SpiceJet</span>
-        <span>&#9992; <b style="color:#06B6D4 !important;">IX</b> Air India Express</span>
-        <span>&#9992; <b style="color:#06B6D4 !important;">QP</b> Akasa Air</span>
-    </div>
-    """, unsafe_allow_html=True)
+# Dynamic Carrier Status Strip (Top HUD display)
+_carrier_strip = (
+    '<div style="background:#0D1626;border:1px solid #1E2D45;border-radius:10px;'
+    'padding:10px 18px;display:flex;align-items:center;gap:16px;margin:12px 0 24px 0;'
+    'box-shadow:0 4px 12px rgba(0,0,0,0.15);overflow-x:auto;">'
+    '<span style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#64748B;white-space:nowrap;">Active Fleet:</span>'
+    
+    '<div style="display:flex;align-items:center;gap:6px;background:#002F6C22;border:1px solid #002F6C55;padding:4px 10px;border-radius:6px;font-size:0.8rem;white-space:nowrap;">'
+    '<span style="color:#3B82F6;font-weight:900;font-family:JetBrains Mono,monospace;">6E</span>'
+    '<span style="color:#E2E8F0;font-weight:600;">IndiGo</span>'
+    '</div>'
+
+    '<div style="display:flex;align-items:center;gap:6px;background:#D91F2622;border:1px solid #D91F2655;padding:4px 10px;border-radius:6px;font-size:0.8rem;white-space:nowrap;">'
+    '<span style="color:#EF4444;font-weight:900;font-family:JetBrains Mono,monospace;">AI</span>'
+    '<span style="color:#E2E8F0;font-weight:600;">Air India</span>'
+    '</div>'
+
+    '<div style="display:flex;align-items:center;gap:6px;background:#FF450022;border:1px solid #FF450055;padding:4px 10px;border-radius:6px;font-size:0.8rem;white-space:nowrap;">'
+    '<span style="color:#F97316;font-weight:900;font-family:JetBrains Mono,monospace;">SG</span>'
+    '<span style="color:#E2E8F0;font-weight:600;">SpiceJet</span>'
+    '</div>'
+
+    '<div style="display:flex;align-items:center;gap:6px;background:#E53E3E22;border:1px solid #E53E3E55;padding:4px 10px;border-radius:6px;font-size:0.8rem;white-space:nowrap;">'
+    '<span style="color:#EF4444;font-weight:900;font-family:JetBrains Mono,monospace;">IX</span>'
+    '<span style="color:#E2E8F0;font-weight:600;">AI Express</span>'
+    '</div>'
+
+    '<div style="display:flex;align-items:center;gap:6px;background:#8B5CF622;border:1px solid #8B5CF655;padding:4px 10px;border-radius:6px;font-size:0.8rem;white-space:nowrap;">'
+    '<span style="color:#A78BFA;font-weight:900;font-family:JetBrains Mono,monospace;">QP</span>'
+    '<span style="color:#E2E8F0;font-weight:600;">Akasa Air</span>'
+    '</div>'
+
+    '<div style="margin-left:auto;display:flex;align-items:center;gap:16px;font-size:0.78rem;font-family:JetBrains Mono,monospace;color:#64748B;white-space:nowrap;">'
+    f'<span>MOSPI: <b style="color:#E2E8F0;">{len(mospi_history_df):,}</b></span>'
+    f'<span>SAMPLES: <b style="color:#E2E8F0;">{len(full_fare_df):,}</b></span>'
+    '<span>FEED: <b style="color:#10B981;">&#9679; LIVE</b></span>'
+    '</div>'
+    '</div>'
+)
+st.markdown(_carrier_strip, unsafe_allow_html=True)
 
 
 # ============================================================
 # PAGE: CALCULATOR
 # ============================================================
 if page == "Calculator":
+    # Control Panel horizontal row
+    st.markdown('<div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#64748B;margin-bottom:12px;">Flight Control Panel</div>', unsafe_allow_html=True)
+    
+    ctrl_col1, ctrl_col2, ctrl_col3, ctrl_col4 = st.columns([1, 1.2, 1.2, 1])
+    with ctrl_col1:
+        base_period = st.date_input("Base Period", value=datetime.today())
+    with ctrl_col2:
+        aggregation = st.selectbox("Aggregation Target", ("Overall Industry", "Airline Specific", "Route Specific"))
+    with ctrl_col3:
+        airline_filter = "All"
+        route_filter = "All"
+        if aggregation == "Airline Specific":
+            airline_filter = st.selectbox("Select Carrier", ("IndiGo (6E)","Air India (AI)","SpiceJet (SG)","Air India Express (IX)","Akasa Air (QP)"))
+        elif aggregation == "Route Specific":
+            route_filter = st.selectbox("Select Route", sorted(full_fare_df['route_id'].unique()))
+        else:
+            st.selectbox("Filter Target", ["All Routes / Carriers"], disabled=True)
+    with ctrl_col4:
+        cabin_class = st.selectbox("Cabin Class", ("Economy","Business"))
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
     filtered_df = full_fare_df.copy()
     filtered_df = filtered_df[filtered_df['cabin_class'] == cabin_class]
     if aggregation == "Airline Specific":
         filtered_df = filtered_df[filtered_df['airline'] == airline_filter]
     elif aggregation == "Route Specific":
         filtered_df = filtered_df[filtered_df['route_id'] == route_filter]
-
+    if filtered_df.empty:
         _empty_msg = (
             '<div style="background:#0D1626;border:1px solid #EF4444;border-radius:12px;padding:24px;text-align:center;margin-top:40px;">'
             '<div style="font-size:2rem;margin-bottom:8px;">&#9888;</div>'
