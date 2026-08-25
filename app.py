@@ -591,34 +591,71 @@ elif page == "Maths & Stats":
         </p>
     </div>
     """, unsafe_allow_html=True)
-
     fc_col, var_col = st.columns([1.1,1])
     with fc_col:
-        st.markdown("""
-        <div style="background:linear-gradient(135deg,#0D1626,#111827);
-                    border:1px solid #1E2D45;border-left:3px solid #06B6D4;
-                    border-radius:12px;padding:32px;text-align:center;margin-bottom:20px;">
-            <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#374151 !important;margin-bottom:16px;">Core Formula</div>
-        """, unsafe_allow_html=True)
-        st.latex(r'\Large APIx_t = rac{\sum_{r=1}^{R}igl(P_{r,t}	imes Q_{r,0}igr)}{\sum_{r=1}^{R}igl(P_{r,0}	imes Q_{r,0}igr)} 	imes 100')
-        st.markdown("</div>", unsafe_allow_html=True)
+        st.markdown(
+            '<div style="background:linear-gradient(135deg,#0D1626,#111827);'
+            'border:1px solid #1E2D45;border-left:3px solid #06B6D4;'
+            'border-radius:12px;padding:32px;text-align:center;margin-bottom:20px;">'
+            '<div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;'
+            'letter-spacing:1.5px;color:#64748B;margin-bottom:22px;">Core Formula</div>'
 
-        st.markdown("""
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
-            <div style="background:#0D1626;border:1px solid rgba(6,182,212,0.25);border-radius:8px;padding:14px;text-align:center;">
-                <div style="color:#06B6D4 !important;font-size:1.6rem;font-weight:900;font-family:'JetBrains Mono',monospace;">100</div>
-                <div style="color:#64748B !important;font-size:0.78rem;margin-top:4px;">Base Parity</div>
-            </div>
-            <div style="background:#0D1626;border:1px solid rgba(239,68,68,0.25);border-radius:8px;padding:14px;text-align:center;">
-                <div style="color:#EF4444 !important;font-size:1.6rem;font-weight:900;font-family:'JetBrains Mono',monospace;">&gt;100</div>
-                <div style="color:#64748B !important;font-size:0.78rem;margin-top:4px;">Fare Inflation</div>
-            </div>
-            <div style="background:#0D1626;border:1px solid rgba(16,185,129,0.25);border-radius:8px;padding:14px;text-align:center;">
-                <div style="color:#10B981 !important;font-size:1.6rem;font-weight:900;font-family:'JetBrains Mono',monospace;">&lt;100</div>
-                <div style="color:#64748B !important;font-size:0.78rem;margin-top:4px;">Fare Deflation</div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+            # Formula line 1: APIx_t =
+            '<div style="font-size:1.1rem;font-family:JetBrains Mono,monospace;'
+            'color:#E2E8F0;margin-bottom:6px;letter-spacing:0.5px;">'
+            '<span style="color:#06B6D4;font-weight:700;">APIx</span>'
+            '<sub style="color:#94A3B8;font-size:0.7rem;">t</sub>'
+            '&nbsp;=&nbsp;'
+            # Fraction wrapper
+            '<span style="display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 6px;">'
+            # Numerator
+            '<span style="border-bottom:1.5px solid #E2E8F0;padding-bottom:4px;font-size:0.95rem;color:#E2E8F0;">'
+            '&sum;<sub style="font-size:0.65rem;color:#94A3B8;">r=1</sub>'
+            '<sup style="font-size:0.65rem;color:#94A3B8;">R</sup>'
+            '&nbsp;'
+            '<span style="color:#06B6D4;">P(r,t)</span>'
+            '&nbsp;&times;&nbsp;'
+            '<span style="color:#8B5CF6;">Q(r,0)</span>'
+            '</span>'
+            # Denominator
+            '<span style="padding-top:4px;font-size:0.95rem;color:#E2E8F0;">'
+            '&sum;<sub style="font-size:0.65rem;color:#94A3B8;">r=1</sub>'
+            '<sup style="font-size:0.65rem;color:#94A3B8;">R</sup>'
+            '&nbsp;'
+            '<span style="color:#F59E0B;">P(r,0)</span>'
+            '&nbsp;&times;&nbsp;'
+            '<span style="color:#8B5CF6;">Q(r,0)</span>'
+            '</span>'
+            '</span>'
+            '&nbsp;&times;&nbsp;100'
+            '</div>'
+
+            '<div style="display:flex;justify-content:center;gap:24px;margin-top:20px;font-size:0.78rem;">'
+            '<span><span style="color:#06B6D4;">&#9632;</span>&nbsp;Current fare</span>'
+            '<span><span style="color:#F59E0B;">&#9632;</span>&nbsp;Base fare</span>'
+            '<span><span style="color:#8B5CF6;">&#9632;</span>&nbsp;DGCA weight</span>'
+            '</div>'
+            '</div>',
+            unsafe_allow_html=True
+        )
+
+        st.markdown(
+            '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">'
+            '<div style="background:#0D1626;border:1px solid rgba(6,182,212,0.25);border-radius:8px;padding:14px;text-align:center;">'
+            '<div style="color:#06B6D4;font-size:1.6rem;font-weight:900;font-family:JetBrains Mono,monospace;">100</div>'
+            '<div style="color:#64748B;font-size:0.78rem;margin-top:4px;">Base Parity</div>'
+            '</div>'
+            '<div style="background:#0D1626;border:1px solid rgba(239,68,68,0.25);border-radius:8px;padding:14px;text-align:center;">'
+            '<div style="color:#EF4444;font-size:1.6rem;font-weight:900;font-family:JetBrains Mono,monospace;">&gt;100</div>'
+            '<div style="color:#64748B;font-size:0.78rem;margin-top:4px;">Fare Inflation</div>'
+            '</div>'
+            '<div style="background:#0D1626;border:1px solid rgba(16,185,129,0.25);border-radius:8px;padding:14px;text-align:center;">'
+            '<div style="color:#10B981;font-size:1.6rem;font-weight:900;font-family:JetBrains Mono,monospace;">&lt;100</div>'
+            '<div style="color:#64748B;font-size:0.78rem;margin-top:4px;">Fare Deflation</div>'
+            '</div>'
+            '</div>',
+            unsafe_allow_html=True
+        )
 
     with var_col:
         for sym, title, desc, clr in [
@@ -626,17 +663,18 @@ elif page == "Maths & Stats":
             ("P(r,0)", "Base Period Fare", "Fixed reference price for route r during the chosen base year, anchoring the index at exactly 100.", "#F59E0B"),
             ("Q(r,0)", "Passenger Weight (DGCA)", "Proportion of national passengers on route r during the base period, from DGCA quarterly data.", "#8B5CF6"),
         ]:
-            st.markdown(f"""
-            <div style="background:#0D1626;border:1px solid #1E2D45;border-radius:10px;
-                        padding:16px;display:flex;gap:14px;align-items:flex-start;margin-bottom:10px;">
-                <div style="background:{clr}18;color:{clr} !important;font-family:'JetBrains Mono',monospace;
-                            font-weight:800;font-size:1rem;padding:7px 12px;border-radius:6px;
-                            white-space:nowrap;border:1px solid {clr}30;">{sym}</div>
-                <div>
-                    <div style="color:#E2E8F0 !important;font-weight:700;margin-bottom:4px;">{title}</div>
-                    <div style="color:#64748B !important;font-size:0.86rem;line-height:1.55;">{desc}</div>
-                </div>
-            </div>""", unsafe_allow_html=True)
+            st.markdown(
+                f'<div style="background:#0D1626;border:1px solid #1E2D45;border-radius:10px;'
+                f'padding:16px;display:flex;gap:14px;align-items:flex-start;margin-bottom:10px;">'
+                f'<div style="background:{clr}18;color:{clr};font-family:JetBrains Mono,monospace;'
+                f'font-weight:800;font-size:1rem;padding:7px 12px;border-radius:6px;'
+                f'white-space:nowrap;border:1px solid {clr}30;">{sym}</div>'
+                f'<div>'
+                f'<div style="color:#E2E8F0;font-weight:700;margin-bottom:4px;">{title}</div>'
+                f'<div style="color:#64748B;font-size:0.86rem;line-height:1.55;">{desc}</div>'
+                f'</div></div>',
+                unsafe_allow_html=True
+            )
 
     st.markdown("<br>", unsafe_allow_html=True)
 
@@ -686,21 +724,31 @@ elif page == "Maths & Stats":
     clean = [x for x in raw_fares if x <= ub]
     med   = np.median(clean)
 
+    colors = ['#EF4444' if x > ub else '#06B6D4' for x in raw_fares]
     fig_iq = go.Figure(go.Bar(
         x=[f"Rs.{x:,}" for x in raw_fares], y=raw_fares,
-        marker_color=['#EF4444' if x > ub else '#06B6D4' for x in raw_fares],
-        text=['OUTLIER' if x > ub else 'Valid' for x in raw_fares],
-        textposition='outside',
-        hovertemplate="<b>Rs.%{y:,}</b><br>%{text}<extra></extra>"
+        marker_color=colors,
+        marker_line_width=0,
+        hovertemplate="<b>Rs.%{y:,}</b><br>%{customdata}<extra></extra>",
+        customdata=['&#9888; Outlier (IQR rejected)' if x > ub else '&#10003; Valid fare' for x in raw_fares]
     ))
-    fig_iq.add_hline(y=ub, line_dash="dash", line_color="#F59E0B",
-                     annotation_text=f"Upper IQR Bound: Rs.{ub:,.0f}", annotation_font_color="#F59E0B")
-    fig_iq.add_hline(y=med, line_dash="dot", line_color="#10B981",
-                     annotation_text=f"Clean Median: Rs.{med:,.0f}", annotation_position="bottom right",
-                     annotation_font_color="#10B981")
-    fig_iq.update_layout(plot_bgcolor="rgba(0,0,0,0)",paper_bgcolor="rgba(0,0,0,0)",
-                          font_color="#94A3B8",height=320,margin=dict(l=0,r=0,t=10,b=0),showlegend=False,
-                          xaxis=dict(showgrid=False),yaxis=dict(showgrid=True,gridcolor='#1E2D45',title="Fare (Rs.)"))
+    fig_iq.add_hline(y=ub, line_dash="dash", line_color="#F59E0B", line_width=1.5,
+                     annotation_text=f"IQR Upper Bound  Rs.{ub:,.0f}",
+                     annotation_font_color="#F59E0B", annotation_font_size=11,
+                     annotation_position="top left")
+    fig_iq.add_hline(y=med, line_dash="dot", line_color="#10B981", line_width=1.5,
+                     annotation_text=f"Clean Median  Rs.{med:,.0f}",
+                     annotation_font_color="#10B981", annotation_font_size=11,
+                     annotation_position="bottom left")
+    fig_iq.update_layout(
+        plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
+        font_color="#94A3B8", height=300, margin=dict(l=0,r=0,t=10,b=0),
+        showlegend=False,
+        xaxis=dict(showgrid=False, tickfont=dict(size=11)),
+        yaxis=dict(showgrid=True, gridcolor='#1E2D45', title="Fare (Rs.)",
+                   tickformat=",.0f",
+                   range=[0, max(raw_fares)*1.08])
+    )
     st.plotly_chart(fig_iq, use_container_width=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
