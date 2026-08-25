@@ -336,26 +336,27 @@ with st.sidebar:
 
     st.markdown("<br>", unsafe_allow_html=True)
     st.markdown('''<div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#374151 !important;margin-bottom:8px;">Live Feed Status</div>''', unsafe_allow_html=True)
-    st.markdown(f"""
-    <div style="background:#0D1626;border:1px solid #1E2D45;border-radius:10px;padding:14px 16px;font-size:0.82rem;">
-        <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
-            <span style="color:#64748B !important;">MOSPI Records</span>
-            <span style="color:#E2E8F0 !important;font-family:'JetBrains Mono',monospace;font-weight:700;">{len(mospi_history_df):,}</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
-            <span style="color:#64748B !important;">Fare Samples</span>
-            <span style="color:#E2E8F0 !important;font-family:'JetBrains Mono',monospace;font-weight:700;">{len(full_fare_df):,}</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
-            <span style="color:#64748B !important;">Routes Tracked</span>
-            <span style="color:#06B6D4 !important;font-family:'JetBrains Mono',monospace;font-weight:700;">80</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;">
-            <span style="color:#64748B !important;">Data Feed</span>
-            <span style="color:#10B981 !important;font-weight:700;">&#9679; LIVE</span>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+    _sidebar_status = (
+        '<div style="background:#0D1626;border:1px solid #1E2D45;border-radius:10px;padding:14px 16px;font-size:0.82rem;">'
+        '<div style="display:flex;justify-content:space-between;margin-bottom:8px;">'
+        '<span style="color:#64748B;">MOSPI Records</span>'
+        f'<span style="color:#E2E8F0;font-family:JetBrains Mono,monospace;font-weight:700;">{len(mospi_history_df):,}</span>'
+        '</div>'
+        '<div style="display:flex;justify-content:space-between;margin-bottom:8px;">'
+        '<span style="color:#64748B;">Fare Samples</span>'
+        f'<span style="color:#E2E8F0;font-family:JetBrains Mono,monospace;font-weight:700;">{len(full_fare_df):,}</span>'
+        '</div>'
+        '<div style="display:flex;justify-content:space-between;margin-bottom:8px;">'
+        '<span style="color:#64748B;">Routes Tracked</span>'
+        '<span style="color:#06B6D4;font-family:JetBrains Mono,monospace;font-weight:700;">80</span>'
+        '</div>'
+        '<div style="display:flex;justify-content:space-between;">'
+        '<span style="color:#64748B;">Data Feed</span>'
+        '<span style="color:#10B981;font-weight:700;">&#9679; LIVE</span>'
+        '</div>'
+        '</div>'
+    )
+    st.markdown(_sidebar_status, unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
     st.markdown("""<div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#374151 !important;margin-bottom:10px;">Airlines Covered</div>
@@ -380,13 +381,14 @@ if page == "Calculator":
     elif aggregation == "Route Specific":
         filtered_df = filtered_df[filtered_df['route_id'] == route_filter]
 
-    if filtered_df.empty:
-        st.markdown("""
-        <div style="background:#0D1626;border:1px solid #EF4444;border-radius:12px;padding:24px;text-align:center;margin-top:40px;">
-            <div style="font-size:2rem;margin-bottom:8px;">&#9888;</div>
-            <div style="font-size:1.1rem;font-weight:700;color:#EF4444 !important;margin-bottom:6px;">No Data Available</div>
-            <div style="color:#64748B !important;font-size:0.9rem;">No flight records match this combination. Please adjust your filters.</div>
-        </div>""", unsafe_allow_html=True)
+        _empty_msg = (
+            '<div style="background:#0D1626;border:1px solid #EF4444;border-radius:12px;padding:24px;text-align:center;margin-top:40px;">'
+            '<div style="font-size:2rem;margin-bottom:8px;">&#9888;</div>'
+            '<div style="font-size:1.1rem;font-weight:700;color:#EF4444;margin-bottom:6px;">No Data Available</div>'
+            '<div style="color:#64748B;font-size:0.9rem;">No flight records match this combination. Please adjust your filters.</div>'
+            '</div>'
+        )
+        st.markdown(_empty_msg, unsafe_allow_html=True)
     else:
         srecs = []
         for r in filtered_df['route_id'].unique():
@@ -580,17 +582,18 @@ if page == "Calculator":
 elif page == "Maths & Stats":
     st.markdown('''<div class="runway-bar"></div>''', unsafe_allow_html=True)
 
-    st.markdown("""
-    <div style="margin-bottom:36px;">
-        <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#06B6D4 !important;margin-bottom:8px;">Methodology</div>
-        <h1 style="font-size:2.6rem;font-weight:900;letter-spacing:-1px;color:#E2E8F0 !important;margin:0 0 10px 0;">
-            Modified Laspeyres Price Index
-        </h1>
-        <p style="color:#64748B !important;font-size:1rem;max-width:820px;line-height:1.75;margin:0;">
-            The <strong style="color:#E2E8F0 !important;">Airfare Price Index (APIx)</strong> uses a modified Laspeyres methodology &mdash; the gold standard used by national statistical agencies &mdash; adapted specifically for India's aviation market, where booking horizon, airline mix, and passenger volume vary enormously across routes.
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
+    _math_header = (
+        '<div style="margin-bottom:36px;">'
+        '<div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#06B6D4;margin-bottom:8px;">Methodology</div>'
+        '<h1 style="font-size:2.6rem;font-weight:900;letter-spacing:-1px;color:#E2E8F0;margin:0 0 10px 0;">'
+        'Modified Laspeyres Price Index'
+        '</h1>'
+        '<p style="color:#64748B;font-size:1rem;max-width:820px;line-height:1.75;margin:0;">'
+        'The <strong style="color:#E2E8F0;">Airfare Price Index (APIx)</strong> uses a modified Laspeyres methodology &mdash; the gold standard used by national statistical agencies &mdash; adapted specifically for India\'s aviation market, where booking horizon, airline mix, and passenger volume vary enormously across routes.'
+        '</p>'
+        '</div>'
+    )
+    st.markdown(_math_header, unsafe_allow_html=True)
     fc_col, var_col = st.columns([1.1,1])
     with fc_col:
         st.markdown(
@@ -697,22 +700,23 @@ elif page == "Maths & Stats":
          "Multiply each route's price ratio (current/base) by its DGCA passenger share Q_base.",
          "DEL-BOM correctly outweighs low-traffic routes, producing a consumer-representative national index."),
     ]:
-        st.markdown(f"""
-        <div style="background:linear-gradient(135deg,#0D1626,#111827);border:1px solid #1E2D45;
-                    border-radius:12px;padding:22px;display:flex;gap:22px;
-                    align-items:flex-start;margin-bottom:12px;">
-            <div style="background:{clr}18;border:1px solid {clr}30;color:{clr} !important;
-                        font-size:1.5rem;font-weight:900;width:56px;height:56px;
-                        border-radius:12px;display:flex;align-items:center;justify-content:center;
-                        flex-shrink:0;font-family:'JetBrains Mono',monospace;">{num}</div>
-            <div style="flex:1;">
-                <div style="color:#E2E8F0 !important;font-size:1.05rem;font-weight:700;margin-bottom:6px;">{title}</div>
-                <div style="color:#94A3B8 !important;font-size:0.9rem;line-height:1.6;margin-bottom:10px;">{action}</div>
-                <div style="background:#060B14;border-left:3px solid {clr};padding:8px 14px;border-radius:0 6px 6px 0;">
-                    <span style="color:#64748B !important;font-size:0.82rem;"><strong style="color:{clr} !important;">Why: </strong>{rationale}</span>
-                </div>
-            </div>
-        </div>""", unsafe_allow_html=True)
+        st.markdown(
+            f'<div style="background:linear-gradient(135deg,#0D1626,#111827);border:1px solid #1E2D45;'
+            f'border-radius:12px;padding:22px;display:flex;gap:22px;align-items:flex-start;margin-bottom:12px;">'
+            f'<div style="background:{clr}18;border:1px solid {clr}30;color:{clr};'
+            f'font-size:1.5rem;font-weight:900;width:56px;height:56px;'
+            f'border-radius:12px;display:flex;align-items:center;justify-content:center;'
+            f'flex-shrink:0;font-family:JetBrains Mono,monospace;">{num}</div>'
+            f'<div style="flex:1;">'
+            f'<div style="color:#E2E8F0;font-size:1.05rem;font-weight:700;margin-bottom:6px;">{title}</div>'
+            f'<div style="color:#94A3B8;font-size:0.9rem;line-height:1.6;margin-bottom:10px;">{action}</div>'
+            f'<div style="background:#060B14;border-left:3px solid {clr};padding:8px 14px;border-radius:0 6px 6px 0;">'
+            f'<span style="color:#64748B;font-size:0.82rem;"><strong style="color:{clr};">Why: </strong>{rationale}</span>'
+            f'</div>'
+            f'</div>'
+            f'</div>',
+            unsafe_allow_html=True
+        )
 
     st.markdown("<br>", unsafe_allow_html=True)
     st.markdown('''<div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#374151 !important;margin-bottom:6px;">Interactive IQR Demonstration</div>
@@ -761,19 +765,21 @@ elif page == "Maths & Stats":
         base_m = [4200,4400,4500,4600,4750]
         full_m = base_m + [ov]
         cmean = np.mean(full_m); cmed = np.median(full_m)
-        st.markdown(f"""
-        <div style="display:flex;flex-direction:column;gap:12px;margin-top:16px;">
-            <div style="background:#EF444410;border:1px solid #EF444430;border-radius:10px;padding:18px;">
-                <div style="color:#FCA5A5 !important;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Mean &mdash; Distorted</div>
-                <div style="color:#EF4444 !important;font-size:2rem;font-weight:900;font-family:'JetBrains Mono',monospace;">Rs.{int(cmean):,}</div>
-                <div style="color:#64748B !important;font-size:0.8rem;margin-top:4px;">Pulled by outlier</div>
-            </div>
-            <div style="background:#10B98110;border:1px solid #10B98130;border-radius:10px;padding:18px;">
-                <div style="color:#6EE7B7 !important;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Median &mdash; Stable</div>
-                <div style="color:#10B981 !important;font-size:2rem;font-weight:900;font-family:'JetBrains Mono',monospace;">Rs.{int(cmed):,}</div>
-                <div style="color:#64748B !important;font-size:0.8rem;margin-top:4px;">True centre holds</div>
-            </div>
-        </div>""", unsafe_allow_html=True)
+        _mean_med_stats = (
+            '<div style="display:flex;flex-direction:column;gap:12px;margin-top:16px;">'
+            '<div style="background:#EF444410;border:1px solid #EF444430;border-radius:10px;padding:18px;">'
+            '<div style="color:#FCA5A5;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Mean &mdash; Distorted</div>'
+            f'<div style="color:#EF4444;font-size:2rem;font-weight:900;font-family:JetBrains Mono,monospace;">Rs.{int(cmean):,}</div>'
+            '<div style="color:#64748B;font-size:0.8rem;margin-top:4px;">Pulled by outlier</div>'
+            '</div>'
+            '<div style="background:#10B98110;border:1px solid #10B98130;border-radius:10px;padding:18px;">'
+            '<div style="color:#6EE7B7;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Median &mdash; Stable</div>'
+            f'<div style="color:#10B981;font-size:2rem;font-weight:900;font-family:JetBrains Mono,monospace;">Rs.{int(cmed):,}</div>'
+            '<div style="color:#64748B;font-size:0.8rem;margin-top:4px;">True centre holds</div>'
+            '</div>'
+            '</div>'
+        )
+        st.markdown(_mean_med_stats, unsafe_allow_html=True)
     with m2:
         xl = [f"Rs.{v:,}" for v in base_m] + [f"Rs.{ov:,} (Outlier)"]
         yl = base_m + [ov]
@@ -805,19 +811,20 @@ elif page == "Weight Allocation (DGCA)":
 
     st.markdown('''<div class="runway-bar"></div>''', unsafe_allow_html=True)
 
-    st.markdown("""
-    <div style="margin-bottom:36px;">
-        <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#8B5CF6 !important;margin-bottom:8px;">DGCA Data Integration</div>
-        <h1 style="font-size:2.6rem;font-weight:900;letter-spacing:-1px;color:#E2E8F0 !important;margin:0 0 10px 0;">
-            Passenger-Weighted Route Allocation
-        </h1>
-        <p style="color:#64748B !important;font-size:1rem;max-width:820px;line-height:1.75;margin:0;">
-            A naive index treats every route equally &mdash; the Chandigarh-Jaipur hop would carry the same weight as DEL-BOM.
-            APIx uses quarterly passenger volume from the <strong style="color:#E2E8F0 !important;">Directorate General of Civil Aviation (DGCA)</strong>
-            to weight each route by its true share of national air traffic.
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
+    _weight_header = (
+        '<div style="margin-bottom:36px;">'
+        '<div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#8B5CF6;margin-bottom:8px;">DGCA Data Integration</div>'
+        '<h1 style="font-size:2.6rem;font-weight:900;letter-spacing:-1px;color:#E2E8F0;margin:0 0 10px 0;">'
+        'Passenger-Weighted Route Allocation'
+        '</h1>'
+        '<p style="color:#64748B;font-size:1rem;max-width:820px;line-height:1.75;margin:0;">'
+        'A naive index treats every route equally &mdash; the Chandigarh-Jaipur hop would carry the same weight as DEL-BOM. '
+        'APIx uses quarterly passenger volume from the <strong style="color:#E2E8F0;">Directorate General of Civil Aviation (DGCA)</strong> '
+        'to weight each route by its true share of national air traffic.'
+        '</p>'
+        '</div>'
+    )
+    st.markdown(_weight_header, unsafe_allow_html=True)
 
     wf1, wf2 = st.columns([1,1])
     with wf1:
