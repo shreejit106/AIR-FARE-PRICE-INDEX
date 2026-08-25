@@ -115,49 +115,99 @@ h1, h2, h3, h4, h5, h6 { color: var(--text) !important; }
 }
 
 /* ---- horizontal radio navigation button styling ---- */
+div[data-testid="stRadio"] {
+    width: 100% !important;
+}
 div[data-testid="stRadio"] > div {
     display: flex !important;
     flex-direction: row !important;
-    gap: 8px !important;
+    flex-wrap: nowrap !important;
+    gap: 6px !important;
     background: transparent !important;
     padding: 0 !important;
+    align-items: center !important;
+    width: 100% !important;
 }
 div[data-testid="stRadio"] label {
     background: #0D1626 !important;
     border: 1px solid #1E2D45 !important;
-    border-radius: 8px !important;
-    padding: 8px 18px !important;
+    border-radius: 6px !important;
+    padding: 6px 12px !important;
     color: #94A3B8 !important;
     font-weight: 700 !important;
-    font-size: 0.8rem !important;
+    font-size: 0.72rem !important;
     text-transform: uppercase !important;
-    letter-spacing: 0.8px !important;
+    letter-spacing: 0.6px !important;
     cursor: pointer !important;
-    transition: all 0.2s ease-in-out !important;
+    transition: all 0.15s ease-in-out !important;
+    white-space: nowrap !important;
+    flex: 1 1 auto !important;
+    text-align: center !important;
+    justify-content: center !important;
 }
 div[data-testid="stRadio"] label:hover {
     border-color: #06B6D4 !important;
     color: #06B6D4 !important;
-    background: rgba(6,182,212,0.04) !important;
+    background: rgba(6,182,212,0.06) !important;
 }
 div[data-testid="stRadio"] label[data-checked="true"] {
-    background: rgba(6,182,212,0.12) !important;
+    background: rgba(6,182,212,0.15) !important;
     border-color: #06B6D4 !important;
     color: #06B6D4 !important;
-    box-shadow: 0 0 15px rgba(6,182,212,0.15) !important;
+    box-shadow: 0 0 12px rgba(6,182,212,0.2) !important;
 }
-/* Hide the native radio circles inside our navigation buttons */
+/* Hide all native radio circles, inputs, svgs, and dots */
+div[data-testid="stRadio"] label input,
+div[data-testid="stRadio"] label svg,
 div[data-testid="stRadio"] label div[role="presentation"],
 div[data-testid="stRadio"] label div[class*="RadioDot"],
-div[data-testid="stRadio"] label span[class*="RadioDot"] {
+div[data-testid="stRadio"] label div[class*="StyledRadio"],
+div[data-testid="stRadio"] label > div:first-child:not([data-testid="stMarkdownContainer"]) {
     display: none !important;
+    visibility: hidden !important;
+    width: 0 !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 div[data-testid="stRadio"] label div[data-testid="stMarkdownContainer"] {
     padding: 0 !important;
     margin: 0 !important;
+    display: inline-block !important;
+}
+div[data-testid="stRadio"] label div[data-testid="stMarkdownContainer"] p,
+div[data-testid="stRadio"] label div[data-testid="stMarkdownContainer"] span {
+    font-size: 0.72rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.6px !important;
+    line-height: 1.2 !important;
+    margin: 0 !important;
 }
 div[data-testid="stRadio"] [data-testid="stWidgetLabel"] {
     display: none !important;
+}
+
+/* ---- compact exit button styling ---- */
+div[data-testid="stButton"] button {
+    background: #0D1626 !important;
+    border: 1px solid #1E2D45 !important;
+    border-radius: 6px !important;
+    padding: 6px 14px !important;
+    color: #94A3B8 !important;
+    font-weight: 700 !important;
+    font-size: 0.72rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.6px !important;
+    cursor: pointer !important;
+    transition: all 0.15s ease-in-out !important;
+    min-height: auto !important;
+    height: auto !important;
+}
+div[data-testid="stButton"] button:hover {
+    border-color: #06B6D4 !important;
+    color: #06B6D4 !important;
+    background: rgba(6,182,212,0.06) !important;
 }
 
 /* ---- scrollbar ---- */
@@ -500,18 +550,18 @@ if st.session_state.current_page == "Home":
 h_col1, h_col2 = st.columns([1.1, 2.9])
 with h_col1:
     st.markdown(
-        '<div style="display:flex;align-items:center;gap:12px;margin-bottom:4px;padding-top:4px;">'
-        '<span style="font-size:2.5rem;color:#06B6D4;line-height:1;">&#9992;</span>'
-        '<span style="font-size:2.4rem;font-weight:900;letter-spacing:-1.5px;color:#E2E8F0;line-height:1;">APIx</span>'
-        '<span style="font-size:0.68rem;background:rgba(6,182,212,0.1);color:#06B6D4;padding:3px 8px;border-radius:4px;font-family:JetBrains Mono,monospace;border:1px solid rgba(6,182,212,0.2);line-height:1;margin-top:6px;">v2.0</span>'
+        '<div style="display:flex;align-items:center;gap:12px;margin-bottom:2px;">'
+        '<span style="font-size:3.2rem;color:#06B6D4;line-height:1;filter:drop-shadow(0 0 12px rgba(6,182,212,0.4));">&#9992;</span>'
+        '<span style="font-size:3.4rem;font-weight:900;letter-spacing:-2px;color:#E2E8F0;line-height:1;text-shadow:0 0 25px rgba(6,182,212,0.25);">APIx</span>'
+        '<span style="font-size:0.7rem;background:rgba(6,182,212,0.12);color:#06B6D4;padding:3px 8px;border-radius:4px;font-family:JetBrains Mono,monospace;border:1px solid rgba(6,182,212,0.25);font-weight:700;margin-top:10px;">v2.0</span>'
         '</div>'
-        '<div style="font-size:0.7rem;color:#64748B;text-transform:uppercase;letter-spacing:1px;font-family:JetBrains Mono,monospace;">'
+        '<div style="font-size:0.75rem;color:#64748B;text-transform:uppercase;letter-spacing:1.5px;font-family:JetBrains Mono,monospace;margin-top:4px;">'
         '20 Airports &middot; 80 Routes &middot; 5 Carriers'
         '</div>',
         unsafe_allow_html=True
     )
 with h_col2:
-    btn_col, rad_col = st.columns([1.1, 2.9])
+    btn_col, rad_col = st.columns([0.8, 2.4])
     with btn_col:
         if st.button("✈ EXIT TO HUB", key="btn_exit_home", help="Return to Landing Page", use_container_width=True):
             st.session_state.current_page = "Home"
