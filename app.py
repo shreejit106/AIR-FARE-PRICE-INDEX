@@ -253,9 +253,7 @@ def generate_massive_mock_db():
         route_airlines = random.sample(airlines, num_airlines)
         
         for al in route_airlines:
-            classes = ["Economy"]
-            if al == "Air India (AI)":
-                classes.append("Business")
+            classes = ["Economy", "Business"]
                 
             for cab in classes:
                 for h in horizons_list:
@@ -386,7 +384,7 @@ if page == "Calculator":
         filtered_df = filtered_df[filtered_df['route_id'] == route_filter]
         
     if filtered_df.empty:
-        st.error(f"No flight data exists for this combination (e.g., LCCs like {airline_filter} typically do not offer {cabin_class} class). Please adjust your filters.")
+        st.error("No flight data is currently available for this combination of filters. Please adjust your selections to view active routes.")
     else:
         summary_records = []
         unique_filtered_routes = filtered_df['route_id'].unique()
@@ -482,7 +480,8 @@ if page == "Calculator":
                 base_val = mospi_history_df[base_date_mask]['CPI_Index'].values[0]
                 base_date = mospi_history_df[base_date_mask]['Date'].values[0]
                 
-            rebased_mospi = mospi_history_df.copy()
+            # Filter so the graph starts from the base date
+            rebased_mospi = mospi_history_df[mospi_history_df['Date'] >= base_date].copy()
             rebased_mospi['CPI_Index'] = (rebased_mospi['CPI_Index'] / base_val) * 100
             
             # Combine MOSPI History and APIx Future
@@ -510,30 +509,6 @@ if page == "Calculator":
                 textfont=dict(color='#F59E0B', size=12, weight="bold"),
                 hovertemplate="<b>Base Period:</b> %{x|%b %Y}<br><b>Index Fixed At:</b> 100<extra></extra>"
             ))
-            
-            # 2. The APIx Future Line (Stitch from the last MOSPI point)
-            last_mospi_date = rebased_mospi['Date'].iloc[-1]
-            last_mospi_val = rebased_mospi['CPI_Index'].iloc[-1]
-            
-            # Generate 45 days into the future
-            future_dates = pd.date_range(start=last_mospi_date, periods=45, freq='D')
-            
-            # Create a smooth transition curve that ends up at our current t7_index
-            target_future = last_mospi_val * (t7_index / 100.0)
-            diff = target_future - last_mospi_val
-            future_vals = [last_mospi_val + (diff * (i/45)) + np.random.normal(0, 0.5) for i in range(45)]
-            
-            fig_macro.add_trace(go.Scatter(
-                x=future_dates, 
-                y=future_vals,
-                mode='lines',
-                name='APIx (Future Predictive)',
-                line=dict(color='#38B2AC', width=3, dash='dot'),
-                hovertemplate="<b>Date:</b> %{x|%Y-%m-%d}<br><b>APIx:</b> %{y:.1f}<extra></extra>"
-            ))
-            
-            # Add a vertical line for "Present Day"
-            fig_macro.add_vline(x=last_mospi_date, line_width=1, line_dash="dash", line_color="#EF4444")
             
             fig_macro.update_layout(
                 plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)", 
