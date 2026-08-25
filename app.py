@@ -411,23 +411,48 @@ if page == "Calculator":
         
         # Calculate top metrics based on the filtered data
         t7_fares = filtered_df[filtered_df['horizon'] == 'T+7']
+        t15_fares = filtered_df[filtered_df['horizon'] == 'T+15']
         t30_fares = filtered_df[filtered_df['horizon'] == 'T+30']
+        t45_fares = filtered_df[filtered_df['horizon'] == 'T+45']
         
         t7_index = 100 + t7_fares['pct_change'].mean() if not t7_fares.empty else 100
+        t15_index = 100 + t15_fares['pct_change'].mean() if not t15_fares.empty else 100
         t30_index = 100 + t30_fares['pct_change'].mean() if not t30_fares.empty else 100
+        t45_index = 100 + t45_fares['pct_change'].mean() if not t45_fares.empty else 100
         
-        with st.container(border=True):
-            col1, col2 = st.columns([3, 1])
-            with col1:
-                st.markdown(f'<p class="headline-title">APIx {cabin_class} Index</p>', unsafe_allow_html=True)
-                # EXPLICITLY DISPLAY INFLATION % HERE
-                inflation_pct = t7_index - 100
-                sign = "+" if inflation_pct > 0 else ""
-                st.markdown(f'<span class="metric-value">{t7_index:.2f}</span><span class="metric-delta">{sign}{inflation_pct:.1f}% Inflation</span>', unsafe_allow_html=True)
-            with col2:
-                st.markdown("<div style='text-align:right; margin-top:20px;'>", unsafe_allow_html=True)
-                st.markdown(f"**Status: LIVE**<br><span style='color:#94A3B8;'>{aggregation}</span>", unsafe_allow_html=True)
-                st.markdown("</div>", unsafe_allow_html=True)
+        def format_change(idx):
+            val = idx - 100
+            if val > 0:
+                return f"<span style='color: #22c55e; font-weight: bold;'>▲ {val:.2f}%</span>"
+            elif val < 0:
+                return f"<span style='color: #ef4444; font-weight: bold;'>▼ {val:.2f}%</span>"
+            return f"<span style='color: #94a3b8; font-weight: bold;'>{val:.2f}%</span>"
+            
+        st.markdown(f"""
+        <div style="background: #1E293B; border: 1px solid #334155; border-radius: 8px; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+            <div style="border-right: 1px solid #334155; padding-right: 30px;">
+                <div style="color: #94A3B8; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; margin-bottom: 5px;">Actual APIx</div>
+                <div style="color: #F8FAFC; font-size: 2rem; font-weight: 700; line-height: 1;">{t7_index:.2f}</div>
+            </div>
+            <div style="border-right: 1px solid #334155; padding: 0 30px;">
+                <div style="color: #94A3B8; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; margin-bottom: 5px;">T+7 Change</div>
+                <div style="font-size: 1.25rem;">{format_change(t7_index)}</div>
+            </div>
+            <div style="border-right: 1px solid #334155; padding: 0 30px;">
+                <div style="color: #94A3B8; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; margin-bottom: 5px;">T+15 Change</div>
+                <div style="font-size: 1.25rem;">{format_change(t15_index)}</div>
+            </div>
+            <div style="border-right: 1px solid #334155; padding: 0 30px;">
+                <div style="color: #94A3B8; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; margin-bottom: 5px;">T+30 Change</div>
+                <div style="font-size: 1.25rem;">{format_change(t30_index)}</div>
+            </div>
+            <div style="padding-left: 30px; text-align: right; flex-grow: 1;">
+                <div style="color: #94A3B8; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; margin-bottom: 5px;">Status</div>
+                <div style="color: #F8FAFC; font-size: 1rem; font-weight: bold;">LIVE &nbsp;<span style='color: #22c55e;'>●</span></div>
+                <div style="color: #94A3B8; font-size: 0.8rem;">{aggregation}</div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
         st.markdown("<br>", unsafe_allow_html=True)
         
