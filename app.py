@@ -537,170 +537,70 @@ if page == "Calculator":
             st.plotly_chart(fig_macro, use_container_width=True)
 
 elif page == "Maths & Stats":
-    import time
     st.markdown("""
-    <div style="text-align: center; margin-top: 50px; margin-bottom: 50px;">
-        <h1 style="font-size: 5rem; font-weight: 900; letter-spacing: -2px; color: #F8FAFC;">01 <span style="color:#334155;">—</span> THE INDEX</h1>
-        <p style="font-size: 1.5rem; color: #94A3B8; max-width: 800px; margin: 0 auto;">How millions of noisy airfare observations become one meaningful measure of national inflation.</p>
+    <div style="margin-top: 20px; margin-bottom: 30px;">
+        <h1 style="font-size: 2.5rem; font-weight: 700; color: #F8FAFC; margin-bottom: 10px;">The Modified Laspeyres Price Index</h1>
+        <p style="font-size: 1.1rem; color: #94A3B8;">A rigorous statistical methodology for computing national airfare inflation, utilizing passenger-weighted aggregations and interquartile anomaly detection.</p>
     </div>
     """, unsafe_allow_html=True)
     
-    st.latex(r'''\huge APIx = \left( \frac{\sum (P_{current} \times Q_{base})}{\sum (P_{base} \times Q_{base})} \right) \times 100''')
+    st.markdown("""
+    <div style="background: #1E293B; border: 1px solid #334155; border-radius: 8px; padding: 30px; text-align: center; margin-bottom: 40px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+    """, unsafe_allow_html=True)
+    st.latex(r'''\LARGE APIx = \left( \frac{\sum (P_{current} \times Q_{base})}{\sum (P_{base} \times Q_{base})} \right) \times 100''')
+    st.markdown("</div>", unsafe_allow_html=True)
     
-    st.markdown("<br>", unsafe_allow_html=True)
-    
-    st.markdown("### 🎛️ Interactive APIx Explorer")
-    explorer_col1, explorer_col2 = st.columns([1, 1.5])
-    
-    with explorer_col1:
-        sim_route = st.selectbox("Select Route (Live Data)", ["DEL-BOM", "BLR-DEL", "BOM-BLR", "CCU-DEL"])
-        sim_base_fare = 5480 if sim_route == "DEL-BOM" else 6200
-        sim_weight = 0.124 if sim_route == "DEL-BOM" else 0.08
-        
-        sim_current = st.slider("Simulate P(current) - Live Fare", min_value=3000, max_value=15000, value=6240, step=100)
-        
-        st.markdown(f"""
-        **P(base)**: ₹{sim_base_fare:,} (Base Period Fare)<br>
-        **Q(base)**: {sim_weight*100:.1f}% (DGCA Passenger Weight)
-        """, unsafe_allow_html=True)
-        
-    with explorer_col2:
-        contribution = (sim_current / sim_base_fare) - 1
-        weighted_contribution = contribution * sim_weight * 100
-        sim_apix = 100 + weighted_contribution
-        
-        st.markdown(f"""
-        <div style="background: #1E293B; border: 1px solid #334155; padding: 30px; border-radius: 12px; text-align: center;">
-            <p style="color: #94A3B8; text-transform: uppercase; letter-spacing: 2px;">{sim_route} Contribution</p>
-            <h2 style="color: #38B2AC; font-size: 3rem; margin: 10px 0;">+{weighted_contribution:.2f} points</h2>
-            <hr style="border-color: #334155; margin: 20px 0;">
-            <p style="color: #94A3B8; text-transform: uppercase; letter-spacing: 2px;">Simulated APIx</p>
-            <h1 style="color: #F8FAFC; font-size: 4rem; margin: 0;">{sim_apix:.1f}</h1>
+    st.markdown("""
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 40px;">
+        <div style="background: #0F172A; border: 1px solid #334155; border-radius: 8px; padding: 20px;">
+            <div style="color: #38B2AC; font-family: monospace; font-size: 1.2rem; font-weight: bold; margin-bottom: 10px;">P_current</div>
+            <div style="color: #F8FAFC; font-weight: 600; margin-bottom: 5px;">Current Fare (Median)</div>
+            <div style="color: #94A3B8; font-size: 0.9rem;">The robust median fare of all flights scraped for a given route and horizon today.</div>
         </div>
-        """, unsafe_allow_html=True)
-        
-    st.markdown("<br><hr style='border-color: #334155;'><br>", unsafe_allow_html=True)
-    
-    # 02 - DATA CLEANING
-    st.markdown("""
-    <div style="text-align: center; margin-bottom: 50px;">
-        <h1 style="font-size: 4rem; font-weight: 900; letter-spacing: -2px; color: #F8FAFC;">02 <span style="color:#334155;">—</span> DATA CLEANING</h1>
-        <p style="font-size: 1.2rem; color: #94A3B8; max-width: 800px; margin: 0 auto;">Raw scraped data contains massive anomalies (e.g., last-seat premium pricing). We use the Interquartile Range (IQR) to detect and destroy them.</p>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    if 'cleaning_stage' not in st.session_state:
-        st.session_state.cleaning_stage = 0
-        
-    c1, c2, c3 = st.columns([1, 2, 1])
-    with c2:
-        if st.button("▶ [✈] INGEST FARE DATA & RUN IQR FILTER", use_container_width=True):
-            st.session_state.cleaning_stage = 1
-            
-    cleaning_chart_placeholder = st.empty()
-    
-    # Generate mock raw data
-    raw_fares = [2100, 2400, 2550, 2600, 2750, 2900, 3100, 3200, 18500]
-    q1 = np.percentile(raw_fares[:-1], 25)
-    q3 = np.percentile(raw_fares[:-1], 75)
-    iqr = q3 - q1
-    upper_bound = q3 + 1.5 * iqr
-    
-    if st.session_state.cleaning_stage == 0:
-        fig_clean = go.Figure(go.Scatter(x=raw_fares, y=[0]*len(raw_fares), mode='markers', marker=dict(size=14, color='#94A3B8')))
-        fig_clean.update_layout(title="Raw Scraped Fares", height=250, plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)", font_color="#F8FAFC", yaxis=dict(showticklabels=False, showgrid=False, zeroline=True, zerolinecolor='#334155'))
-        cleaning_chart_placeholder.plotly_chart(fig_clean, use_container_width=True)
-        
-    elif st.session_state.cleaning_stage == 1:
-        # Step 1: Show Raw
-        fig_clean = go.Figure(go.Scatter(x=raw_fares, y=[0]*len(raw_fares), mode='markers', marker=dict(size=14, color='#94A3B8')))
-        fig_clean.update_layout(title="[✈] INGESTING RAW FARES...", height=250, plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)", font_color="#F8FAFC", yaxis=dict(showticklabels=False, showgrid=False, zeroline=True, zerolinecolor='#334155'))
-        cleaning_chart_placeholder.plotly_chart(fig_clean, use_container_width=True)
-        time.sleep(1.2)
-        
-        # Step 2: Show IQR bounds
-        fig_clean.add_vline(x=upper_bound, line_dash="dash", line_color="#EF4444", annotation_text="Upper IQR Bound")
-        fig_clean.update_layout(title="[✈] CALCULATING IQR BOUNDARIES...")
-        cleaning_chart_placeholder.plotly_chart(fig_clean, use_container_width=True)
-        time.sleep(1.5)
-        
-        # Step 3: Highlight Outlier
-        colors = ['#94A3B8' if x <= upper_bound else '#EF4444' for x in raw_fares]
-        fig_clean.data[0].marker.color = colors
-        fig_clean.update_layout(title="[✈] ANOMALY DETECTED (₹18,500)")
-        cleaning_chart_placeholder.plotly_chart(fig_clean, use_container_width=True)
-        time.sleep(1.5)
-        
-        # Step 4: Cleaned
-        clean_fares = [x for x in raw_fares if x <= upper_bound]
-        fig_clean = go.Figure(go.Scatter(x=clean_fares, y=[0]*len(clean_fares), mode='markers', marker=dict(size=14, color='#38B2AC')))
-        fig_clean.update_layout(title="[✓] DATA CLEANED & READY", height=250, plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)", font_color="#F8FAFC", yaxis=dict(showticklabels=False, showgrid=False, zeroline=True, zerolinecolor='#334155'))
-        cleaning_chart_placeholder.plotly_chart(fig_clean, use_container_width=True)
-        st.session_state.cleaning_stage = 0 
-    
-    st.markdown("<br><hr style='border-color: #334155;'><br>", unsafe_allow_html=True)
-    
-    # 03 - MEAN VS MEDIAN
-    st.markdown("""
-    <div style="text-align: center; margin-bottom: 50px;">
-        <h1 style="font-size: 4rem; font-weight: 900; letter-spacing: -2px; color: #F8FAFC;">03 <span style="color:#334155;">—</span> ROBUST REPRESENTATION</h1>
-        <p style="font-size: 1.2rem; color: #94A3B8; max-width: 800px; margin: 0 auto;">Why do we use the Median instead of the Mean? Inject an outlier below and watch the Mean distort while the Median stays perfectly stable.</p>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    base_data = [5800, 6000, 6100, 6200, 6400]
-    outlier_val = st.number_input("Inject Outlier Fare (₹):", min_value=6000, max_value=100000, value=42000, step=1000)
-    
-    current_data = base_data + [outlier_val]
-    current_mean = np.mean(current_data)
-    current_median = np.median(current_data)
-    
-    mm_c1, mm_c2 = st.columns(2)
-    with mm_c1:
-        st.markdown(f"""
-        <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); padding: 30px; border-radius: 12px; text-align: center;">
-            <p style="color: #FCA5A5; text-transform: uppercase; letter-spacing: 2px;">The Mean (Distorted)</p>
-            <h1 style="color: #EF4444; font-size: 3.5rem; margin: 0;">₹{int(current_mean):,}</h1>
+        <div style="background: #0F172A; border: 1px solid #334155; border-radius: 8px; padding: 20px;">
+            <div style="color: #38B2AC; font-family: monospace; font-size: 1.2rem; font-weight: bold; margin-bottom: 10px;">P_base</div>
+            <div style="color: #F8FAFC; font-weight: 600; margin-bottom: 5px;">Base Period Fare (2012)</div>
+            <div style="color: #94A3B8; font-size: 0.9rem;">The average ticket price for the route during the chosen base year, serving as the index foundation (100).</div>
         </div>
-        """, unsafe_allow_html=True)
-        
-    with mm_c2:
-        st.markdown(f"""
-        <div style="background: rgba(56, 178, 172, 0.1); border: 1px solid rgba(56, 178, 172, 0.3); padding: 30px; border-radius: 12px; text-align: center;">
-            <p style="color: #99F6E4; text-transform: uppercase; letter-spacing: 2px;">The Median (Stable)</p>
-            <h1 style="color: #38B2AC; font-size: 3.5rem; margin: 0;">₹{int(current_median):,}</h1>
+        <div style="background: #0F172A; border: 1px solid #334155; border-radius: 8px; padding: 20px;">
+            <div style="color: #38B2AC; font-family: monospace; font-size: 1.2rem; font-weight: bold; margin-bottom: 10px;">Q_base</div>
+            <div style="color: #F8FAFC; font-weight: 600; margin-bottom: 5px;">Passenger Volume Weight</div>
+            <div style="color: #94A3B8; font-size: 0.9rem;">The proportion of total national passenger traffic that flies on this specific route, sourced from DGCA.</div>
         </div>
-        """, unsafe_allow_html=True)
-        
-    st.markdown("<br><hr style='border-color: #334155;'><br>", unsafe_allow_html=True)
-    
-    # 04 - CULMINATION
-    st.markdown("""
-    <div style="text-align: center; margin-bottom: 50px;">
-        <h1 style="font-size: 4rem; font-weight: 900; letter-spacing: -2px; color: #F8FAFC;">04 <span style="color:#334155;">—</span> THE CULMINATION</h1>
-        <p style="font-size: 1.2rem; color: #94A3B8; max-width: 800px; margin: 0 auto;">Hundreds of thousands of clean, median-represented, passenger-weighted fares flow together to form the national Airfare Price Index.</p>
     </div>
     """, unsafe_allow_html=True)
-    
-    wf_fig = go.Figure(go.Waterfall(
-        name="20", orientation="v",
-        measure=["absolute", "relative", "relative", "relative", "relative", "total"],
-        x=["Base Index", "DEL-BOM", "BLR-DEL", "BOM-MAA", "Other Routes", "APIx (Live)"],
-        textposition="outside",
-        text=["100", "+2.4", "+1.8", "+0.9", "+7.7", "112.8"],
-        y=[100, 2.4, 1.8, 0.9, 7.7, 112.8],
-        connector={"line": {"color": "#334155"}},
-        decreasing={"marker": {"color": "#EF4444"}},
-        increasing={"marker": {"color": "#38B2AC"}},
-        totals={"marker": {"color": "#F8FAFC"}}
-    ))
-    wf_fig.update_layout(
-        plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)", font_color="#F8FAFC",
-        height=500, margin=dict(l=0, r=0, t=20, b=0)
-    )
-    wf_fig.update_xaxes(showgrid=False)
-    wf_fig.update_yaxes(showgrid=True, gridcolor='#334155')
-    st.plotly_chart(wf_fig, use_container_width=True)
+
+    st.markdown("""
+    <h3 style="color: #F8FAFC; margin-bottom: 20px;">Data Filtration Pipeline</h3>
+    <div style="background: #1E293B; border: 1px solid #334155; border-radius: 8px; padding: 0; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+        <table style="width: 100%; border-collapse: collapse; text-align: left; color: #F8FAFC;">
+            <thead>
+                <tr style="border-bottom: 1px solid #334155; background: #0F172A;">
+                    <th style="padding: 15px 20px; color: #94A3B8; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; width: 25%;">Phase</th>
+                    <th style="padding: 15px 20px; color: #94A3B8; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; width: 35%;">Action</th>
+                    <th style="padding: 15px 20px; color: #94A3B8; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; width: 40%;">Rationale</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr style="border-bottom: 1px solid #334155;">
+                    <td style="padding: 15px 20px; font-weight: bold; color: #38B2AC;">1. Ingestion</td>
+                    <td style="padding: 15px 20px;">Continuous scraping of OTA and airline portals.</td>
+                    <td style="padding: 15px 20px; color: #94A3B8; font-size: 0.9rem;">Captures live pricing signals across multiple booking horizons (T+1 to T+45).</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #334155;">
+                    <td style="padding: 15px 20px; font-weight: bold; color: #38B2AC;">2. IQR Filtration</td>
+                    <td style="padding: 15px 20px;">Discard prices outside 1.5 × IQR.</td>
+                    <td style="padding: 15px 20px; color: #94A3B8; font-size: 0.9rem;">Removes extreme anomalies (e.g., last-seat premium pricing) that distort averages.</td>
+                </tr>
+                <tr>
+                    <td style="padding: 15px 20px; font-weight: bold; color: #38B2AC;">3. Median Aggregation</td>
+                    <td style="padding: 15px 20px;">Compute the median of the filtered set.</td>
+                    <td style="padding: 15px 20px; color: #94A3B8; font-size: 0.9rem;">The median is highly resistant to skewness, providing a truer reflection of central tendency than the mean.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    """, unsafe_allow_html=True)
 
 elif page == "Weight Allocation (DGCA)":
     # Build global route summary just for this page so it's immune to calculator filters
@@ -712,45 +612,59 @@ elif page == "Weight Allocation (DGCA)":
             "route_id": r, "passenger_share": first_row['passenger_share'], "passenger_count": first_row['passenger_count']
         })
     global_route_summary = pd.DataFrame(summary_records)
-    
     total_tracked = global_route_summary['passenger_count'].sum()
     
-    st.markdown("## Weight Allocation (DGCA Data) <span style='font-size: 0.5em; background: #334155; padding: 4px 8px; border-radius: 4px; color: #94A3B8; vertical-align: middle; margin-left: 10px;'>Source: DGCA via Vonter dataset · refreshed quarterly</span>", unsafe_allow_html=True)
+    st.markdown("""
+    <div style="margin-top: 20px; margin-bottom: 30px;">
+        <h1 style="font-size: 2.5rem; font-weight: 700; color: #F8FAFC; margin-bottom: 10px;">DGCA Passenger Weight Allocation</h1>
+        <p style="font-size: 1.1rem; color: #94A3B8;">APIx integrates directly with Directorate General of Civil Aviation (DGCA) datasets to weight routes by true passenger volume, preventing low-traffic routes from hijacking the national index.</p>
+    </div>
+    """, unsafe_allow_html=True)
     
     if 'selected_route_id' not in st.session_state:
-        st.session_state.selected_route_id = global_route_summary.sort_values('passenger_share').iloc[0]['route_id']
+        st.session_state.selected_route_id = global_route_summary.sort_values('passenger_share', ascending=False).iloc[0]['route_id']
         
     selected_route_id = st.session_state.selected_route_id
     selected_row = global_route_summary[global_route_summary['route_id'] == selected_route_id].iloc[0]
+    pct_formatted = selected_row['passenger_share'] * 100
+    p_count = int(selected_row['passenger_count'])
     
-    col1, col2 = st.columns([1.2, 1])
+    col1, col2 = st.columns([1, 1.5])
     
     with col1:
-        st.markdown("A naive index treats every route equally. If a low-traffic route (e.g., Indore to Coimbatore) doubles in price, a naive index spikes, even though very few consumers are affected.")
-        st.markdown("To solve this, APIx integrates directly with the **Directorate General of Civil Aviation (DGCA)** passenger volume datasets. We extract the total number of passengers flown on each city-pair over the base period.")
-        
-        st.markdown("""
-        <div class="formula-box">
-        Route Weight = Total Passengers on Route / Total Passengers on All Tracked Routes
+        st.markdown(f"""
+        <div style="background: #1E293B; border: 1px solid #334155; border-radius: 8px; padding: 25px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); height: 100%;">
+            <div style="color: #94A3B8; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; margin-bottom: 20px;">Route Analysis: {selected_route_id}</div>
+            
+            <div style="margin-bottom: 20px;">
+                <div style="color: #94A3B8; font-size: 0.85rem; margin-bottom: 5px;">Quarterly Passengers</div>
+                <div style="color: #F8FAFC; font-size: 1.8rem; font-weight: 700;">{p_count:,}</div>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                <div style="color: #94A3B8; font-size: 0.85rem; margin-bottom: 5px;">Total Tracked (All Routes)</div>
+                <div style="color: #F8FAFC; font-size: 1.8rem; font-weight: 700;">{int(total_tracked):,}</div>
+            </div>
+            
+            <div style="border-top: 1px solid #334155; padding-top: 20px; margin-top: 20px;">
+                <div style="color: #94A3B8; font-size: 0.85rem; margin-bottom: 5px;">Calculated Q_base Weight</div>
+                <div style="color: #38B2AC; font-size: 2.5rem; font-weight: 700;">{pct_formatted:.2f}%</div>
+            </div>
         </div>
         """, unsafe_allow_html=True)
-        
-        pct_formatted = selected_row['passenger_share'] * 100
-        p_count = int(selected_row['passenger_count'])
-        st.markdown(f"**LIVE EXAMPLE:**<br><span style='color:#38B2AC; font-size:1.2rem; font-weight:bold;'>{selected_route_id}: {p_count:,} passengers ÷ {int(total_tracked):,} total tracked = {pct_formatted:.2f}% weight</span>", unsafe_allow_html=True)
         
     with col2:
         labels = global_route_summary['route_id'].tolist()
         values = global_route_summary['passenger_count'].tolist()
-        pulls = [0.03 if r == selected_route_id else 0 for r in labels]
+        pulls = [0.05 if r == selected_route_id else 0 for r in labels]
         
         fig = go.Figure(data=[go.Pie(
-            labels=labels, values=values, hole=0.6, pull=pulls,
-            marker=dict(colors=['#38B2AC' if r == selected_route_id else '#334155' for r in labels], line=dict(color='#0F172A', width=2)),
+            labels=labels, values=values, hole=0.7, pull=pulls,
+            marker=dict(colors=['#38B2AC' if r == selected_route_id else '#1E293B' for r in labels], line=dict(color='#0F172A', width=2)),
             hovertemplate="<b>%{label}</b><br>Passengers: %{value:,}<br>Share: %{percent}<extra></extra>",
-            textinfo='none' # Hide text because 80 routes is too dense
+            textinfo='none'
         )])
-        fig.update_layout(margin=dict(t=0, b=0, l=0, r=0), plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)", font_color="#F8FAFC", showlegend=False, height=300)
+        fig.update_layout(margin=dict(t=0, b=0, l=0, r=0), plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)", font_color="#F8FAFC", showlegend=False, height=400)
         
         selection = st.plotly_chart(fig, use_container_width=True, on_select="rerun", selection_mode="points")
         if selection and "selection" in selection and selection["selection"].get("points"):
@@ -760,18 +674,25 @@ elif page == "Weight Allocation (DGCA)":
                 st.session_state.selected_route_id = clicked_label
                 st.rerun()
 
-    st.markdown("<hr style='border-color: #334155;'>", unsafe_allow_html=True)
-    st.markdown("### 💥 Why Weighting Matters")
-    st.markdown(f"Let's simulate a sudden **+20% fare spike** localized entirely on **{selected_route_id}**:")
-    
     naive_delta = 20.0 / len(global_route_summary)
     apix_delta = 20.0 * selected_row['passenger_share']
     
-    with st.container(border=True):
-        c1, c2 = st.columns(2)
-        with c1:
-            st.metric(label="Naive Index Impact", value=f"+{naive_delta:.2f} points", delta="Misleading Spike", delta_color="inverse")
-        with c2:
-            st.metric(label="APIx (Weighted) Impact", value=f"+{apix_delta:.2f} points", delta="True Impact", delta_color="off")
+    st.markdown(f"""
+    <div style="margin-top: 40px; background: #0F172A; border: 1px solid #334155; border-radius: 8px; padding: 25px;">
+        <h4 style="color: #F8FAFC; margin-top: 0; margin-bottom: 20px;">Impact Simulator: +20% Fare Spike on {selected_route_id}</h4>
+        
+        <div style="display: flex; gap: 30px;">
+            <div style="flex: 1; border-right: 1px solid #334155; padding-right: 30px;">
+                <div style="color: #94A3B8; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; margin-bottom: 5px;">Naive Unweighted Index</div>
+                <div style="color: #EF4444; font-size: 2rem; font-weight: 700; margin-bottom: 5px;">+{naive_delta:.2f} pts</div>
+                <div style="color: #94A3B8; font-size: 0.9rem;">Assumes all routes are equal. Heavily distorts inflation if this is a minor route.</div>
+            </div>
             
-        st.markdown(f"<p style='text-align:center; font-size:1.1rem; color:#94A3B8; margin-top:10px;'>A 20% fare spike on <b>{selected_route_id}</b> moves a naive index by {naive_delta:.2f} points but only {apix_delta:.2f} points on APIx — because it carries just {pct_formatted:.2f}% of national traffic.</p>", unsafe_allow_html=True)
+            <div style="flex: 1;">
+                <div style="color: #94A3B8; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; margin-bottom: 5px;">APIx (DGCA Weighted)</div>
+                <div style="color: #38B2AC; font-size: 2rem; font-weight: 700; margin-bottom: 5px;">+{apix_delta:.2f} pts</div>
+                <div style="color: #94A3B8; font-size: 0.9rem;">Absorbs the spike correctly based on the route's true {pct_formatted:.2f}% national passenger share.</div>
+            </div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
