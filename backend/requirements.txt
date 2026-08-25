@@ -1,0 +1,7 @@
+amadeus
+requests
+pandas
+numpy
+pydantic
+python-dotenv
+sqlalchemy
