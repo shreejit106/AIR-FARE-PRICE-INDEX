@@ -483,6 +483,7 @@ if page == "Calculator":
             # Filter so the graph starts from the base date
             rebased_mospi = mospi_history_df[mospi_history_df['Date'] >= base_date].copy()
             rebased_mospi['CPI_Index'] = (rebased_mospi['CPI_Index'] / base_val) * 100
+            rebased_mospi['Inflation'] = rebased_mospi['CPI_Index'] - 100
             
             # Combine MOSPI History and APIx Future
             fig_macro = go.Figure()
@@ -491,31 +492,20 @@ if page == "Calculator":
             fig_macro.add_trace(go.Scatter(
                 x=rebased_mospi['Date'], 
                 y=rebased_mospi['CPI_Index'],
+                customdata=rebased_mospi['Inflation'],
                 mode='lines',
-                name='MOSPI CPI (Historical)',
+                name='MOSPI CPI',
                 line=dict(color='#94A3B8', width=2),
-                hovertemplate="<b>Date:</b> %{x|%b %Y}<br><b>Index:</b> %{y:.1f}<extra></extra>"
-            ))
-            
-            # Highlight the Base Date Point (100)
-            fig_macro.add_trace(go.Scatter(
-                x=[base_date], 
-                y=[100.0],
-                mode='markers+text',
-                name='Base Period',
-                marker=dict(color='#F59E0B', size=12, symbol='star'),
-                text=["Base=100"],
-                textposition="top center",
-                textfont=dict(color='#F59E0B', size=12, weight="bold"),
-                hovertemplate="<b>Base Period:</b> %{x|%b %Y}<br><b>Index Fixed At:</b> 100<extra></extra>"
+                hovertemplate="<span style='font-size:14px; color:#94A3B8'>%{x|%b %Y}</span><br><br><span style='font-size:26px; font-weight:bold; color:#F8FAFC'>%{y:.1f} Index</span><br><span style='font-size:16px; color:#38B2AC'>%{customdata:+.1f}% Inflation</span><extra></extra>"
             ))
             
             fig_macro.update_layout(
                 plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)", 
                 font_color="#F8FAFC", margin=dict(l=0, r=0, t=20, b=0), height=500,
-                legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=0)
+                legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=0),
+                hovermode="x unified"
             )
-            fig_macro.update_xaxes(showgrid=True, gridcolor='#334155')
+            fig_macro.update_xaxes(showgrid=True, gridcolor='#334155', showspikes=True, spikemode="across", spikethickness=1, spikedash="dash")
             fig_macro.update_yaxes(showgrid=True, gridcolor='#334155', title="Price Index")
             st.plotly_chart(fig_macro, use_container_width=True)
 
