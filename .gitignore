@@ -48,3 +48,8 @@ Thumbs.db
 # Output
 frontend/dist/
 frontend/build/
+
+# AI / IDEs
+.gemini/
+.cursor/
+.agent/
