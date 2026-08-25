@@ -545,30 +545,170 @@ if page == "Calculator":
             st.plotly_chart(fig_macro, use_container_width=True)
 
 elif page == "Maths & Stats":
-    st.markdown("## 🧮 Maths & Stats")
-    st.markdown("Transparent methodology for the APIx calculation and data sanitization.", unsafe_allow_html=True)
+    import time
+    st.markdown("""
+    <div style="text-align: center; margin-top: 50px; margin-bottom: 50px;">
+        <h1 style="font-size: 5rem; font-weight: 900; letter-spacing: -2px; color: #F8FAFC;">01 <span style="color:#334155;">—</span> THE INDEX</h1>
+        <p style="font-size: 1.5rem; color: #94A3B8; max-width: 800px; margin: 0 auto;">How millions of noisy airfare observations become one meaningful measure of national inflation.</p>
+    </div>
+    """, unsafe_allow_html=True)
     
-    with st.container(border=True):
-        st.markdown("### The Laspeyres Price Index")
-        st.markdown("The APIx is constructed using a modified Laspeyres Price Index formula. Just like the Consumer Price Index (CPI) measures a fixed basket of goods, the APIx measures a fixed basket of domestic flight routes, weighted by their passenger traffic significance.")
+    st.latex(r'''\huge APIx = \left( \frac{\sum (P_{current} \times Q_{base})}{\sum (P_{base} \times Q_{base})} \right) \times 100''')
+    
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    st.markdown("### 🎛️ Interactive APIx Explorer")
+    explorer_col1, explorer_col2 = st.columns([1, 1.5])
+    
+    with explorer_col1:
+        sim_route = st.selectbox("Select Route (Live Data)", ["DEL-BOM", "BLR-DEL", "BOM-BLR", "CCU-DEL"])
+        sim_base_fare = 5480 if sim_route == "DEL-BOM" else 6200
+        sim_weight = 0.124 if sim_route == "DEL-BOM" else 0.08
         
-        st.latex(r'''APIx = \left( \frac{\sum (P_{current} \times Q_{base})}{\sum (P_{base} \times Q_{base})} \right) \times 100''')
+        sim_current = st.slider("Simulate P(current) - Live Fare", min_value=3000, max_value=15000, value=6240, step=100)
         
-        st.markdown("""
-        - **$P_{current}$:** The median live scraped fare for a specific route and advance purchase window.
-        - **$P_{base}$:** The baseline median fare for that same route/window established during the base period.
-        - **$Q_{base}$:** The fixed quantity weight (passenger volume) assigned to that route by the DGCA.
-        """)
-
-    with st.container(border=True):
-        st.markdown("### 🛡️ Data Cleaning & Outlier Removal")
-        st.markdown("OTA pricing data is notoriously noisy. It includes artificially deflated prices (student/armed forces discounts) and extreme outliers (last seat on a flight sold at a 500% premium). To ensure the APIx reflects reality, we run a rigorous 2-step cleaning pipeline.")
+        st.markdown(f"""
+        **P(base)**: ₹{sim_base_fare:,} (Base Period Fare)<br>
+        **Q(base)**: {sim_weight*100:.1f}% (DGCA Passenger Weight)
+        """, unsafe_allow_html=True)
         
-        col1, col2 = st.columns(2)
-        with col1:
-            st.info("**Step 1: Interquartile Range (IQR)**\n\nWe calculate the 25th (Q1) and 75th (Q3) percentiles of scraped fares for a route. Any fare falling below Q1 - 1.5*IQR or above Q3 + 1.5*IQR is mathematically classified as an anomaly and discarded.")
-        with col2:
-            st.success("**Step 2: Median Representation**\n\nInstead of taking a simple average (mean) which is highly susceptible to skewness, we take the median of the remaining cleaned dataset to represent the P(current) for that specific route and horizon.")
+    with explorer_col2:
+        contribution = (sim_current / sim_base_fare) - 1
+        weighted_contribution = contribution * sim_weight * 100
+        sim_apix = 100 + weighted_contribution
+        
+        st.markdown(f"""
+        <div style="background: #1E293B; border: 1px solid #334155; padding: 30px; border-radius: 12px; text-align: center;">
+            <p style="color: #94A3B8; text-transform: uppercase; letter-spacing: 2px;">{sim_route} Contribution</p>
+            <h2 style="color: #38B2AC; font-size: 3rem; margin: 10px 0;">+{weighted_contribution:.2f} points</h2>
+            <hr style="border-color: #334155; margin: 20px 0;">
+            <p style="color: #94A3B8; text-transform: uppercase; letter-spacing: 2px;">Simulated APIx</p>
+            <h1 style="color: #F8FAFC; font-size: 4rem; margin: 0;">{sim_apix:.1f}</h1>
+        </div>
+        """, unsafe_allow_html=True)
+        
+    st.markdown("<br><hr style='border-color: #334155;'><br>", unsafe_allow_html=True)
+    
+    # 02 - DATA CLEANING
+    st.markdown("""
+    <div style="text-align: center; margin-bottom: 50px;">
+        <h1 style="font-size: 4rem; font-weight: 900; letter-spacing: -2px; color: #F8FAFC;">02 <span style="color:#334155;">—</span> DATA CLEANING</h1>
+        <p style="font-size: 1.2rem; color: #94A3B8; max-width: 800px; margin: 0 auto;">Raw scraped data contains massive anomalies (e.g., last-seat premium pricing). We use the Interquartile Range (IQR) to detect and destroy them.</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    if 'cleaning_stage' not in st.session_state:
+        st.session_state.cleaning_stage = 0
+        
+    c1, c2, c3 = st.columns([1, 2, 1])
+    with c2:
+        if st.button("▶ [✈] INGEST FARE DATA & RUN IQR FILTER", use_container_width=True):
+            st.session_state.cleaning_stage = 1
+            
+    cleaning_chart_placeholder = st.empty()
+    
+    # Generate mock raw data
+    raw_fares = [2100, 2400, 2550, 2600, 2750, 2900, 3100, 3200, 18500]
+    q1 = np.percentile(raw_fares[:-1], 25)
+    q3 = np.percentile(raw_fares[:-1], 75)
+    iqr = q3 - q1
+    upper_bound = q3 + 1.5 * iqr
+    
+    if st.session_state.cleaning_stage == 0:
+        fig_clean = go.Figure(go.Scatter(x=raw_fares, y=[0]*len(raw_fares), mode='markers', marker=dict(size=14, color='#94A3B8')))
+        fig_clean.update_layout(title="Raw Scraped Fares", height=250, plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)", font_color="#F8FAFC", yaxis=dict(showticklabels=False, showgrid=False, zeroline=True, zerolinecolor='#334155'))
+        cleaning_chart_placeholder.plotly_chart(fig_clean, use_container_width=True)
+        
+    elif st.session_state.cleaning_stage == 1:
+        # Step 1: Show Raw
+        fig_clean = go.Figure(go.Scatter(x=raw_fares, y=[0]*len(raw_fares), mode='markers', marker=dict(size=14, color='#94A3B8')))
+        fig_clean.update_layout(title="[✈] INGESTING RAW FARES...", height=250, plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)", font_color="#F8FAFC", yaxis=dict(showticklabels=False, showgrid=False, zeroline=True, zerolinecolor='#334155'))
+        cleaning_chart_placeholder.plotly_chart(fig_clean, use_container_width=True)
+        time.sleep(1.2)
+        
+        # Step 2: Show IQR bounds
+        fig_clean.add_vline(x=upper_bound, line_dash="dash", line_color="#EF4444", annotation_text="Upper IQR Bound")
+        fig_clean.update_layout(title="[✈] CALCULATING IQR BOUNDARIES...")
+        cleaning_chart_placeholder.plotly_chart(fig_clean, use_container_width=True)
+        time.sleep(1.5)
+        
+        # Step 3: Highlight Outlier
+        colors = ['#94A3B8' if x <= upper_bound else '#EF4444' for x in raw_fares]
+        fig_clean.data[0].marker.color = colors
+        fig_clean.update_layout(title="[✈] ANOMALY DETECTED (₹18,500)")
+        cleaning_chart_placeholder.plotly_chart(fig_clean, use_container_width=True)
+        time.sleep(1.5)
+        
+        # Step 4: Cleaned
+        clean_fares = [x for x in raw_fares if x <= upper_bound]
+        fig_clean = go.Figure(go.Scatter(x=clean_fares, y=[0]*len(clean_fares), mode='markers', marker=dict(size=14, color='#38B2AC')))
+        fig_clean.update_layout(title="[✓] DATA CLEANED & READY", height=250, plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)", font_color="#F8FAFC", yaxis=dict(showticklabels=False, showgrid=False, zeroline=True, zerolinecolor='#334155'))
+        cleaning_chart_placeholder.plotly_chart(fig_clean, use_container_width=True)
+        st.session_state.cleaning_stage = 0 
+    
+    st.markdown("<br><hr style='border-color: #334155;'><br>", unsafe_allow_html=True)
+    
+    # 03 - MEAN VS MEDIAN
+    st.markdown("""
+    <div style="text-align: center; margin-bottom: 50px;">
+        <h1 style="font-size: 4rem; font-weight: 900; letter-spacing: -2px; color: #F8FAFC;">03 <span style="color:#334155;">—</span> ROBUST REPRESENTATION</h1>
+        <p style="font-size: 1.2rem; color: #94A3B8; max-width: 800px; margin: 0 auto;">Why do we use the Median instead of the Mean? Inject an outlier below and watch the Mean distort while the Median stays perfectly stable.</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    base_data = [5800, 6000, 6100, 6200, 6400]
+    outlier_val = st.number_input("Inject Outlier Fare (₹):", min_value=6000, max_value=100000, value=42000, step=1000)
+    
+    current_data = base_data + [outlier_val]
+    current_mean = np.mean(current_data)
+    current_median = np.median(current_data)
+    
+    mm_c1, mm_c2 = st.columns(2)
+    with mm_c1:
+        st.markdown(f"""
+        <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); padding: 30px; border-radius: 12px; text-align: center;">
+            <p style="color: #FCA5A5; text-transform: uppercase; letter-spacing: 2px;">The Mean (Distorted)</p>
+            <h1 style="color: #EF4444; font-size: 3.5rem; margin: 0;">₹{int(current_mean):,}</h1>
+        </div>
+        """, unsafe_allow_html=True)
+        
+    with mm_c2:
+        st.markdown(f"""
+        <div style="background: rgba(56, 178, 172, 0.1); border: 1px solid rgba(56, 178, 172, 0.3); padding: 30px; border-radius: 12px; text-align: center;">
+            <p style="color: #99F6E4; text-transform: uppercase; letter-spacing: 2px;">The Median (Stable)</p>
+            <h1 style="color: #38B2AC; font-size: 3.5rem; margin: 0;">₹{int(current_median):,}</h1>
+        </div>
+        """, unsafe_allow_html=True)
+        
+    st.markdown("<br><hr style='border-color: #334155;'><br>", unsafe_allow_html=True)
+    
+    # 04 - CULMINATION
+    st.markdown("""
+    <div style="text-align: center; margin-bottom: 50px;">
+        <h1 style="font-size: 4rem; font-weight: 900; letter-spacing: -2px; color: #F8FAFC;">04 <span style="color:#334155;">—</span> THE CULMINATION</h1>
+        <p style="font-size: 1.2rem; color: #94A3B8; max-width: 800px; margin: 0 auto;">Hundreds of thousands of clean, median-represented, passenger-weighted fares flow together to form the national Airfare Price Index.</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    wf_fig = go.Figure(go.Waterfall(
+        name="20", orientation="v",
+        measure=["absolute", "relative", "relative", "relative", "relative", "total"],
+        x=["Base Index", "DEL-BOM", "BLR-DEL", "BOM-MAA", "Other Routes", "APIx (Live)"],
+        textposition="outside",
+        text=["100", "+2.4", "+1.8", "+0.9", "+7.7", "112.8"],
+        y=[100, 2.4, 1.8, 0.9, 7.7, 112.8],
+        connector={"line": {"color": "#334155"}},
+        decreasing={"marker": {"color": "#EF4444"}},
+        increasing={"marker": {"color": "#38B2AC"}},
+        totals={"marker": {"color": "#F8FAFC"}}
+    ))
+    wf_fig.update_layout(
+        plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)", font_color="#F8FAFC",
+        height=500, margin=dict(l=0, r=0, t=20, b=0)
+    )
+    wf_fig.update_xaxes(showgrid=False)
+    wf_fig.update_yaxes(showgrid=True, gridcolor='#334155')
+    st.plotly_chart(wf_fig, use_container_width=True)
 
 elif page == "Weight Allocation (DGCA)":
     # Build global route summary just for this page so it's immune to calculator filters
