@@ -1,10 +1,11 @@
 import React, { useState, createContext, useContext } from 'react';
-import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Landing from './pages/Landing';
 import Dashboard from './pages/Dashboard';
-import MathsStats from './pages/MathsStats';
-import Weights from './pages/Weights';
+import Methodology from './pages/MathsStats';
 import Analysts from './pages/Analysts';
+import Simulation from './pages/Simulation';
+import Fleet from './pages/Fleet';
 import HudNav from './components/HudNav';
 
 /* ─── Theme context ──────────────────────────────────────────────────────── */
@@ -23,9 +24,12 @@ const AppInner: React.FC = () => {
       <Routes>
         <Route path="/"            element={<Landing />} />
         <Route path="/dashboard"   element={<Dashboard />} />
-        <Route path="/methodology" element={<MathsStats />} />
-        <Route path="/weights"     element={<Weights />} />
+        <Route path="/methodology" element={<Methodology />} />
+        {/* Legacy /weights route still works — redirects to /methodology */}
+        <Route path="/weights"     element={<Methodology />} />
         <Route path="/analysts"    element={<Analysts />} />
+        <Route path="/simulation"  element={<Simulation />} />
+        <Route path="/fleet"       element={<Fleet />} />
       </Routes>
     </div>
   );
@@ -38,10 +42,8 @@ const App: React.FC = () => {
     const html = document.documentElement;
     const body = document.body;
     const theme = dark ? 'dark' : 'light';
-    // Apply to <html> so CSS [data-theme] selectors work
     html.setAttribute('data-theme', theme);
     html.style.colorScheme = theme;
-    // Force background to switch immediately (no flash)
     body.style.backgroundColor = dark ? '#060B14' : '#F0F4F8';
     body.style.color = dark ? '#E2E8F0' : '#0F172A';
   }, [dark]);

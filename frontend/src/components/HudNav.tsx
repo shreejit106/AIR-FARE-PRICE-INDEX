@@ -3,10 +3,11 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useTheme } from '../App';
 
 const TABS = [
-  { label: '✈ Calculator',        path: '/dashboard' },
-  { label: '∑ Maths & Stats',     path: '/methodology' },
-  { label: '⚖ Weight Allocation', path: '/weights' },
-  { label: '🏛 For Analysts',     path: '/analysts' },
+  { label: '✈ Calculator',       path: '/dashboard'   },
+  { label: '📐 Methodology',     path: '/methodology' },
+  { label: '🏛 For Analysts',    path: '/analysts'    },
+  { label: '🔮 Simulation',      path: '/simulation'  },
+  { label: '🛩 Fleet & Carriers',path: '/fleet'       },
 ];
 
 const API = 'http://localhost:8000';
