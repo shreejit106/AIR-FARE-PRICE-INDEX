@@ -45,7 +45,7 @@ const AIRLINES = [
     fleet: 188, founded: 1932,
   },
   {
-    code: 'SG', name: 'SpiceJet',        color: '#F37B20',
+    code: 'SG', name: 'SpiceJet',        color: '#ED1B24',
     passThrough: 0.80, routeShare: 0.14,
     t1: 7800,  t7: 5900, t15: 4900, t30: 4100, t45: 3500,
     surgeScore: 75, network: 65, priceComp: 85, mktConc: 38, complaints: 78,

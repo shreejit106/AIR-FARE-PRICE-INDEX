@@ -1,5 +1,7 @@
 from fastapi import FastAPI, Query, Response
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+import os
 from typing import Optional
 import numpy as np
 import random
@@ -15,6 +17,11 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# ─── Serve airline logos from backend/LOGO/ at /logos/ ──────────────────────
+_logo_dir = os.path.join(os.path.dirname(__file__), "LOGO")
+if os.path.isdir(_logo_dir):
+    app.mount("/logos", StaticFiles(directory=_logo_dir), name="logos")
 
 # ─── Seed-stable mock data (generated once at startup) ───────────────────────
 np.random.seed(42)

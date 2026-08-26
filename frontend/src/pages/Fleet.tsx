@@ -3,12 +3,15 @@ import Plot from 'react-plotly.js';
 import { useTheme } from '../App';
 
 /* ─────────────────── AIRLINE INTELLIGENCE DATABASE ─────────────────────── */
+const LOGO_BASE = 'http://localhost:8000/logos';
+
 const CARRIERS = [
   {
     code: '6E', iata: '6E', icao: 'IGO',
     name: 'IndiGo', fullName: 'InterGlobe Aviation Ltd.',
     color: '#1B67B2', accent: '#00AEEF', textColor: '#fff',
-    logo: 'https://img.logo.dev/goindigo.in?token=pk_free&size=60',
+    bannerBg: 'linear-gradient(120deg, #1B67B2 0%, #134E8A 50%, #0D3B6C 100%)',
+    logo: `${LOGO_BASE}/IndiGo_Clean.png`,
     domain: 'goindigo.in',
     rating: 'CHEAPEST', ratingColor: '#10B981',
     tagline: "India's dominant LCC. Pure capacity game.",
@@ -26,7 +29,8 @@ const CARRIERS = [
     code: 'AI', iata: 'AI', icao: 'AIC',
     name: 'Air India', fullName: 'Air India Limited (Tata Sons)',
     color: '#C8102E', accent: '#F5A623', textColor: '#fff',
-    logo: 'https://img.logo.dev/airindia.com?token=pk_free&size=60',
+    bannerBg: 'linear-gradient(to bottom, #D9174E 0%, #B81342 50%, #981342 100%)',
+    logo: `${LOGO_BASE}/AIR%20INDIA.png`,
     domain: 'airindia.com',
     rating: 'PREMIUM', ratingColor: '#F59E0B',
     tagline: "National carrier reborn. Tata premium push.",
@@ -43,8 +47,9 @@ const CARRIERS = [
   {
     code: 'SG', iata: 'SG', icao: 'SEJ',
     name: 'SpiceJet', fullName: 'SpiceJet Ltd.',
-    color: '#F37B20', accent: '#FFCB5B', textColor: '#fff',
-    logo: 'https://img.logo.dev/spicejet.com?token=pk_free&size=60',
+    color: '#ED1B24', accent: '#FFD100', textColor: '#fff',
+    bannerBg: 'linear-gradient(120deg, #ED1B24 0%, #D8141D 60%, #B80F17 100%)',
+    logo: `${LOGO_BASE}/spicejet.jpg`,
     domain: 'spicejet.com',
     rating: 'BUDGET', ratingColor: '#06B6D4',
     tagline: "India's discount warrior. Turbulent, but cheap.",
@@ -61,8 +66,9 @@ const CARRIERS = [
   {
     code: 'QP', iata: 'QP', icao: 'AKJ',
     name: 'Akasa Air', fullName: 'SNV Aviation Pvt. Ltd.',
-    color: '#FF6600', accent: '#FFB347', textColor: '#fff',
-    logo: 'https://img.logo.dev/akasaair.com?token=pk_free&size=60',
+    color: '#FF6600', accent: '#A855F7', textColor: '#fff',
+    bannerBg: 'linear-gradient(120deg, #160B29 0%, #2A114B 50%, #120722 100%)',
+    logo: `${LOGO_BASE}/Akasa_Clean.png`,
     domain: 'akasaair.com',
     rating: 'DISRUPTOR', ratingColor: '#8B5CF6',
     tagline: "Rakesh Jhunjhunwala's dream LCC. Greenest fleet.",
@@ -80,7 +86,8 @@ const CARRIERS = [
     code: 'IX', iata: 'IX', icao: 'AXB',
     name: 'Air India Express', fullName: 'Air India Express Ltd.',
     color: '#E83B3B', accent: '#FF9A9A', textColor: '#fff',
-    logo: 'https://img.logo.dev/airindiaexpress.in?token=pk_free&size=60',
+    bannerBg: 'linear-gradient(120deg, #E83B3B 0%, #BF2222 60%, #8C1414 100%)',
+    logo: `${LOGO_BASE}/Air_India_Express_logo.svg.webp`,
     domain: 'airindiaexpress.in',
     rating: 'MID-RANGE', ratingColor: '#06B6D4',
     tagline: "AI's low-cost arm. South India & Gulf specialist.",
@@ -263,38 +270,66 @@ const Fleet: React.FC = () => {
       <div style={{
         borderRadius: 20, overflow: 'hidden', marginBottom: 32,
         border: `1px solid ${c.color}40`,
-        boxShadow: `0 0 60px ${c.color}18`,
+        boxShadow: `0 0 60px ${c.color}25`,
       }}>
-        {/* Header banner */}
+        {/* ── Header banner with blended logo on left ── */}
         <div style={{
-          background: `linear-gradient(135deg, ${c.color}ee, ${c.accent}88)`,
-          padding: '28px 32px',
-          display: 'flex', alignItems: 'center', gap: 24, flexWrap: 'wrap',
+          background: c.bannerBg,
+          padding: '0',
+          display: 'flex', alignItems: 'stretch', minHeight: 140,
+          position: 'relative', overflow: 'hidden',
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
-            {/* Logo or IATA badge */}
-            <div style={{ width: 80, height: 80, background: 'rgba(255,255,255,0.15)', borderRadius: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(10px)' }}>
-              {!logoErrors[c.code] ? (
-                <img src={c.logo} alt={c.name} style={{ width: 60, height: 60, objectFit: 'contain' }}
-                  onError={() => setLogoErrors(prev => ({ ...prev, [c.code]: true }))} />
-              ) : (
-                <div style={{ fontSize: '1.6rem', fontWeight: 900, color: '#fff', fontFamily: 'JetBrains Mono,monospace', letterSpacing: 2 }}>{c.code}</div>
-              )}
-            </div>
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 4 }}>
-                <span style={{ fontSize: '0.7rem', fontWeight: 700, letterSpacing: 2, color: 'rgba(255,255,255,0.7)', textTransform: 'uppercase' }}>IATA: {c.iata}</span>
-                <span style={{ fontSize: '0.7rem', fontWeight: 700, letterSpacing: 2, color: 'rgba(255,255,255,0.7)', textTransform: 'uppercase' }}>ICAO: {c.icao}</span>
-              </div>
-              <div style={{ fontSize: '2rem', fontWeight: 900, color: '#fff', letterSpacing: -0.5 }}>{c.name}</div>
-              <div style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.75)' }}>{c.fullName}</div>
-            </div>
+          {/* Subtle luminous bloom behind logo area */}
+          <div style={{
+            position: 'absolute', left: 0, top: 0, bottom: 0, width: 300,
+            background: 'radial-gradient(ellipse at 35% 50%, rgba(255,255,255,0.14) 0%, transparent 70%)',
+            pointerEvents: 'none',
+          }} />
+
+          {/* LEFT — seamlessly blended floating logo */}
+          <div style={{
+            width: 260, minHeight: '100%', flexShrink: 0,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            padding: '24px 28px',
+            position: 'relative',
+          }}>
+            {!logoErrors[c.code] ? (
+              <img
+                src={c.logo}
+                alt={`${c.name} logo`}
+                style={{
+                  maxWidth: 200, maxHeight: 95,
+                  objectFit: 'contain',
+                  filter: 'drop-shadow(0 6px 20px rgba(0,0,0,0.32))',
+                }}
+                onError={() => setLogoErrors(prev => ({ ...prev, [c.code]: true }))}
+              />
+            ) : (
+              /* Fallback IATA badge if logo fails to load */
+              <div style={{
+                fontSize: '2.8rem', fontWeight: 900, color: '#fff',
+                fontFamily: 'JetBrains Mono,monospace', letterSpacing: 4,
+                textShadow: '0 2px 12px rgba(0,0,0,0.4)',
+              }}>{c.code}</div>
+            )}
           </div>
-          <div style={{ marginLeft: 'auto', textAlign: 'right' }}>
-            <div style={{ padding: '6px 16px', borderRadius: 20, background: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(10px)', fontSize: '0.85rem', fontWeight: 800, color: '#fff', letterSpacing: 1, marginBottom: 8 }}>
-              {c.rating}
+
+          {/* RIGHT — airline name, codes, rating */}
+          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '24px 36px', flexWrap: 'wrap', gap: 12 }}>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 6 }}>
+                <span style={{ fontSize: '0.65rem', fontWeight: 700, letterSpacing: 2.5, color: 'rgba(255,255,255,0.65)', textTransform: 'uppercase', background: 'rgba(0,0,0,0.15)', padding: '2px 8px', borderRadius: 4 }}>IATA: {c.iata}</span>
+                <span style={{ fontSize: '0.65rem', fontWeight: 700, letterSpacing: 2.5, color: 'rgba(255,255,255,0.65)', textTransform: 'uppercase', background: 'rgba(0,0,0,0.15)', padding: '2px 8px', borderRadius: 4 }}>ICAO: {c.icao}</span>
+              </div>
+              <div style={{ fontSize: '2.2rem', fontWeight: 900, color: '#fff', letterSpacing: -1, textShadow: '0 2px 12px rgba(0,0,0,0.3)' }}>{c.name}</div>
+              <div style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.7)', marginTop: 2 }}>{c.fullName}</div>
             </div>
-            <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)' }}>Est. {c.founded} · {c.fleet} aircraft</div>
+            <div style={{ textAlign: 'right' }}>
+              <div style={{ padding: '6px 18px', borderRadius: 20, background: 'rgba(255,255,255,0.22)', backdropFilter: 'blur(10px)', fontSize: '0.82rem', fontWeight: 800, color: '#fff', letterSpacing: 1.5, marginBottom: 8, display: 'inline-block' }}>
+                {c.rating}
+              </div>
+              <div style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.65)' }}>Est. {c.founded} &nbsp;·&nbsp; {c.fleet} aircraft</div>
+            </div>
           </div>
         </div>
 
