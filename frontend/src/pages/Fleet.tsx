@@ -49,7 +49,7 @@ const CARRIERS = [
     name: 'SpiceJet', fullName: 'SpiceJet Ltd.',
     color: '#ED1B24', accent: '#FFD100', textColor: '#fff',
     bannerBg: 'linear-gradient(120deg, #ED1B24 0%, #D8141D 60%, #B80F17 100%)',
-    logo: `${LOGO_BASE}/spicejet.jpg`,
+    logo: `${LOGO_BASE}/SpiceJet_Cropped.jpg`,
     domain: 'spicejet.com',
     rating: 'BUDGET', ratingColor: '#06B6D4',
     tagline: "India's discount warrior. Turbulent, but cheap.",
@@ -86,7 +86,7 @@ const CARRIERS = [
     code: 'IX', iata: 'IX', icao: 'AXB',
     name: 'Air India Express', fullName: 'Air India Express Ltd.',
     color: '#E83B3B', accent: '#FF9A9A', textColor: '#fff',
-    bannerBg: 'linear-gradient(120deg, #E83B3B 0%, #BF2222 60%, #8C1414 100%)',
+    bannerBg: 'linear-gradient(120deg, #1C0A15 0%, #380F28 50%, #150610 100%)',
     logo: `${LOGO_BASE}/Air_India_Express_logo.svg.webp`,
     domain: 'airindiaexpress.in',
     rating: 'MID-RANGE', ratingColor: '#06B6D4',
@@ -288,9 +288,9 @@ const Fleet: React.FC = () => {
 
           {/* LEFT — seamlessly blended floating logo */}
           <div style={{
-            width: 260, minHeight: '100%', flexShrink: 0,
+            width: 280, minHeight: '100%', flexShrink: 0,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            padding: '24px 28px',
+            padding: '16px 24px',
             position: 'relative',
           }}>
             {!logoErrors[c.code] ? (
@@ -298,7 +298,7 @@ const Fleet: React.FC = () => {
                 src={c.logo}
                 alt={`${c.name} logo`}
                 style={{
-                  maxWidth: 200, maxHeight: 95,
+                  maxWidth: 240, maxHeight: 115,
                   objectFit: 'contain',
                   filter: 'drop-shadow(0 6px 20px rgba(0,0,0,0.32))',
                 }}
