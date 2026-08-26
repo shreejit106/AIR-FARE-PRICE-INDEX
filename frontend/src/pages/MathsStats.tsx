@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Plot from 'react-plotly.js';
 import { useTheme } from '../App';
+import { API_BASE_URL } from '../config';
 
 /* ─────────────────────────────── MATHS DATA ─────────────────────────────── */
 const RAW_FARES = [3800, 4100, 4200, 4350, 4400, 4500, 4600, 4750, 4900, 5100, 5300, 18500];
@@ -29,7 +30,7 @@ const VARS = [
   { sym: 'Q(r,0)', title: 'Passenger Weight (DGCA)', color: '#8B5CF6', desc: 'Proportion of national passengers on route r during the base period, from DGCA quarterly data.' },
 ];
 
-const API = 'http://localhost:8000';
+const API = API_BASE_URL;
 
 interface RouteWeight {
   route_id: string;

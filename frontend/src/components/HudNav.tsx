@@ -3,6 +3,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useTheme } from '../App';
 import ThreeUIButton from './ThreeUIButton';
 import GlassmorphismCTA from './GlassmorphismCTA';
+import { API_BASE_URL } from '../config';
+
 const TABS = [
   { label: '✈ Calculator',       path: '/dashboard'   },
   { label: '📐 Methodology',     path: '/methodology' },
@@ -11,7 +13,7 @@ const TABS = [
   { label: '🛩 Fleet & Carriers',path: '/fleet'       },
 ];
 
-const API = 'http://localhost:8000';
+const API = API_BASE_URL;
 
 const HudNav: React.FC = () => {
   const navigate  = useNavigate();

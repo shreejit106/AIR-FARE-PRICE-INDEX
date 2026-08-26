@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Plot from 'react-plotly.js';
 import { useTheme } from '../App';
+import { LOGO_BASE_URL } from '../config';
 
 /* ─────────────────── AIRLINE INTELLIGENCE DATABASE ─────────────────────── */
-const LOGO_BASE = 'http://localhost:8000/logos';
+const LOGO_BASE = LOGO_BASE_URL;
 
 const CARRIERS = [
   {

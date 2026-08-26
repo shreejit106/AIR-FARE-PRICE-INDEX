@@ -3,9 +3,9 @@ import Plot from 'react-plotly.js';
 import { MapContainer, TileLayer, Polyline, CircleMarker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useTheme } from '../App';
+import { API_BASE_URL } from '../config';
 
-const API = 'http://localhost:8000';
+const API = API_BASE_URL;
 
 /* ─── Types ─────────────────────────────────────────────────────────────── */
 interface RouteSummary {

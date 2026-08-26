@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import Plot from 'react-plotly.js';
 import { useTheme } from '../App';
+import { API_BASE_URL } from '../config';
 
-const API = 'http://localhost:8000';
+const API = API_BASE_URL;
 
 /* ─── Interfaces ──────────────────────────────────────────────────────────── */
 interface AnomalyItem {
