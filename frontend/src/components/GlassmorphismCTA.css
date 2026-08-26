@@ -1,0 +1,194 @@
+.glassmorphism-cta {
+  --spread: 90deg;
+  --shimmer-color: rgba(255, 255, 255, 0.6);
+  --speed: 4s;
+  --cut: 1px;
+  --bg: rgba(255, 255, 255, 0.05);
+  
+  position: relative;
+  display: inline-flex;
+  isolation: isolate;
+  cursor: pointer;
+  overflow: hidden;
+  border-radius: 9999px;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 40px rgba(129, 140, 248, 0.15);
+}
+
+[data-theme="light"] .glassmorphism-cta {
+  --shimmer-color: rgba(0, 0, 0, 0.3);
+  --bg: rgba(0, 0, 0, 0.05);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="intermediate"] .glassmorphism-cta {
+  --shimmer-color: rgba(17, 34, 80, 0.4);
+  box-shadow: 0 8px 40px rgba(0, 50, 150, 0.2);
+}
+
+[data-theme="coastal"] .glassmorphism-cta {
+  --shimmer-color: rgba(63, 79, 95, 0.4);
+  box-shadow: 0 8px 40px rgba(63, 79, 95, 0.15);
+}
+
+.glassmorphism-cta:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 40px 8px rgba(129, 140, 248, 0.25);
+}
+
+[data-theme="light"] .glassmorphism-cta:hover {
+  box-shadow: 0 0 40px 8px rgba(0, 0, 0, 0.15);
+}
+[data-theme="intermediate"] .glassmorphism-cta:hover {
+  box-shadow: 0 0 40px 8px rgba(0, 50, 150, 0.3);
+}
+[data-theme="coastal"] .glassmorphism-cta:hover {
+  box-shadow: 0 0 40px 8px rgba(63, 79, 95, 0.25);
+}
+
+.glassmorphism-cta:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: scale(1);
+}
+
+.glassmorphism-cta-bg-wrapper {
+  position: absolute;
+  inset: 0;
+}
+
+.glassmorphism-cta-bg-rotator {
+  position: absolute;
+  inset: -200%;
+  width: 400%;
+  height: 400%;
+  animation: rotate-gradient var(--speed) linear infinite;
+}
+
+.glassmorphism-cta-bg-conic {
+  position: absolute;
+  inset: 0;
+  background: conic-gradient(
+    from calc(270deg - (var(--spread) * 0.5)),
+    transparent 0,
+    var(--shimmer-color) var(--spread),
+    transparent var(--spread)
+  );
+}
+
+.glassmorphism-cta-inner-bg {
+  position: absolute;
+  border-radius: 9999px;
+  background: var(--bg);
+  inset: var(--cut);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.glassmorphism-cta-content {
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 0 20px;
+  height: 40px;
+  overflow: hidden;
+  position: relative;
+  border-radius: 9999px;
+}
+
+.glassmorphism-cta-border-beam {
+  position: absolute;
+  content: ' ';
+  display: block;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    rgba(255, 255, 255, 0.2),
+    rgba(255, 255, 255, 0.2),
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  animation: borderBeamRotation 4s infinite linear;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+[data-theme="light"] .glassmorphism-cta-border-beam {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(0, 0, 0, 0.1),
+    rgba(0, 0, 0, 0.1),
+    rgba(0, 0, 0, 0.1),
+    rgba(0, 0, 0, 0.1),
+    transparent
+  );
+}
+[data-theme="coastal"] .glassmorphism-cta-border-beam {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(63, 79, 95, 0.15),
+    rgba(63, 79, 95, 0.15),
+    rgba(63, 79, 95, 0.15),
+    rgba(63, 79, 95, 0.15),
+    transparent
+  );
+}
+
+.glassmorphism-cta-blur-bg {
+  position: absolute;
+  inset: 1px;
+  background: rgba(10, 11, 20, 0.8);
+  border-radius: 9999px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+[data-theme="light"] .glassmorphism-cta-blur-bg {
+  background: rgba(240, 244, 248, 0.8);
+}
+
+[data-theme="intermediate"] .glassmorphism-cta-blur-bg {
+  background: rgba(217, 203, 194, 0.8); /* Light beige to contrast with the dark text */
+}
+
+[data-theme="coastal"] .glassmorphism-cta-blur-bg {
+  background: rgba(204, 212, 215, 0.8);
+}
+
+.glassmorphism-cta-text {
+  white-space: nowrap;
+  position: relative;
+  z-index: 10;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+@keyframes rotate-gradient {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes borderBeamRotation {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glassmorphism-cta-bg-rotator,
+  .glassmorphism-cta-border-beam {
+    animation: none !important;
+  }
+}

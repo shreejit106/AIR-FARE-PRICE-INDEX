@@ -1,0 +1,128 @@
+.threeui-button-stage {
+  --threeui-button-bg: #0a0a0a;
+  --threeui-button-color: rgba(255, 255, 255, 0.95);
+}
+
+.threeui-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px; /* Adapted from 52px for nav bar fit */
+  padding: 0 20px; /* Adapted from 32px */
+  overflow: hidden;
+  border: 0;
+  border-radius: 20px; /* Adapted from 32px */
+  color: rgba(255, 255, 255, 0.7);
+  background: transparent;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+  cursor: pointer;
+  font-family: inherit;
+  transition: transform 0.1s ease;
+  white-space: nowrap;
+}
+
+.threeui-button.active {
+  color: rgba(255, 255, 255, 1);
+}
+
+.threeui-button::before,
+.threeui-button::after {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  content: "";
+}
+
+.threeui-button::before {
+  background: rgba(23, 23, 23, 0.7);
+  box-shadow: inset 2px 4px 16px rgba(255, 255, 255, 0.06);
+  -webkit-backdrop-filter: blur(50px);
+  backdrop-filter: blur(50px);
+}
+
+/* Optional active state background */
+.threeui-button.active::before {
+  background: rgba(40, 40, 40, 0.7);
+}
+
+.threeui-button::after {
+  z-index: 2;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  opacity: 0.25;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(170deg, #000, transparent 50%);
+  mask-image: linear-gradient(170deg, #000, transparent 50%);
+}
+
+.threeui-button__title {
+  position: relative;
+  z-index: 4;
+}
+
+.threeui-button__circle {
+  position: absolute;
+  z-index: 3;
+  top: calc(50% - 100px);
+  left: calc(50% - 100px);
+  width: 200px;
+  height: 200px;
+}
+
+.threeui-button__circle::before,
+.threeui-button__circle::after {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  content: "";
+}
+
+.threeui-button__circle::before {
+  background: conic-gradient(from 180deg, rgba(255, 255, 255, 0.012) 180deg, rgba(255, 255, 255, 0.05) 360deg);
+  filter: blur(15px);
+  animation: threeui-button-circle 3.6s linear infinite;
+  transition: opacity 0.5s;
+}
+
+.threeui-button__circle::after {
+  inset: 30px;
+  background: rgba(255, 255, 255, 0.12);
+  opacity: 0;
+  filter: blur(5px);
+  transform: scale(0.5);
+  transition: opacity 0.5s, transform 0.7s;
+  -webkit-mask-image: radial-gradient(50% 50%, #000, rgba(23, 23, 23, 0));
+  mask-image: radial-gradient(50% 50%, #000, rgba(23, 23, 23, 0));
+}
+
+.threeui-button:hover .threeui-button__circle::before {
+  opacity: 0;
+}
+
+.threeui-button:hover .threeui-button__circle::after {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.threeui-button:active {
+  transform: scale(0.96);
+}
+
+@keyframes threeui-button-circle {
+  0% { transform: translate(0) rotate(0); }
+  25% { transform: translateX(-30px) rotate(90deg); }
+  50% { transform: translate(0) rotate(180deg); }
+  75% { transform: translateX(30px) rotate(270deg); }
+  100% { transform: translate(0) rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .threeui-button *,
+  .threeui-button *::before,
+  .threeui-button *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

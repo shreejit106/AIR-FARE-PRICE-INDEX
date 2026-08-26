@@ -107,14 +107,14 @@ const HORIZONS = ['T+1', 'T+7', 'T+15', 'T+30', 'T+45'];
 const HORIZON_KEYS = ['t1', 't7', 't15', 't30', 't45'] as const;
 
 /* ─── Plotly helpers ─────────────────────────────────────────────────────── */
-function plotBase(dark: boolean): Partial<Plotly.Layout> {
+function plotBase(dark: boolean): Partial<any> {
   return {
     paper_bgcolor: 'rgba(0,0,0,0)',
     plot_bgcolor: dark ? '#0A1628' : '#F8FAFC',
     font: { color: dark ? '#94A3B8' : '#334155', family: 'Inter, sans-serif', size: 12 },
   };
 }
-function axisStyle(dark: boolean): Partial<Plotly.LayoutAxis> {
+function axisStyle(dark: boolean): Partial<any> {
   return {
     gridcolor: dark ? '#1E3A5F' : '#E2E8F0', gridwidth: 1,
     zerolinecolor: dark ? '#2D4A6E' : '#CBD5E1', zerolinewidth: 1,

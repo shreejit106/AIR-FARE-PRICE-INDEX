@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTheme } from '../App';
-
+import ThreeUIButton from './ThreeUIButton';
+import GlassmorphismCTA from './GlassmorphismCTA';
 const TABS = [
   { label: '✈ Calculator',       path: '/dashboard'   },
   { label: '📐 Methodology',     path: '/methodology' },
@@ -15,8 +16,20 @@ const API = 'http://localhost:8000';
 const HudNav: React.FC = () => {
   const navigate  = useNavigate();
   const location  = useLocation();
-  const { dark, toggle } = useTheme();
+  const { theme, setTheme } = useTheme();
   const [syncing, setSyncing] = useState(false);
+  const [themeOpen, setThemeOpen] = useState(false);
+  const themeRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (themeRef.current && !themeRef.current.contains(e.target as Node)) {
+        setThemeOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, []);
 
   const handleSync = async () => {
     setSyncing(true);
@@ -45,32 +58,56 @@ const HudNav: React.FC = () => {
       {/* Tabs */}
       <div className="hud-nav-tabs">
         {TABS.map(tab => (
-          <button
+          <ThreeUIButton
             key={tab.path}
-            className={`hud-tab${location.pathname === tab.path ? ' active' : ''}`}
+            active={location.pathname === tab.path}
             onClick={() => navigate(tab.path)}
           >
             {tab.label}
-          </button>
+          </ThreeUIButton>
         ))}
       </div>
 
       {/* Actions */}
       <div className="hud-actions">
-        <button 
-          className="btn" 
+        <GlassmorphismCTA 
           onClick={handleSync} 
           disabled={syncing}
-          style={{ backgroundColor: syncing ? '#64748B' : '#10B981', color: '#fff', border: 'none' }}
         >
           {syncing ? '↻ Scraping...' : 'Fetch Live Fares'}
-        </button>
-        <button className="btn" onClick={toggle} title="Toggle theme">
-          {dark ? '☀ Light' : '🌙 Dark'}
-        </button>
-        <button className="btn" onClick={() => navigate('/')}>
+        </GlassmorphismCTA>
+        <div ref={themeRef} style={{ position: 'relative' }}>
+          <ThreeUIButton onClick={() => setThemeOpen(!themeOpen)} title="Select theme">
+            Theme: {theme.charAt(0).toUpperCase() + theme.slice(1)} ▼
+          </ThreeUIButton>
+          {themeOpen && (
+            <div style={{
+              position: 'absolute',
+              top: '100%',
+              right: 0,
+              marginTop: '8px',
+              background: 'var(--surface-glass)',
+              border: '1px solid var(--border)',
+              borderRadius: '12px',
+              padding: '8px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '6px',
+              minWidth: '140px',
+              backdropFilter: 'blur(16px)',
+              boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
+              zIndex: 1000
+            }}>
+              <ThreeUIButton active={theme === 'dark'} onClick={() => { setTheme('dark'); setThemeOpen(false); }}>🌙 Dark</ThreeUIButton>
+              <ThreeUIButton active={theme === 'light'} onClick={() => { setTheme('light'); setThemeOpen(false); }}>☀ Light</ThreeUIButton>
+              <ThreeUIButton active={theme === 'intermediate'} onClick={() => { setTheme('intermediate'); setThemeOpen(false); }}>☁ Inter</ThreeUIButton>
+              <ThreeUIButton active={theme === 'coastal'} onClick={() => { setTheme('coastal'); setThemeOpen(false); }}>🌊 Coastal</ThreeUIButton>
+            </div>
+          )}
+        </div>
+        <ThreeUIButton onClick={() => navigate('/')}>
           ← Hub
-        </button>
+        </ThreeUIButton>
       </div>
     </nav>
   );

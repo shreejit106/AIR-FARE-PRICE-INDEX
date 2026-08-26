@@ -8,9 +8,9 @@ import Simulation from './pages/Simulation';
 import Fleet from './pages/Fleet';
 import HudNav from './components/HudNav';
 
-/* ─── Theme context ──────────────────────────────────────────────────────── */
-interface ThemeCtx { dark: boolean; toggle: () => void; }
-export const ThemeContext = createContext<ThemeCtx>({ dark: true, toggle: () => {} });
+type ThemeMode = 'light' | 'intermediate' | 'coastal' | 'dark';
+interface ThemeCtx { theme: ThemeMode; dark: boolean; setTheme: (t: ThemeMode) => void; }
+export const ThemeContext = createContext<ThemeCtx>({ theme: 'dark', dark: true, setTheme: () => {} });
 export const useTheme = () => useContext(ThemeContext);
 
 /* ─── Inner layout (with HUD nav) ───────────────────────────────────────── */
@@ -36,20 +36,36 @@ const AppInner: React.FC = () => {
 };
 
 const App: React.FC = () => {
-  const [dark, setDark] = useState(true);
+  const [theme, setTheme] = useState<ThemeMode>('dark');
+  const dark = theme === 'dark';
 
   React.useEffect(() => {
     const html = document.documentElement;
     const body = document.body;
-    const theme = dark ? 'dark' : 'light';
+    
     html.setAttribute('data-theme', theme);
-    html.style.colorScheme = theme;
-    body.style.backgroundColor = dark ? '#060B14' : '#F0F4F8';
-    body.style.color = dark ? '#E2E8F0' : '#0F172A';
-  }, [dark]);
+    
+    if (theme === 'dark') {
+      html.style.colorScheme = 'dark';
+      body.style.backgroundColor = '#060B14';
+      body.style.color = '#E2E8F0';
+    } else if (theme === 'intermediate') {
+      html.style.colorScheme = 'light';
+      body.style.backgroundColor = '#F5F0E9'; // SWAN WING
+      body.style.color = '#112250'; // ROYAL BLUE
+    } else if (theme === 'coastal') {
+      html.style.colorScheme = 'light';
+      body.style.backgroundColor = '#CCD4D7'; // LIGHT BLUE-GREY
+      body.style.color = '#3F4F5F'; // DARK BLUE-GREY
+    } else {
+      html.style.colorScheme = 'light';
+      body.style.backgroundColor = '#F0F4F8';
+      body.style.color = '#0F172A';
+    }
+  }, [theme]);
 
   return (
-    <ThemeContext.Provider value={{ dark, toggle: () => setDark(d => !d) }}>
+    <ThemeContext.Provider value={{ theme, dark, setTheme }}>
       <Router>
         <AppInner />
       </Router>

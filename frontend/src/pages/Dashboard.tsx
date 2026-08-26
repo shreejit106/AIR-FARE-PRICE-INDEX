@@ -30,14 +30,14 @@ function seededRand(seed: number, i: number): number {
 }
 
 /* ─── Shared Plotly layout builder (adapts to theme) ───────────────────── */
-function plotBase(dark: boolean): Partial<Plotly.Layout> {
+function plotBase(dark: boolean): Partial<any> {
   return {
     paper_bgcolor: 'rgba(0,0,0,0)',
     plot_bgcolor:  dark ? '#0A1628' : '#F8FAFC',
     font: { color: dark ? '#94A3B8' : '#334155', family: 'Inter, sans-serif', size: 12 },
   };
 }
-function axisStyle(dark: boolean): Partial<Plotly.LayoutAxis> {
+function axisStyle(dark: boolean): Partial<any> {
   return {
     gridcolor:   dark ? '#1E3A5F' : '#E2E8F0',
     gridwidth:   1,
