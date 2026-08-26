@@ -18,6 +18,27 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/")
+def root():
+    return {
+        "status": "online",
+        "service": "APIx National Airfare Price Index API",
+        "version": "2.0",
+        "documentation": "/docs",
+        "endpoints": [
+            "/api/heatmap",
+            "/api/timeseries",
+            "/api/routes",
+            "/api/analysts/anomalies",
+            "/api/analysts/competition",
+            "/api/analysts/cpi-comparison"
+        ]
+    }
+
+@app.get("/health")
+def health():
+    return {"status": "healthy"}
+
 # ─── Serve airline logos from backend/LOGO/ at /logos/ ──────────────────────
 _logo_dir = os.path.join(os.path.dirname(__file__), "LOGO")
 if os.path.isdir(_logo_dir):
