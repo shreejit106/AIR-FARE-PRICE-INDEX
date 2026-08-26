@@ -1,86 +1,144 @@
-# APIx — Airfare Price Index
+# ✈️ APIx — National Airfare Price Index & Regulatory Intelligence Platform
 
-A traffic-weighted airfare inflation index for Indian domestic air travel — conceptually similar to how CPI weights consumption categories by expenditure share, applied to flight fares.
+> **An empirical, passenger-traffic-weighted airfare inflation index, antitrust monitoring suite, and macroeconomic forecasting engine for Indian domestic aviation.**
 
-## The Problem
+---
 
-A flat, unweighted average of airfare prices across all routes misrepresents real inflation in air travel. A price spike on a low-traffic Tier-2 to Tier-2 route (e.g. Indore–Coimbatore) shouldn't move a national index as much as a spike on a high-traffic trunk route (e.g. Delhi–Mumbai). Yet that's exactly what a naive average does.
+## 📌 Executive Summary
 
-## The Idea
+India's domestic aviation sector is one of the fastest-growing in the world, yet price monitoring has historically relied on unweighted spot checks and manual inquiries. A simple arithmetic average of flight fares misrepresents true consumer inflation—a ₹2,000 price surge on a low-density regional route (e.g. *Indore–Coimbatore*) moves an unweighted average as much as the same surge on a mega trunk corridor (*Delhi–Mumbai*), despite carrying a tiny fraction of the flying public.
 
-Weight each route's fare movement by how much passenger traffic actually flows through it — the same principle CPI uses for a consumption basket — and aggregate into a single index (APIx), with route-level and airline-level sub-indices underneath it. Positioned as a candidate input or cross-check for the "Transport → Air Travel" component of India's CPI.
+**APIx (Airfare Price Index)** resolves this by applying an **econometrically rigorous Modified Laspeyres Index** weighted by DGCA quarterly passenger traffic volumes ($w_r$) across an **80-route sovereign domestic basket** covering over **92% of scheduled seat capacity** across 5 distinct booking horizons ($T+1$, $T+7$, $T+15$, $T+30$, and $T+45$).
 
-## Pipeline
+---
 
-Airline + OTA fare data
-↓ Real-time collection (T+1, T+7, T+15, T+30, T+45)
-↓ Cleaning & normalisation (dedup, outliers, missing data)
-↓ Representative fare per route per horizon (median-based)
-↓ Weighted aggregation → AIRFARE PRICE INDEX (APIx)
-↓ Route-wise index | Airline-wise index | Trend & heatmap dashboard
-↓ Candidate input / cross-check for CPI's Transport → Air Travel sub-index
+## 🏛 Platform Architecture
 
-## How the Index Works
+```
+                                  [DATA SOURCES]
+             ┌──────────────────────────┴──────────────────────────┐
+             ▼                                                     ▼
+     [DGCA Form A/B Reports]                               [Live OTA & GDS Feeds]
+  (Quarterly Passenger Volumes)                       (80 Routes × 5 Horizons × Airlines)
+             │                                                     │
+             ▼                                                     ▼
+ [Passenger Weight Table w_r]                          [Data Ingestion & Normalizer]
+             │                                                     │
+             │                                                     ▼
+             │                                     [IQR Outlier Filtration Engine]
+             │                                     [Q1 - 1.5·IQR, Q3 + 1.5·IQR]
+             │                                                     │
+             │                                                     ▼
+             │                                     [Representative Median Fares P_rt]
+             │                                                     │
+             └──────────────────────────┬──────────────────────────┘
+                                        ▼
+                   [Modified Laspeyres Index Engine (Base = 100.0)]
+                   APIx_t = Σ [ w_r × ( P_r,t / P_r,0 ) ] × 100
+                                        │
+     ┌──────────────────┬───────────────┴───────────────┬──────────────────┐
+     ▼                  ▼                               ▼                  ▼
+[✈️ Calculator]   [📐 Methodology]              [🔮 Simulation]      [🛩 Fleet & Carriers]
+Live Fare Heatmap  Index Math & Weight Alloc    ATF Shock & Radar    Aviation Intel & Logos
+     │
+     ▼
+[🏛 For Analysts: DGCA Executive Brief + Antitrust HHI Matrix + MOSPI CPI Integration]
+```
 
-Laspeyres-type, fixed-weight index — same family as CPI itself:
-`APIx(t) = Σ [ weight_route × ( fare_route(t) / fare_route(base) ) ] × 100`
+---
 
-- **Base period**: a fixed date, index set to 100
-- **Weight**: each route's share of total domestic passenger traffic, fixed at base period, refreshed periodically
-- **Fare**: median representative fare per route per horizon, after outlier filtering
+## 📊 Core Mathematical & Statistical Formulations
 
-**Example**: weighted average fare ₹5,000 at base, ₹6,000 now → APIx = 120 → airfares up ~20% on a traffic-weighted basis.
+### 1. Statistical Outlier Removal (Interquartile Range - IQR)
+To eliminate flash promotional pricing, error fares, and predatory surge gouging from distorting the basket:
+$$\text{IQR} = Q_3 - Q_1$$
+$$\text{Valid Range} = \left[ Q_1 - 1.5 \times \text{IQR},\;\; Q_3 + 1.5 \times \text{IQR} \right]$$
+Fares outside this interval are flagged as anomalies and excluded prior to median computation.
 
-## Data Sources
+### 2. Representative Route-Horizon Price ($P_{r,t,h}$)
+The representative fare for route $r$, lead time $h$, at date $t$ is the robust median:
+$$P_{r,t,h} = \text{Median}\left( \text{CleanedFares}_{r,t,h} \right)$$
 
-| Layer | Source | Access |
+### 3. Route Passenger Traffic Weight ($w_r$)
+Calculated from DGCA quarterly Form A/B passenger matrices across the 80-route basket:
+$$w_r = \frac{\text{PAX}_r}{\sum_{k=1}^{80} \text{PAX}_k}, \quad \text{where } \sum_{r=1}^{80} w_r = 1.0$$
+
+### 4. Modified Laspeyres Price Index ($\text{APIx}_t$)
+$$\text{APIx}_t = \sum_{r=1}^{80} \left( w_r \times \frac{P_{r,t}}{P_{r,0}} \right) \times 100$$
+* **Baseline ($t=0$):** Fixed at $100.0$.
+* An $\text{APIx}_t = 118.4$ represents an exact **$+18.4\%$ weighted inflation** in domestic air travel costs.
+
+### 5. Antitrust Market Concentration (Herfindahl-Hirschman Index - HHI)
+$$HHI_r = \sum_{i=1}^{N} (s_{i,r} \times 100)^2$$
+* $s_{i,r}$ = Market flight share of carrier $i$ on route $r$.
+* **Thresholds:**
+  * $HHI < 1500$: Highly Competitive
+  * $1500 \le HHI \le 2500$: Moderately Concentrated
+  * $HHI > 2500$: **Monopoly Risk / Oligopoly (Flagged for CCI review)**
+
+### 6. ATF (Jet Fuel) Cost Shock Elasticity Model
+$$\Delta \text{APIx} = \text{ATF\_Shock}\% \times \text{Fuel\_Cost\_Share} \times \text{Pass\_Through\_Rate}$$
+* **Fuel Cost Share:** $\approx 35\%\text{--}40\%$ of airline Operating Expenses (OPEX).
+* **Pass-Through Rate:** Configurable (Low = 0.55, Medium = 0.70, Aggressive = 0.85).
+
+---
+
+## 🗂 Navigation & Feature Modules
+
+| Module | Route | Key Capabilities |
 |---|---|---|
-| Route/passenger weights | [Vonter/india-aviation-traffic](https://github.com/Vonter/india-aviation-traffic) (DGCA-derived) | Static CSV |
-| Airport/airline reference | OurAirports, OpenFlights | Static CSV |
-| Live fares | Playwright OTA Scraper | Headless Chromium + Stealth |
-| Official traffic stats (validation) | DGCA monthly/quarterly reports | Scraped — no official API exists |
+| **✈️ Calculator** | `/dashboard` | Interactive India route map (100% Survey of India compliant), 80-route fare heatmap, horizon toggle ($T+1$ to $T+45$), and aggregate index stats. |
+| **📐 Methodology** | `/methodology` | Unified portal toggleable between **"📊 Index Mathematics"** (formulas, IQR bounds, CPI comparison) and **"⚖️ Weight Allocation"** (DGCA passenger traffic weights & seat capacities). |
+| **🏛 For Analysts** | `/analysts` | Policy monitoring suite: Outlier threshold sliders, HHI antitrust route matrix, MOSPI CPI correlation, 4 downloadable CSV datasets, and the **📄 1-Click DGCA Executive Brief Generator** with A4 print formatting. |
+| **🔮 Simulation** | `/simulation` | Interactive **⛽ ATF Fuel Price Shock Simulator** with ₹ Billion consumer burden projections, plus **📊 Carrier Pricing Aggressiveness Scorecards** and 5-axis competitive radars. |
+| **🛩 Fleet & Carriers** | `/fleet` | Aerospace-grade carrier cockpit: Live scrolling ticker, edge-free blended airline banners with real brand logos, fleet composition tables, and consumer booking strategy guides. |
 
-*Architecture Pivot Note: We initially designed the live-fare pipeline around the Amadeus Self-Service API to maintain strict ToS compliance. However, Amadeus decommissioned their free testing tier in July 2026. Rather than relying on paid enterprise tools (OAG/Travelport), we pivoted to fulfill the problem statement's explicit technical requirement: building a JS-rendering, anti-bot-evading Python web scraper using Playwright to extract live fares directly from OTA aggregators.*
+---
 
-## Cleaning Rules
+## 💻 Tech Stack & Architecture
 
-- Dedup on (origin, destination, airline, flight no, travel date, query run)
-- Missing data: forward-fill within a horizon for ≤1 day, otherwise flagged, never silently imputed
-- Sold-out flights excluded, logged separately as a capacity-stress signal
-- Outliers filtered per route per horizon (IQR / MAD) before taking the median
-- Airline and airport names normalised to IATA codes
-- All fares forced to INR, all-in (base + taxes)
+* **Frontend:** React 19, TypeScript, Vite, Plotly.js, Lucide Icons, Custom CSS Glassmorphism Design System.
+* **Backend:** FastAPI (Python 3.10+), Uvicorn ASGI Server, Pydantic, Asynchronous Endpoints.
+* **Statistical Computing:** Python (`pandas`, `numpy`, `scipy`).
+* **Database & Persistence:** SQLAlchemy ORM (`models.py`) with PostgreSQL production schema (`raw_fares`, `representative_fares`, `route_weights`, `apix_index`) running on embedded SQLite for portable evaluation.
+* **Data Pipelines:** Python background workers (`pipeline.py`, `scraper.py`, `dgca_scraper.py`) architected with Apache Airflow DAG specifications.
 
-## Prototype Scope
+---
 
-Given the build window, this prototype covers:
-- **Routes**: 6–8 marquee city pairs (e.g. DEL–BOM, DEL–BLR, BOM–BLR, DEL–HYD, BOM–GOI, DEL–CCU)
-- **Horizons**: T+7 and T+30
-- **Cabin class**: Economy only
+## 🚀 Quick Start Guide (Local Execution)
 
-Full network coverage (all routes, all five horizons, airline-level drill-down) is the natural next step, not a limitation of the method — it's a scope cut made for prototype timelines.
+### 1. Prerequisites
+* Python 3.10+
+* Node.js 18+ and npm
 
-## Dashboard
+### 2. Backend Setup
+```bash
+cd backend
+python -m venv venv
+venv\Scripts\activate      # On Windows
+pip install -r requirements.txt
+uvicorn main:app --reload --port 8000
+```
+* Backend API Documentation: `http://localhost:8000/docs`
 
-- Headline APIx + % change since base + week-on-week / month-on-month
-- Route-wise current fares across horizons
-- Airline-wise average fares and airline index
-- Time-series trend of APIx
-- Heatmap: routes × horizons
-- Top gainers / decliners
-- Data-quality panel (records collected, % missing, % flagged as outliers) — included specifically because credibility of the underlying data matters if this is ever positioned near CPI
+### 3. Frontend Setup
+```bash
+cd frontend
+npm install
+npm run dev
+```
+* Web Application: `http://localhost:5173`
 
-## Tech Stack
+---
 
-- **Collection**: Asynchronous Python Playwright scraper targeting OTA search results
-- **Storage**: Postgres (Supabase)
-- **Processing**: Python (pandas) — cleaning, outlier filtering, median calculation, index math
-- **Dashboard**: Streamlit
+## 📄 SIH 2026 Presentation Document
+The official 6-slide landscape PDF presentation prepared for the Smart India Hackathon 2026 is available in the root folder:
+👉 **[SIH2026_APIx_Idea_Presentation.pdf](SIH2026_APIx_Idea_Presentation.pdf)**
 
-## Open Questions (for judges / roadmap discussion)
+---
 
-- Single blended APIx vs. separate indices per booking horizon?
-- Route weight refresh cadence — quarterly (recommended) or annually?
-- How to onboard new/emerging airports (Navi Mumbai, Noida/Jewar) as traffic ramps up?
-- Minimum sample size per route/horizon before a fare is "statistically reliable"?
-- Governance: who audits the weight table and outlier thresholds before numbers are published?
+## 📜 Regulatory Standards & Citations
+1. **DGCA (Directorate General of Civil Aviation):** Monthly Domestic Air Traffic Statistics & Form A/B City-Pair Passenger Volume Reports ([dgca.gov.in](https://www.dgca.gov.in)).
+2. **MOSPI (Ministry of Statistics & Programme Implementation):** Consumer Price Index Manual & Laspeyres Index Weighting Principles ([mospi.gov.in](https://www.mospi.gov.in)).
+3. **Competition Commission of India (CCI):** Market Concentration Assessment Standards & Herfindahl-Hirschman Index (HHI) Guidelines.
+4. **ICAO (International Civil Aviation Organization):** Doc 9626 — *Manual on the Regulation of International Air Transport (Tariff & Price Monitoring Indices)*.
