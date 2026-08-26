@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, Query, Response
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Optional
 import numpy as np
@@ -337,6 +337,196 @@ def sync_live_data():
     global _RECORDS
     _RECORDS = fetch_and_process_live_data()
     return {"status": "success", "message": "Live fares scraped and synced.", "total_records": len(_RECORDS)}
+
+
+# ─── Policy & Analyst Endpoints ───────────────────────────────────────────────
+
+@app.get("/api/analysts/anomalies")
+def get_analyst_anomalies(
+    threshold: float = Query(25.0, description="Minimum percentage surge to flag as anomaly"),
+    horizon: str = Query("all"),
+    route: str = Query("all")
+):
+    """
+    Price Gouging & Outlier Radar for DGCA/Regulators.
+    Identifies routes with extreme fare surges, IQR boundary breaches, and severity ratings.
+    """
+    records = _RECORDS.copy()
+    if horizon != "all":
+        records = [r for r in records if r["horizon"] == horizon]
+    if route != "all":
+        records = [r for r in records if r["route_id"] == route]
+
+    anomalies = []
+    for r in records:
+        pct = r["pct_change"]
+        if pct >= threshold:
+            severity = "CRITICAL" if pct >= 80 else ("HIGH" if pct >= 40 else "MODERATE")
+            anomalies.append({
+                "route_id": r["route_id"],
+                "origin": r["origin"],
+                "destination": r["destination"],
+                "airline": r["airline"],
+                "horizon": r["horizon"],
+                "cabin_class": r["cabin_class"],
+                "fare_current": r["fare_current"],
+                "fare_base": r["fare_base"],
+                "pct_change": r["pct_change"],
+                "surge_multiplier": round(r["fare_current"] / max(r["fare_base"], 1), 2),
+                "severity": severity,
+                "passenger_share": r["passenger_share"],
+                "passenger_count": r["passenger_count"],
+            })
+
+    anomalies.sort(key=lambda x: x["pct_change"], reverse=True)
+    
+    # Calculate IQR for all current fares across records for outlier boundary chart
+    all_fares = [r["fare_current"] for r in _RECORDS]
+    q1 = float(np.percentile(all_fares, 25)) if all_fares else 0
+    q3 = float(np.percentile(all_fares, 75)) if all_fares else 0
+    iqr = q3 - q1
+    iqr_upper_bound = q3 + 1.5 * iqr
+
+    return {
+        "total_anomalies": len(anomalies),
+        "critical_count": sum(1 for a in anomalies if a["severity"] == "CRITICAL"),
+        "high_count": sum(1 for a in anomalies if a["severity"] == "HIGH"),
+        "moderate_count": sum(1 for a in anomalies if a["severity"] == "MODERATE"),
+        "iqr_stats": {
+            "q1": round(q1, 2),
+            "q3": round(q3, 2),
+            "iqr": round(iqr, 2),
+            "upper_bound": round(iqr_upper_bound, 2)
+        },
+        "anomalies": anomalies
+    }
+
+
+@app.get("/api/analysts/competition")
+def get_analyst_competition():
+    """
+    Herfindahl-Hirschman Index (HHI) & Market Concentration Analysis per route.
+    """
+    from collections import defaultdict
+    route_airline_counts = defaultdict(lambda: defaultdict(int))
+    route_fares = defaultdict(list)
+    route_pct_changes = defaultdict(list)
+    route_base_fares = defaultdict(list)
+
+    for r in _RECORDS:
+        rid = r["route_id"]
+        al = r["airline"]
+        route_airline_counts[rid][al] += 1
+        route_fares[rid].append(r["fare_current"])
+        route_pct_changes[rid].append(r["pct_change"])
+        route_base_fares[rid].append(r["fare_base"])
+
+    routes_data = []
+    for rid, al_dict in route_airline_counts.items():
+        total_flights = sum(al_dict.values())
+        hhi = 0.0
+        shares = []
+        dominant_al = ""
+        dominant_share = 0.0
+
+        for al, count in al_dict.items():
+            share_pct = (count / total_flights) * 100
+            hhi += share_pct ** 2
+            shares.append({"airline": al, "flights": count, "share_pct": round(share_pct, 1)})
+            if share_pct > dominant_share:
+                dominant_share = share_pct
+                dominant_al = al
+
+        hhi = round(hhi, 1)
+        if hhi < 1500:
+            market_type = "Competitive"
+            badge_color = "emerald"
+        elif hhi <= 2500:
+            market_type = "Moderate Concentration"
+            badge_color = "amber"
+        else:
+            market_type = "High Concentration (Monopoly Risk)"
+            badge_color = "red"
+
+        avg_pct = round(float(np.mean(route_pct_changes[rid])), 2) if route_pct_changes[rid] else 0.0
+        avg_fare = round(float(np.mean(route_fares[rid])), 2) if route_fares[rid] else 0.0
+        avg_base = round(float(np.mean(route_base_fares[rid])), 2) if route_base_fares[rid] else 0.0
+
+        routes_data.append({
+            "route_id": rid,
+            "hhi": hhi,
+            "market_type": market_type,
+            "badge_color": badge_color,
+            "dominant_airline": dominant_al,
+            "dominant_share_pct": round(dominant_share, 1),
+            "carrier_count": len(al_dict),
+            "avg_fare_current": avg_fare,
+            "avg_fare_base": avg_base,
+            "avg_pct_change": avg_pct,
+            "carriers": sorted(shares, key=lambda x: x["share_pct"], reverse=True)
+        })
+
+    routes_data.sort(key=lambda x: x["hhi"], reverse=True)
+    avg_national_hhi = round(float(np.mean([r["hhi"] for r in routes_data])), 1) if routes_data else 0.0
+
+    return {
+        "national_avg_hhi": avg_national_hhi,
+        "total_routes_analyzed": len(routes_data),
+        "high_concentration_routes": sum(1 for r in routes_data if r["hhi"] > 2500),
+        "routes": routes_data
+    }
+
+
+@app.get("/api/analysts/export/{dataset}")
+def export_analyst_dataset(dataset: str):
+    """
+    Direct CSV export stream for economists and government analysts.
+    Datasets: 'fares', 'weights', 'anomalies', 'competition', 'mospi'
+    """
+    import io
+    import pandas as pd
+    from fastapi.responses import Response
+
+    output = io.StringIO()
+    filename = f"apix_{dataset}_{datetime.now().strftime('%Y%m%d')}.csv"
+
+    if dataset == "fares":
+        df = pd.DataFrame(_RECORDS)
+        df.to_csv(output, index=False)
+    elif dataset == "weights":
+        weights_data = [{"route_id": k, "weight": v, "passenger_count": int(v * 150_000_000)} for k, v in ROUTE_WEIGHTS.items()]
+        pd.DataFrame(weights_data).to_csv(output, index=False)
+    elif dataset == "anomalies":
+        anom_res = get_analyst_anomalies(threshold=20.0, horizon="all", route="all")
+        pd.DataFrame(anom_res["anomalies"]).to_csv(output, index=False)
+    elif dataset == "competition":
+        comp_res = get_analyst_competition()
+        flat_routes = []
+        for r in comp_res["routes"]:
+            flat_routes.append({
+                "route_id": r["route_id"],
+                "hhi": r["hhi"],
+                "market_type": r["market_type"],
+                "dominant_airline": r["dominant_airline"],
+                "dominant_share_pct": r["dominant_share_pct"],
+                "carrier_count": r["carrier_count"],
+                "avg_fare_current": r["avg_fare_current"],
+                "avg_fare_base": r["avg_fare_base"],
+                "avg_pct_change": r["avg_pct_change"],
+            })
+        pd.DataFrame(flat_routes).to_csv(output, index=False)
+    elif dataset == "mospi":
+        pd.DataFrame(_MOSPI).to_csv(output, index=False)
+    else:
+        return Response(content="Invalid dataset name. Available: fares, weights, anomalies, competition, mospi", status_code=400)
+
+    csv_content = output.getvalue()
+    return Response(
+        content=csv_content,
+        media_type="text/csv",
+        headers={"Content-Disposition": f"attachment; filename={filename}"}
+    )
+
 
 if __name__ == "__main__":
     import uvicorn

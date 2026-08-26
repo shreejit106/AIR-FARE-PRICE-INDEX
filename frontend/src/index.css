@@ -699,3 +699,49 @@ input[type="range"]::-webkit-slider-thumb {
   .stat-cell { border-right: none; border-bottom: 1px solid var(--border); padding: 0 0 12px 0; }
   .stat-cell:last-child { border-bottom: none; padding-bottom: 0; }
 }
+
+/* ─── Print & PDF Export Styles ──────────────────────────────────────────── */
+@media print {
+  body, html {
+    background: #FFFFFF !important;
+    color: #0F172A !important;
+    font-size: 10pt !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  .hud-nav, .print-hidden, .runway-bar, button, select, input[type="range"], .hud-actions {
+    display: none !important;
+  }
+  .page-content {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+  }
+  .card {
+    background: #FFFFFF !important;
+    border: 1px solid #CBD5E1 !important;
+    box-shadow: none !important;
+    color: #0F172A !important;
+    page-break-inside: avoid;
+    margin-bottom: 24px !important;
+    padding: 16px !important;
+  }
+  h1, h2, h3, strong, th {
+    color: #0F172A !important;
+  }
+  table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+  }
+  th, td {
+    border: 1px solid #E2E8F0 !important;
+    padding: 6px 8px !important;
+    color: #0F172A !important;
+  }
+  .analyst-header {
+    border-bottom: 2px solid #0F172A;
+    padding-bottom: 12px;
+    margin-bottom: 20px !important;
+  }
+}
+

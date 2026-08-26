@@ -4,6 +4,7 @@ import Landing from './pages/Landing';
 import Dashboard from './pages/Dashboard';
 import MathsStats from './pages/MathsStats';
 import Weights from './pages/Weights';
+import Analysts from './pages/Analysts';
 import HudNav from './components/HudNav';
 
 /* ─── Theme context ──────────────────────────────────────────────────────── */
@@ -24,6 +25,7 @@ const AppInner: React.FC = () => {
         <Route path="/dashboard"   element={<Dashboard />} />
         <Route path="/methodology" element={<MathsStats />} />
         <Route path="/weights"     element={<Weights />} />
+        <Route path="/analysts"    element={<Analysts />} />
       </Routes>
     </div>
   );
