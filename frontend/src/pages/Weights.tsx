@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import Plot from 'react-plotly.js';
 import { useTheme } from '../App';
 
-const API = 'http://localhost:8001';
+const API = 'http://localhost:8000';
 
 interface RouteWeight {
   route_id: string;

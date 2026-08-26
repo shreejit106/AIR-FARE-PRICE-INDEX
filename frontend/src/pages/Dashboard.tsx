@@ -5,7 +5,7 @@ import 'leaflet/dist/leaflet.css';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../App';
 
-const API = 'http://localhost:8001';
+const API = 'http://localhost:8000';
 
 /* ─── Types ─────────────────────────────────────────────────────────────── */
 interface RouteSummary {

@@ -32,42 +32,96 @@ AIRPORTS = {
 AIRLINES = ["IndiGo (6E)", "Air India (AI)", "SpiceJet (SG)", "Air India Express (IX)", "Akasa Air (QP)"]
 HORIZONS = ["T+1", "T+7", "T+15", "T+30", "T+45"]
 
-all_pairs     = list(itertools.combinations(AIRPORTS.keys(), 2))
-selected_pairs = random.sample(all_pairs, 80)
-base_shares   = np.random.lognormal(mean=0, sigma=1, size=80)
-base_shares   /= base_shares.sum()
+try:
+    from backend.scraper import scrape_fares
+    from backend.static_data import ROUTE_WEIGHTS, BASE_FARES
+except ModuleNotFoundError:
+    from scraper import scrape_fares
+    from static_data import ROUTE_WEIGHTS, BASE_FARES
 
-def _build_records():
+def fetch_and_process_live_data():
+    print("Scraping live data...")
+    try:
+        df = scrape_fares()
+        if df.empty:
+            print("Warning: scraper returned empty DataFrame.")
+            return []
+    except Exception as e:
+        print(f"Error during scraping: {e}")
+        return []
+
     records = []
-    for i, (orig, dest) in enumerate(selected_pairs):
-        pshare = float(base_shares[i])
-        pcount = int(pshare * 150_000_000)
-        route_airlines = random.sample(AIRLINES, random.randint(2, 5))
-        for al in route_airlines:
-            for cab in ["Economy", "Business"]:
-                for h in HORIZONS:
-                    base_fare = (np.random.randint(4000, 8000) if cab == "Economy"
-                                 else np.random.randint(15000, 35000))
-                    mult = {"T+1": np.random.uniform(1.3, 2.0), "T+7": np.random.uniform(1.1, 1.5),
-                            "T+15": np.random.uniform(0.9, 1.3), "T+30": np.random.uniform(0.8, 1.1),
-                            "T+45": np.random.uniform(0.7, 0.9)}[h]
-                    if al == "IndiGo (6E)":           mult *= 0.95
-                    elif al == "Air India (AI)":       mult *= 1.10
-                    elif al == "SpiceJet (SG)":        mult *= 0.90
-                    cur = base_fare * mult
-                    records.append({
-                        "route_id": f"{orig}-{dest}",
-                        "origin": orig, "destination": dest,
-                        "origin_lat": AIRPORTS[orig][0], "origin_lon": AIRPORTS[orig][1],
-                        "dest_lat":   AIRPORTS[dest][0], "dest_lon":   AIRPORTS[dest][1],
-                        "airline": al, "cabin_class": cab, "horizon": h,
-                        "fare_base": int(base_fare), "fare_current": round(cur, 2),
-                        "pct_change": round(((cur - base_fare) / base_fare) * 100, 4),
-                        "passenger_share": pshare, "passenger_count": pcount,
-                    })
+    for _, row in df.iterrows():
+        orig = row.get("origin")
+        dest = row.get("destination")
+        route_id = f"{orig}-{dest}"
+        h = row.get("lead_time_horizon")
+        
+        weight = ROUTE_WEIGHTS.get(route_id, 0.05)
+        pcount = int(weight * 150_000_000)
+        
+        base_fares_h = BASE_FARES.get(h, {})
+        base_fare = base_fares_h.get(route_id, 5000)
+        
+        cur = row.get("total_fare", base_fare)
+        pct_change = ((cur - base_fare) / base_fare) * 100 if base_fare > 0 else 0
+        
+        al = row.get("airline")
+        al_map = {"6E": "IndiGo (6E)", "AI": "Air India (AI)", "SG": "SpiceJet (SG)", "IX": "Air India Express (IX)", "QP": "Akasa Air (QP)"}
+        al_name = al_map.get(al, f"{al} ({al})")
+
+        origin_lat = AIRPORTS.get(orig, (0,0))[0]
+        origin_lon = AIRPORTS.get(orig, (0,0))[1]
+        dest_lat = AIRPORTS.get(dest, (0,0))[0]
+        dest_lon = AIRPORTS.get(dest, (0,0))[1]
+
+        records.append({
+            "route_id": route_id,
+            "origin": orig, "destination": dest,
+            "origin_lat": origin_lat, "origin_lon": origin_lon,
+            "dest_lat": dest_lat, "dest_lon": dest_lon,
+            "airline": al_name, "cabin_class": row.get("cabin_class", "Economy").capitalize(), "horizon": h,
+            "fare_base": int(base_fare), "fare_current": round(cur, 2),
+            "pct_change": round(pct_change, 4),
+            "passenger_share": weight, "passenger_count": pcount,
+        })
+
+    # Save to SQLite and CSV
+    try:
+        import pandas as pd
+        import sqlite3
+        import os
+
+        # Create exports directory
+        os.makedirs("exports", exist_ok=True)
+        
+        # 1. Save records to CSV
+        records_df = pd.DataFrame(records)
+        records_df.to_csv("exports/fares_latest.csv", index=False)
+        
+        # 2. Save routes and weights to CSV
+        weights_data = [{"route_id": k, "weight": v, "passenger_count": int(v * 150_000_000)} for k,v in ROUTE_WEIGHTS.items()]
+        weights_df = pd.DataFrame(weights_data)
+        weights_df.to_csv("exports/routes_weights.csv", index=False)
+        
+        # 3. Save to SQLite database
+        conn = sqlite3.connect("apix_data.db")
+        
+        # Append timestamp to history
+        history_df = records_df.copy()
+        history_df["scrape_timestamp"] = pd.Timestamp.now().isoformat()
+        
+        history_df.to_sql("fares_history", conn, if_exists="append", index=False)
+        weights_df.to_sql("routes_weights", conn, if_exists="replace", index=False)
+        
+        conn.close()
+        print("Data successfully exported to CSV and SQLite database.")
+    except Exception as e:
+        print(f"Failed to export data: {e}")
+
     return records
 
-_RECORDS = _build_records()
+_RECORDS = fetch_and_process_live_data()
 
 
 def _build_mospi():
@@ -277,6 +331,12 @@ def get_apix_data(
         ]
     }
 
+
+@app.post("/api/sync")
+def sync_live_data():
+    global _RECORDS
+    _RECORDS = fetch_and_process_live_data()
+    return {"status": "success", "message": "Live fares scraped and synced.", "total_records": len(_RECORDS)}
 
 if __name__ == "__main__":
     import uvicorn

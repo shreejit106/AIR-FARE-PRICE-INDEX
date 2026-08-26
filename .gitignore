@@ -53,3 +53,8 @@ frontend/build/
 .gemini/
 .cursor/
 .agent/
+
+# Data exports
+backend/apix_data.db
+backend/raw_scraped_fares.json
+backend/exports/
