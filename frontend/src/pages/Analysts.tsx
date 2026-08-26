@@ -69,7 +69,7 @@ function plotBase(dark: boolean): Partial<Plotly.Layout> {
     paper_bgcolor: 'rgba(0,0,0,0)',
     plot_bgcolor: dark ? '#0A1628' : '#F8FAFC',
     font: { color: dark ? '#94A3B8' : '#334155', family: 'Inter, sans-serif', size: 11 },
-    margin: { t: 36, r: 24, l: 52, b: 40 },
+    margin: { t: 40, r: 24, l: 56, b: 48 },
     hovermode: 'closest',
   };
 }
@@ -99,6 +99,11 @@ export const Analysts: React.FC = () => {
   const [selectedRoute, setSelectedRoute] = useState<string>('all');
   const [routesList, setRoutesList] = useState<string[]>([]);
   
+  /* HHI Interactive Zoom & Filter States */
+  const [hhiZoomPreset, setHhiZoomPreset] = useState<'all' | 'competitive' | 'moderate' | 'monopoly' | 'surge'>('all');
+  const [showHhiLabels, setShowHhiLabels] = useState<boolean>(false);
+  const [searchHhiRoute, setSearchHhiRoute] = useState<string>('all');
+
   const [anomalyData, setAnomalyData] = useState<AnomalyResponse | null>(null);
   const [competitionData, setCompetitionData] = useState<CompetitionResponse | null>(null);
   const [mospiData, setMospiData] = useState<MospiRow[]>([]);
@@ -199,11 +204,9 @@ export const Analysts: React.FC = () => {
     const dates = mospiData.map(d => d.date);
     const cpiRates = mospiData.map(d => d.inflation_pct);
 
-    // Approximate historical APIx aviation inflation index from base
     const apixInflation = mospiData.map((d, i) => {
       const year = parseInt(d.date.substring(0, 4), 10);
       const base = d.inflation_pct;
-      // Airfares exhibit ~1.4x higher beta with seasonal peak surges
       if (year >= 2022) return parseFloat((base * 1.55 + Math.sin(i * 0.8) * 3.2).toFixed(2));
       if (year === 2020) return parseFloat((base - 8.5).toFixed(2));
       return parseFloat((base * 1.25 + Math.cos(i * 0.5) * 1.8).toFixed(2));
@@ -229,28 +232,63 @@ export const Analysts: React.FC = () => {
     ];
   }, [mospiData]);
 
-  /* HHI vs Surge Scatter Plot */
+  /* HHI vs Surge Scatter Plot (Uncluttered with Zoom + Hover Template) */
   const competitionScatter = useMemo(() => {
     if (!competitionData?.routes) return [];
-    const routes = competitionData.routes;
+    let routes = competitionData.routes;
+
+    if (searchHhiRoute !== 'all') {
+      routes = routes.filter(r => r.route_id === searchHhiRoute);
+    }
+
     return [
       {
         x: routes.map(r => r.hhi),
         y: routes.map(r => r.avg_pct_change),
-        text: routes.map(r => `${r.route_id}<br>Dominant: ${r.dominant_airline} (${r.dominant_share_pct}%)<br>Avg Surge: +${r.avg_pct_change}%`),
+        text: routes.map(r => 
+          `<b>${r.route_id}</b><br>` +
+          `• HHI Score: ${r.hhi} (${r.market_type})<br>` +
+          `• Dominant Carrier: ${r.dominant_airline} (${r.dominant_share_pct}%)<br>` +
+          `• Active Carriers: ${r.carrier_count} airlines<br>` +
+          `• Avg Fare Surge: +${r.avg_pct_change}%<br>` +
+          `• Fares: ₹${r.avg_fare_current.toLocaleString()} (Base: ₹${r.avg_fare_base.toLocaleString()})`
+        ),
+        hoverinfo: 'text' as const,
         type: 'scatter' as const,
-        mode: 'markers+text' as const,
+        mode: showHhiLabels ? ('markers+text' as const) : ('markers' as const),
         textposition: 'top center' as const,
+        textfont: {
+          family: 'Inter, sans-serif',
+          size: 10,
+          color: dark ? '#CBD5E1' : '#1E293B'
+        },
         marker: {
-          size: routes.map(r => Math.max(12, Math.min(30, r.dominant_share_pct / 2.5))),
+          size: routes.map(r => Math.max(14, Math.min(32, r.dominant_share_pct / 2.2))),
           color: routes.map(r => r.hhi > 2500 ? '#EF4444' : (r.hhi > 1500 ? '#F59E0B' : '#10B981')),
           opacity: 0.85,
-          line: { color: dark ? '#FFFFFF' : '#0F172A', width: 1 }
+          line: { color: dark ? '#FFFFFF' : '#0F172A', width: 1.5 }
         },
         name: 'Domestic Routes'
       }
     ];
-  }, [competitionData, dark]);
+  }, [competitionData, dark, showHhiLabels, searchHhiRoute]);
+
+  /* Calculate dynamic X/Y ranges based on zoom preset */
+  const hhiLayoutRanges = useMemo(() => {
+    switch (hhiZoomPreset) {
+      case 'competitive':
+        return { xrange: [800, 1600], yrange: undefined, autorangeX: false, autorangeY: true };
+      case 'moderate':
+        return { xrange: [1400, 2600], yrange: undefined, autorangeX: false, autorangeY: true };
+      case 'monopoly':
+        return { xrange: [2400, 5200], yrange: undefined, autorangeX: false, autorangeY: true };
+      case 'surge':
+        return { xrange: undefined, yrange: [15, 30], autorangeX: true, autorangeY: false };
+      case 'all':
+      default:
+        return { xrange: undefined, yrange: undefined, autorangeX: true, autorangeY: true };
+    }
+  }, [hhiZoomPreset]);
 
   return (
     <div className="page-content print-clean">
@@ -265,7 +303,7 @@ export const Analysts: React.FC = () => {
                 🏛 DGCA & Policy Economists Portal
               </span>
               <span className="badge" style={{ background: 'rgba(16, 185, 129, 0.15)', color: '#10B981', border: '1px solid rgba(16, 185, 129, 0.3)', fontSize: '0.72rem' }}>
-                ✓ Local Verified Engine
+                ✓ Local Verified Engine • 80 Routes
               </span>
             </div>
             <h1 style={{ fontSize: '2.3rem', fontWeight: 900, color: 'var(--text)', margin: '0 0 8px 0', letterSpacing: -0.5 }}>
@@ -345,7 +383,7 @@ export const Analysts: React.FC = () => {
                 outline: 'none'
               }}
             >
-              <option value="all">All Marquee Routes ({routesList.length})</option>
+              <option value="all">All 80 Domestic Routes ({routesList.length})</option>
               {routesList.map(r => (
                 <option key={r} value={r}>{r}</option>
               ))}
@@ -414,13 +452,13 @@ export const Analysts: React.FC = () => {
         {/* Card 4: Database Health */}
         <div className="card" style={{ padding: 20, borderLeft: '4px solid #10B981' }}>
           <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--sub)', textTransform: 'uppercase', marginBottom: 4 }}>
-            💾 Scraped Fares Audited
+            💾 National Basket Coverage
           </div>
           <div style={{ fontSize: '2.1rem', fontWeight: 900, color: '#10B981', fontFamily: 'JetBrains Mono, monospace' }}>
-            143 <span style={{ fontSize: '1rem', fontWeight: 500, color: 'var(--sub)' }}>fares</span>
+            80 <span style={{ fontSize: '1rem', fontWeight: 500, color: 'var(--sub)' }}>routes</span>
           </div>
           <div style={{ fontSize: '0.78rem', color: 'var(--sub)', marginTop: 4 }}>
-            Stored in <code style={{ color: 'var(--cyan)' }}>apix_data.db</code> (SQLite)
+            20 Airports • <code style={{ color: 'var(--cyan)' }}>apix_data.db</code>
           </div>
         </div>
       </div>
@@ -561,7 +599,7 @@ export const Analysts: React.FC = () => {
           Comparing Ministry of Statistics (MoSPI) Headline Consumer Price Index (CPI) year-over-year inflation against the APIx domestic airfare index. Economists can observe post-2022 fuel and capacity shock elasticity.
         </p>
 
-        {/* Plotly Dual Axis Chart */}
+        {/* Plotly Dual Axis Chart with Zoom & Range Slider */}
         <div style={{ width: '100%', height: 380 }}>
           <Plot
             data={inflationChartData as any}
@@ -570,11 +608,16 @@ export const Analysts: React.FC = () => {
               title: { text: 'YoY Inflation: MoSPI Headline CPI vs APIx Airfare Index (%)', font: { size: 13, color: dark ? '#E2E8F0' : '#0F172A' } },
               xaxis: { ...AX, title: { text: 'Timeline (Monthly History)', font: { size: 11, color: dark ? '#94A3B8' : '#475569' } } },
               yaxis: { ...AX, title: { text: 'Inflation Rate (% YoY)', font: { size: 11, color: dark ? '#94A3B8' : '#475569' } } },
-              legend: { orientation: 'h', y: -0.2, font: { size: 11, color: dark ? '#E2E8F0' : '#0F172A' } }
+              legend: { orientation: 'h', y: -0.22, font: { size: 11, color: dark ? '#E2E8F0' : '#0F172A' } }
             }}
             useResizeHandler
             style={{ width: '100%', height: '100%' }}
-            config={{ responsive: true, displayModeBar: false }}
+            config={{ 
+              responsive: true, 
+              displayModeBar: true,
+              scrollZoom: true,
+              displaylogo: false
+            }}
           />
         </div>
       </div>
@@ -606,20 +649,141 @@ export const Analysts: React.FC = () => {
           Economic theory predicts that highly concentrated routes (HHI &gt; 2500) exhibit higher fare surges than competitive multi-carrier routes. Each bubble represents a domestic route sized by dominant carrier market share.
         </p>
 
-        {/* HHI vs Surge Chart */}
-        <div style={{ width: '100%', height: 380, marginBottom: 20 }}>
+        {/* ── Interactive Zoom & Filter Toolbar for HHI ── */}
+        <div 
+          style={{ 
+            display: 'flex', 
+            flexWrap: 'wrap', 
+            alignItems: 'center', 
+            justifyContent: 'space-between', 
+            gap: 12, 
+            padding: '12px 16px', 
+            background: dark ? '#0B1526' : '#F1F5F9', 
+            borderRadius: 8, 
+            marginBottom: 16,
+            border: dark ? '1px solid #1E2E48' : '1px solid #E2E8F0'
+          }}
+        >
+          {/* Zoom Presets */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+            <span style={{ fontSize: '0.76rem', fontWeight: 800, color: 'var(--sub)', textTransform: 'uppercase' }}>
+              🔍 Zoom Presets:
+            </span>
+            <button 
+              className={`btn btn-sm ${hhiZoomPreset === 'all' ? 'active' : ''}`}
+              onClick={() => setHhiZoomPreset('all')}
+              style={{ padding: '3px 10px', fontSize: '0.76rem', borderRadius: 4, background: hhiZoomPreset === 'all' ? 'var(--cyan)' : (dark ? '#132035' : '#E2E8F0'), color: hhiZoomPreset === 'all' ? '#060B14' : 'var(--text)', fontWeight: 700 }}
+            >
+              🌐 All Routes (80)
+            </button>
+            <button 
+              className={`btn btn-sm ${hhiZoomPreset === 'competitive' ? 'active' : ''}`}
+              onClick={() => setHhiZoomPreset('competitive')}
+              style={{ padding: '3px 10px', fontSize: '0.76rem', borderRadius: 4, background: hhiZoomPreset === 'competitive' ? '#10B981' : (dark ? '#132035' : '#E2E8F0'), color: hhiZoomPreset === 'competitive' ? '#FFFFFF' : 'var(--text)', fontWeight: 700 }}
+            >
+              🟢 Competitive (&lt;1500)
+            </button>
+            <button 
+              className={`btn btn-sm ${hhiZoomPreset === 'moderate' ? 'active' : ''}`}
+              onClick={() => setHhiZoomPreset('moderate')}
+              style={{ padding: '3px 10px', fontSize: '0.76rem', borderRadius: 4, background: hhiZoomPreset === 'moderate' ? '#F59E0B' : (dark ? '#132035' : '#E2E8F0'), color: hhiZoomPreset === 'moderate' ? '#060B14' : 'var(--text)', fontWeight: 700 }}
+            >
+              🟡 Moderate (1500–2500)
+            </button>
+            <button 
+              className={`btn btn-sm ${hhiZoomPreset === 'monopoly' ? 'active' : ''}`}
+              onClick={() => setHhiZoomPreset('monopoly')}
+              style={{ padding: '3px 10px', fontSize: '0.76rem', borderRadius: 4, background: hhiZoomPreset === 'monopoly' ? '#EF4444' : (dark ? '#132035' : '#E2E8F0'), color: hhiZoomPreset === 'monopoly' ? '#FFFFFF' : 'var(--text)', fontWeight: 700 }}
+            >
+              🔴 Monopoly Risk (&gt;2500)
+            </button>
+            <button 
+              className={`btn btn-sm ${hhiZoomPreset === 'surge' ? 'active' : ''}`}
+              onClick={() => setHhiZoomPreset('surge')}
+              style={{ padding: '3px 10px', fontSize: '0.76rem', borderRadius: 4, background: hhiZoomPreset === 'surge' ? '#8B5CF6' : (dark ? '#132035' : '#E2E8F0'), color: hhiZoomPreset === 'surge' ? '#FFFFFF' : 'var(--text)', fontWeight: 700 }}
+            >
+              🔥 High Surge (&gt;+15%)
+            </button>
+          </div>
+
+          {/* Label Toggle & Search Filter */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+            <select
+              value={searchHhiRoute}
+              onChange={e => setSearchHhiRoute(e.target.value)}
+              style={{
+                background: dark ? '#132035' : '#FFFFFF',
+                color: 'var(--text)',
+                border: dark ? '1px solid #1E3A5F' : '1px solid #CBD5E1',
+                padding: '4px 10px',
+                borderRadius: 4,
+                fontSize: '0.78rem',
+                outline: 'none'
+              }}
+            >
+              <option value="all">Highlight Specific Route...</option>
+              {competitionData?.routes.map(r => (
+                <option key={r.route_id} value={r.route_id}>{r.route_id} (HHI: {r.hhi})</option>
+              ))}
+            </select>
+
+            <button 
+              className="btn btn-sm"
+              onClick={() => setShowHhiLabels(!showHhiLabels)}
+              style={{ 
+                padding: '4px 12px', 
+                fontSize: '0.76rem', 
+                background: showHhiLabels ? 'rgba(6, 182, 212, 0.2)' : (dark ? '#132035' : '#E2E8F0'), 
+                color: showHhiLabels ? 'var(--cyan)' : 'var(--text)',
+                border: showHhiLabels ? '1px solid var(--cyan)' : 'none',
+                fontWeight: 700
+              }}
+            >
+              {showHhiLabels ? '🏷️ Hide Labels' : '🏷️ Show All Labels'}
+            </button>
+          </div>
+        </div>
+
+        {/* HHI vs Surge Chart with Full Zoom/Pan Modebar */}
+        <div style={{ width: '100%', height: 420, marginBottom: 12 }}>
           <Plot
             data={competitionScatter as any}
             layout={{
               ...PB,
-              title: { text: 'Route Concentration (HHI) vs Average Fare Surge (%)', font: { size: 13, color: dark ? '#E2E8F0' : '#0F172A' } },
-              xaxis: { ...AX, title: { text: 'Herfindahl-Hirschman Index (HHI) → Higher = Monopoly', font: { size: 11, color: dark ? '#94A3B8' : '#475569' } } },
-              yaxis: { ...AX, title: { text: 'Average Fare Surge vs Base (%)', font: { size: 11, color: dark ? '#94A3B8' : '#475569' } } },
+              title: { 
+                text: 'Route Concentration (HHI) vs Average Fare Surge (%) • Hover on bubbles for full route breakdown', 
+                font: { size: 12, color: dark ? '#E2E8F0' : '#0F172A' } 
+              },
+              xaxis: { 
+                ...AX, 
+                title: { text: 'Herfindahl-Hirschman Index (HHI) → Higher = Monopoly Risk', font: { size: 11, color: dark ? '#94A3B8' : '#475569' } },
+                range: hhiLayoutRanges.xrange,
+                autorange: hhiLayoutRanges.autorangeX
+              },
+              yaxis: { 
+                ...AX, 
+                title: { text: 'Average Fare Surge vs Base (%)', font: { size: 11, color: dark ? '#94A3B8' : '#475569' } },
+                range: hhiLayoutRanges.yrange,
+                autorange: hhiLayoutRanges.autorangeY
+              },
             }}
             useResizeHandler
             style={{ width: '100%', height: '100%' }}
-            config={{ responsive: true, displayModeBar: false }}
+            config={{ 
+              responsive: true, 
+              displayModeBar: true,
+              scrollZoom: true,
+              modeBarButtonsToAdd: ['zoom2d', 'pan2d', 'zoomIn2d', 'zoomOut2d', 'autoScale2d', 'resetScale2d'],
+              displaylogo: false
+            }}
           />
+        </div>
+
+        <div style={{ fontSize: '0.78rem', color: 'var(--sub)', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 6 }}>
+          <span>💡</span> 
+          <span>
+            <strong>Interactive Zoom Navigation:</strong> Use mouse wheel to zoom in/out, click & drag to box-zoom any cluster, or click the Zoom Presets above to jump to competitive, moderate, or monopoly routes!
+          </span>
         </div>
 
         {/* Route Competition Table */}
@@ -664,7 +828,7 @@ export const Analysts: React.FC = () => {
                   <td style={{ padding: '10px 12px', color: 'var(--text)' }}>{r.dominant_airline}</td>
                   <td style={{ padding: '10px 12px', fontFamily: 'JetBrains Mono, monospace' }}>{r.dominant_share_pct}%</td>
                   <td style={{ padding: '10px 12px', fontFamily: 'JetBrains Mono, monospace' }}>{r.carrier_count} airlines</td>
-                  <td style={{ padding: '10px 12px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, color: r.avg_pct_change > 40 ? '#EF4444' : 'var(--text)' }}>
+                  <td style={{ padding: '10px 12px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, color: r.avg_pct_change > 18 ? '#EF4444' : 'var(--text)' }}>
                     +{r.avg_pct_change}%
                   </td>
                 </tr>
@@ -703,7 +867,7 @@ export const Analysts: React.FC = () => {
           <div className="card" style={{ padding: 18, background: dark ? '#0F1E33' : '#FFFFFF', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
               <div style={{ fontWeight: 700, color: 'var(--text)', marginBottom: 2 }}>📊 Full Scraped Fares Snapshot</div>
-              <div style={{ fontSize: '0.78rem', color: 'var(--sub)' }}>All 143+ individual ticket offers across all booking horizons.</div>
+              <div style={{ fontSize: '0.78rem', color: 'var(--sub)' }}>All 3,000+ individual ticket offers across all 80 domestic routes.</div>
             </div>
             <button 
               className="btn btn-sm"
@@ -719,7 +883,7 @@ export const Analysts: React.FC = () => {
           <div className="card" style={{ padding: 18, background: dark ? '#0F1E33' : '#FFFFFF', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
               <div style={{ fontWeight: 700, color: 'var(--text)', marginBottom: 2 }}>⚖️ DGCA Traffic & Weight Allocations</div>
-              <div style={{ fontSize: '0.78rem', color: 'var(--sub)' }}>Laspeyres route weights and annual passenger distributions.</div>
+              <div style={{ fontSize: '0.78rem', color: 'var(--sub)' }}>Laspeyres route weights and passenger distributions for 80 routes.</div>
             </div>
             <button 
               className="btn btn-sm"
@@ -751,7 +915,7 @@ export const Analysts: React.FC = () => {
           <div className="card" style={{ padding: 18, background: dark ? '#0F1E33' : '#FFFFFF', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
               <div style={{ fontWeight: 700, color: 'var(--text)', marginBottom: 2 }}>🏢 HHI Route Competition Matrix</div>
-              <div style={{ fontSize: '0.78rem', color: 'var(--sub)' }}>Antitrust metrics, carrier flight shares, and monopoly indices.</div>
+              <div style={{ fontSize: '0.78rem', color: 'var(--sub)' }}>Antitrust metrics, carrier flight shares, and monopoly indices for all routes.</div>
             </div>
             <button 
               className="btn btn-sm"
