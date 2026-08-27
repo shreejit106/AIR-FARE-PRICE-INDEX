@@ -209,7 +209,7 @@ body {
   height: 68px;
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 10000;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
@@ -399,24 +399,26 @@ body {
   position: relative;
   display: flex;
   align-items: center;
+  z-index: 10001;
 }
 
-/* ── Fullscreen Backdrop Dimmer ── */
+/* ── Fullscreen Backdrop Dimmer (sits under nav at z-index 999) ── */
 .hud-mobile-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.75);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  z-index: 9990;
-  animation: backdrop-fade 0.2s ease;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 999;
+  animation: backdrop-fade 0.18s ease;
+  pointer-events: auto;
 }
 @keyframes backdrop-fade {
   from { opacity: 0; }
   to   { opacity: 1; }
 }
 
-/* ── Mobile dropdown menu ── */
+/* ── Mobile dropdown menu (sits above nav & backdrop at z-index 10002) ── */
 .hud-mobile-menu {
   position: absolute;
   top: calc(100% + 12px);
@@ -430,9 +432,10 @@ body {
   border-radius: 18px;
   padding: 16px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.95), 0 0 30px rgba(6, 182, 212, 0.25) !important;
-  z-index: 10000;
-  animation: menu-slide-in 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 10002;
+  animation: menu-slide-in 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   box-sizing: border-box;
+  pointer-events: auto;
 }
 
 [data-theme='light'] .hud-mobile-menu {
