@@ -828,92 +828,57 @@ body {
 .stat-red { color: var(--red) !important; }
 
 /* ══════════════════════════════════════════════════════════════════════════
-   OFFICIAL GOVERNMENT OF INDIA / DGCA MACROECONOMIC PORTAL STYLES
+   APIx MODERN ECONOMIC INTELLIGENCE PLATFORM (BLACK & WHITE GRID THEME)
    ══════════════════════════════════════════════════════════════════════════ */
-.govt-portal-container {
+.apix-modern-container {
   width: 100%;
   min-height: 100vh;
-  background-color: #030712;
+  background-color: #000000;
   color: #E2E8F0;
-  overflow-x: hidden;
-  font-family: 'Inter', sans-serif;
-}
-
-/* ── Top Official Government Strip ── */
-.govt-top-bar {
-  background: #02040A;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  font-size: 0.72rem;
-  color: #94A3B8;
-  padding: 6px 16px;
   position: relative;
-  z-index: 50;
+  overflow-x: hidden;
+  font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
 }
-.govt-top-bar::before {
-  content: '';
+
+/* ── Modern White Precision Grid Background ── */
+.apix-grid-bg {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, #FF9933 0%, #FFFFFF 50%, #138808 100%);
+  inset: 0;
+  background-size: 44px 44px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.055) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.055) 1px, transparent 1px);
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 20%, #000 60%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 20%, #000 60%, transparent 100%);
+  pointer-events: none;
+  z-index: 0;
 }
 
-.govt-top-bar-inner {
-  max-width: 1320px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
+.apix-glow-orb {
+  position: absolute;
+  top: 5%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 750px;
+  height: 450px;
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.08) 0%, rgba(59, 130, 246, 0.04) 50%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
 }
 
-.govt-emblem-text {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: 600;
-  color: #CBD5E1;
-}
-
-.govt-tricolor-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #06B6D4;
-  box-shadow: 0 0 8px rgba(6, 182, 212, 0.6);
-}
-
-.govt-bar-sep {
-  color: rgba(255, 255, 255, 0.2);
-}
-
-.govt-top-meta {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-family: var(--font-mono);
-}
-
-.govt-status-tag {
-  color: #10B981;
-  font-weight: 700;
-}
-
-/* ── Ministry Portal Navigation ── */
-.govt-nav-header {
-  background: rgba(8, 14, 28, 0.85);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  padding: 14px 24px;
+/* ── Top Header Navigation ── */
+.apix-top-nav {
   position: sticky;
   top: 0;
   z-index: 100;
+  background: rgba(0, 0, 0, 0.75);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 14px 28px;
 }
 
-.govt-nav-inner {
+.apix-top-nav-inner {
   max-width: 1320px;
   margin: 0 auto;
   display: flex;
@@ -922,32 +887,53 @@ body {
   gap: 16px;
 }
 
-.govt-brand {
+.apix-brand {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 10px;
   cursor: pointer;
 }
-.govt-brand-icon {
-  font-size: 1.8rem;
-}
-.govt-brand-title {
-  font-family: var(--font-heading);
+.apix-brand-icon {
+  color: #06B6D4;
   font-size: 1.25rem;
+  filter: drop-shadow(0 0 10px rgba(6, 182, 212, 0.5));
+}
+.apix-brand-text {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.apix-brand-title {
+  font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+  font-size: 1.2rem;
   font-weight: 900;
   color: #FFFFFF;
   letter-spacing: -0.5px;
 }
-.govt-brand-sub {
-  font-size: 0.72rem;
+.apix-brand-tag {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 800;
+  background: rgba(6, 182, 212, 0.15);
+  border: 1px solid rgba(6, 182, 212, 0.4);
+  color: #06B6D4;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+.apix-brand-divider {
+  color: rgba(255, 255, 255, 0.2);
+  font-size: 0.9rem;
+}
+.apix-brand-sub {
+  font-size: 0.8rem;
   color: #94A3B8;
-  margin-top: 1px;
+  font-weight: 500;
 }
 
-.govt-btn-primary {
-  background: #06B6D4;
-  color: #030712;
-  font-family: 'Inter', sans-serif;
+.apix-launch-btn {
+  background: #FFFFFF;
+  color: #000000;
+  font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
   font-weight: 800;
   font-size: 0.82rem;
   padding: 9px 18px;
@@ -955,394 +941,401 @@ body {
   border: none;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 0 16px rgba(6, 182, 212, 0.3);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
 }
-.govt-btn-primary:hover {
-  background: #0891B2;
+.apix-launch-btn:hover {
+  background: #E2E8F0;
   transform: translateY(-1px);
-  box-shadow: 0 0 24px rgba(6, 182, 212, 0.5);
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.3);
 }
 
-/* ── Sober Institutional Hero ── */
-.govt-hero-section {
-  position: relative;
-  background: radial-gradient(circle at 50% 0%, #081730 0%, #030712 70%);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 60px 24px 70px;
-}
-.govt-hero-section::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(circle, rgba(14, 76, 146, 0.15) 1px, transparent 1px);
-  background-size: 32px 32px;
-  pointer-events: none;
-  opacity: 0.8;
-}
-
-.govt-hero-inner {
+/* ── Hero Section ── */
+.apix-hero-section {
   position: relative;
   z-index: 10;
-  max-width: 1100px;
+  padding: 80px 24px 70px;
+}
+
+.apix-hero-inner {
+  max-width: 1080px;
   margin: 0 auto;
   text-align: center;
 }
 
-.govt-dept-badge {
-  display: inline-block;
+.apix-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   font-family: var(--font-mono);
   font-size: 0.72rem;
   font-weight: 800;
   letter-spacing: 2px;
   color: #06B6D4;
-  background: rgba(6, 182, 212, 0.1);
-  border: 1px solid rgba(6, 182, 212, 0.35);
-  padding: 5px 14px;
-  border-radius: 6px;
-  margin-bottom: 18px;
-}
-
-.govt-main-heading {
-  font-family: var(--font-heading);
-  font-size: clamp(2.4rem, 5vw, 4.2rem);
-  font-weight: 900;
-  color: #FFFFFF;
-  letter-spacing: -1px;
-  line-height: 1.15;
-  margin: 0 0 8px;
-}
-
-.govt-devanagari-title {
-  font-size: clamp(1rem, 2vw, 1.4rem);
-  font-weight: 600;
-  color: #94A3B8;
+  background: rgba(6, 182, 212, 0.08);
+  border: 1px solid rgba(6, 182, 212, 0.3);
+  padding: 6px 16px;
+  border-radius: 9999px;
   margin-bottom: 24px;
 }
 
-.govt-lead-text {
-  font-size: clamp(0.98rem, 1.6vw, 1.15rem);
-  color: #CBD5E1;
-  line-height: 1.8;
-  max-width: 860px;
-  margin: 0 auto 36px;
-}
-.govt-lead-text strong {
-  color: #FFFFFF;
+.apix-badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #10B981;
+  box-shadow: 0 0 8px #10B981;
 }
 
-.govt-hero-buttons {
+.apix-hero-title {
+  font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+  font-size: clamp(2.8rem, 6.5vw, 4.8rem);
+  font-weight: 900;
+  color: #FFFFFF;
+  letter-spacing: -2px;
+  line-height: 1.1;
+  margin: 0 0 20px;
+}
+
+.apix-hero-desc {
+  font-size: clamp(1rem, 1.8vw, 1.18rem);
+  color: #94A3B8;
+  line-height: 1.8;
+  max-width: 820px;
+  margin: 0 auto 36px;
+  font-weight: 400;
+}
+.apix-hero-desc strong {
+  color: #F8FAFC;
+  font-weight: 700;
+}
+
+.apix-hero-cta-group {
   display: flex;
   justify-content: center;
   gap: 16px;
   flex-wrap: wrap;
-  margin-bottom: 50px;
+  margin-bottom: 56px;
 }
 
-.govt-hero-btn-primary {
+.apix-cta-primary {
   background: linear-gradient(135deg, #06B6D4 0%, #0284C7 100%);
-  color: #030712;
-  font-family: 'Inter', sans-serif;
+  color: #000000;
+  font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
   font-size: 0.98rem;
   font-weight: 800;
-  padding: 14px 28px;
+  padding: 14px 30px;
   border-radius: 10px;
   border: none;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  box-shadow: 0 4px 25px rgba(6, 182, 212, 0.4);
+  box-shadow: 0 0 30px rgba(6, 182, 212, 0.4);
   transition: all 0.2s ease;
 }
-.govt-hero-btn-primary:hover {
+.apix-cta-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(6, 182, 212, 0.6);
+  box-shadow: 0 0 40px rgba(6, 182, 212, 0.65);
 }
 
-.govt-hero-btn-secondary {
-  background: rgba(255, 255, 255, 0.05);
+.apix-cta-secondary {
+  background: rgba(255, 255, 255, 0.04);
   color: #F1F5F9;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
   font-size: 0.98rem;
   font-weight: 700;
-  padding: 14px 26px;
+  padding: 14px 28px;
   border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 10px;
   transition: all 0.2s ease;
 }
-.govt-hero-btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: #06B6D4;
+.apix-cta-secondary:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
-/* ── National Economic KPI Cards ── */
-.govt-kpi-grid {
+/* ── 4 KPI Metric Cards ── */
+.apix-kpi-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 16px;
   text-align: left;
 }
 
-.govt-kpi-card {
-  background: rgba(10, 20, 40, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+.apix-kpi-card {
+  background: rgba(10, 10, 15, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 14px;
-  padding: 20px 18px;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  padding: 22px 20px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transition: border-color 0.2s ease;
+}
+.apix-kpi-card:hover {
+  border-color: rgba(255, 255, 255, 0.25);
 }
 
-.govt-kpi-label {
+.apix-kpi-label {
   font-family: var(--font-mono);
   font-size: 0.68rem;
   font-weight: 700;
-  color: #94A3B8;
+  color: #64748B;
   letter-spacing: 1px;
   margin-bottom: 6px;
 }
 
-.govt-kpi-value {
+.apix-kpi-value {
   font-family: var(--font-mono);
-  font-size: 1.65rem;
+  font-size: 1.7rem;
   font-weight: 900;
   color: #FFFFFF;
   line-height: 1.1;
   margin-bottom: 6px;
 }
-.govt-kpi-value small {
+.apix-kpi-value small {
   font-size: 0.75rem;
   color: #06B6D4;
 }
 
-.govt-kpi-change.up {
+.apix-kpi-status.up {
   font-size: 0.76rem;
   font-weight: 700;
   color: #F59E0B;
 }
 
-.govt-kpi-sub {
+.apix-kpi-status {
   font-size: 0.76rem;
   color: #64748B;
 }
 
-/* ── Official Modules Section ── */
-.govt-modules-section {
-  padding: 80px 24px;
+/* ── Core Modules Section ── */
+.apix-modules-section {
+  position: relative;
+  z-index: 10;
+  padding: 90px 24px;
   max-width: 1320px;
   margin: 0 auto;
 }
 
-.govt-section-header {
+.apix-section-header {
   text-align: center;
-  margin-bottom: 48px;
+  margin-bottom: 52px;
 }
 
-.govt-section-tag {
+.apix-section-tag {
   font-family: var(--font-mono);
   font-size: 0.75rem;
   font-weight: 800;
   letter-spacing: 2px;
   color: #06B6D4;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
-.govt-section-title {
-  font-family: var(--font-heading);
-  font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+.apix-section-title {
+  font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+  font-size: clamp(1.9rem, 3.8vw, 2.7rem);
   font-weight: 900;
   color: #FFFFFF;
-  letter-spacing: -0.5px;
-  margin: 0 0 10px;
+  letter-spacing: -0.8px;
+  margin: 0 0 12px;
 }
 
-.govt-section-desc {
+.apix-section-desc {
   font-size: 1rem;
   color: #94A3B8;
-  max-width: 700px;
+  max-width: 720px;
   margin: 0 auto;
+  line-height: 1.7;
 }
 
-.govt-cards-grid {
+.apix-cards-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
+  gap: 22px;
 }
 
-.govt-module-card {
-  background: rgba(10, 18, 34, 0.65);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+.apix-module-card {
+  background: rgba(12, 12, 18, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 16px;
-  padding: 28px 24px;
+  padding: 30px 24px;
   display: flex;
   flex-direction: column;
   cursor: pointer;
-  transition: all 0.25s ease;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
-.govt-module-card:hover {
-  background: rgba(14, 26, 50, 0.85);
+.apix-module-card:hover {
+  background: rgba(18, 18, 28, 0.95);
   border-color: rgba(6, 182, 212, 0.4);
   transform: translateY(-4px);
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 0 0 25px rgba(6, 182, 212, 0.15);
 }
 
-.govt-module-card-top {
+.apix-card-top {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 18px;
 }
 
-.govt-module-icon {
-  font-size: 1.6rem;
+.apix-card-icon {
+  font-size: 1.75rem;
 }
 
-.govt-module-badge {
+.apix-card-badge {
   font-family: var(--font-mono);
   font-size: 0.68rem;
   font-weight: 700;
   color: #06B6D4;
   background: rgba(6, 182, 212, 0.12);
   border: 1px solid rgba(6, 182, 212, 0.3);
-  padding: 3px 8px;
+  padding: 4px 10px;
   border-radius: 6px;
 }
 
-.govt-module-code {
+.apix-card-code {
   font-family: var(--font-mono);
   font-size: 0.7rem;
   font-weight: 700;
   color: #64748B;
-  letter-spacing: 1px;
-  margin-bottom: 6px;
+  letter-spacing: 1.5px;
+  margin-bottom: 8px;
 }
 
-.govt-module-title {
-  font-size: 1.15rem;
+.apix-card-title {
+  font-size: 1.2rem;
   font-weight: 800;
   color: #FFFFFF;
-  margin: 0 0 10px;
+  margin: 0 0 12px;
   line-height: 1.35;
 }
 
-.govt-module-desc {
-  font-size: 0.88rem;
+.apix-card-desc {
+  font-size: 0.9rem;
   color: #94A3B8;
   line-height: 1.65;
-  margin: 0 0 20px;
+  margin: 0 0 24px;
   flex-grow: 1;
 }
 
-.govt-module-link {
+.apix-card-link {
   border-top: 1px solid rgba(255, 255, 255, 0.08);
-  padding-top: 14px;
+  padding-top: 16px;
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 0.82rem;
+  font-size: 0.85rem;
   font-weight: 700;
   color: #06B6D4;
 }
-.govt-arrow {
+.apix-arrow {
   transition: transform 0.2s ease;
 }
-.govt-module-card:hover .govt-arrow {
-  transform: translateX(4px);
+.apix-module-card:hover .apix-arrow {
+  transform: translateX(5px);
 }
 
-/* ── Benchmark Table Section ── */
-.govt-table-section {
-  background: #020612;
+/* ── Benchmark Table ── */
+.apix-table-section {
+  position: relative;
+  z-index: 10;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 70px 24px;
+  padding: 80px 24px;
+  background: rgba(4, 4, 8, 0.6);
 }
 
-.govt-table-inner {
+.apix-table-inner {
   max-width: 1100px;
   margin: 0 auto;
 }
 
-.govt-table-wrapper {
+.apix-table-wrap {
   overflow-x: auto;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  background: #000000;
 }
 
-.govt-comparison-table {
+.apix-benchmark-table {
   width: 100%;
   border-collapse: collapse;
   text-align: left;
-  font-size: 0.9rem;
+  font-size: 0.92rem;
 }
 
-.govt-comparison-table th {
-  background: #0A1428;
+.apix-benchmark-table th {
+  background: #0A0A10;
   color: #FFFFFF;
   font-weight: 800;
-  padding: 14px 18px;
+  padding: 16px 20px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 }
 
-.govt-comparison-table td {
-  padding: 14px 18px;
+.apix-benchmark-table td {
+  padding: 16px 20px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   color: #94A3B8;
 }
-.govt-comparison-table td strong {
-  color: #E2E8F0;
+.apix-benchmark-table td strong {
+  color: #F1F5F9;
 }
 
-.govt-comparison-table .highlight-cell {
+.apix-benchmark-table .highlight-col {
   color: #06B6D4;
   font-weight: 600;
 }
 
-/* ── Official Footer ── */
-.govt-footer {
-  background: #010308;
-  padding: 48px 24px 32px;
+/* ── Footer ── */
+.apix-footer {
+  position: relative;
+  z-index: 10;
+  background: #000000;
+  padding: 50px 24px 36px;
   border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-.govt-footer-inner {
+.apix-footer-inner {
   max-width: 1320px;
   margin: 0 auto;
 }
 
-.govt-footer-main {
+.apix-footer-top {
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
   gap: 20px;
-  padding-bottom: 28px;
+  padding-bottom: 30px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.govt-footer-title {
-  font-size: 1.05rem;
-  font-weight: 800;
+.apix-footer-brand {
+  font-size: 1.1rem;
+  font-weight: 900;
   color: #FFFFFF;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
-.govt-footer-desc {
-  font-size: 0.8rem;
+.apix-footer-desc {
+  font-size: 0.84rem;
   color: #64748B;
-  max-width: 600px;
+  max-width: 620px;
+  line-height: 1.6;
 }
 
-.govt-footer-badges {
+.apix-footer-pills {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
 }
 
-.govt-footer-pill {
+.apix-pill {
   font-family: var(--font-mono);
   font-size: 0.72rem;
   font-weight: 700;
@@ -1353,32 +1346,33 @@ body {
   border-radius: 6px;
 }
 
-.govt-footer-bottom {
+.apix-footer-bottom {
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
   gap: 12px;
-  padding-top: 20px;
-  font-size: 0.75rem;
+  padding-top: 24px;
+  font-size: 0.76rem;
   color: #64748B;
 }
 
 /* ── Responsive Breakpoints ── */
 @media (max-width: 1024px) {
-  .govt-kpi-grid { grid-template-columns: repeat(2, 1fr); }
-  .govt-cards-grid { grid-template-columns: repeat(2, 1fr); }
+  .apix-kpi-grid { grid-template-columns: repeat(2, 1fr); }
+  .apix-cards-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 640px) {
-  .govt-hero-section { padding: 40px 16px 50px; }
-  .govt-kpi-grid { grid-template-columns: 1fr; }
-  .govt-cards-grid { grid-template-columns: 1fr; }
-  .govt-hero-buttons { flex-direction: column; }
-  .govt-top-bar { display: none; }
-  .govt-brand-sub { display: none; }
-  .govt-footer-main { flex-direction: column; align-items: flex-start; }
+  .apix-hero-section { padding: 50px 16px 50px; }
+  .apix-kpi-grid { grid-template-columns: 1fr; }
+  .apix-cards-grid { grid-template-columns: 1fr; }
+  .apix-hero-cta-group { flex-direction: column; }
+  .apix-brand-sub, .apix-brand-divider { display: none; }
+  .apix-footer-top { flex-direction: column; align-items: flex-start; }
+  .apix-footer-bottom { flex-direction: column; align-items: flex-start; }
 }
+
 
 /* ─── Map container ──────────────────────────────────────────────────────── */
 .map-wrap {
