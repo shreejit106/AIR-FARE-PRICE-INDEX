@@ -385,13 +385,18 @@ const Dashboard: React.FC = () => {
                         <Polyline key={r.route_id} positions={pts}
                           pathOptions={{color:pctColor(r.avg_pct_change), weight, opacity:0.85}}>
                           <Popup>
-                            <div style={{fontFamily:'Inter,sans-serif', minWidth:160}}>
-                              <div style={{fontSize:'1.05rem', fontWeight:800, color:'#06B6D4', marginBottom:6}}>{r.route_id}</div>
-                              <div>APIx: <b>{r.route_index.toFixed(1)}</b></div>
-                              <div>Avg Change: <b style={{color:r.avg_pct_change>0?'#EF4444':'#10B981'}}>
+                            <div style={{fontFamily:'Inter,sans-serif', minWidth:180, color:'#0F172A'}}>
+                              <div style={{fontSize:'1.05rem', fontWeight:800, color:'#0284C7', marginBottom:6, display:'flex', alignItems:'center', gap:6}}>
+                                <span>{r.origin}</span>
+                                <span style={{color:'#64748B'}}>➔</span>
+                                <span>{r.destination}</span>
+                              </div>
+                              <div style={{fontSize:'0.75rem', color:'#475569', marginBottom:4}}>Directional City-Pair Corridor</div>
+                              <div style={{fontSize:'0.85rem', marginBottom:3}}>APIx Index: <b style={{color:'#0F172A'}}>{r.route_index.toFixed(1)} PTS</b></div>
+                              <div style={{fontSize:'0.85rem', marginBottom:3}}>Fare Inflation: <b style={{color:r.avg_pct_change>0?'#DC2626':'#059669'}}>
                                 {r.avg_pct_change>0?'+':''}{r.avg_pct_change.toFixed(1)}%
                               </b></div>
-                              <div>Traffic Share: <b>{(r.passenger_share*100).toFixed(2)}%</b></div>
+                              <div style={{fontSize:'0.85rem', color:'#334155'}}>DGCA Weight: <b>{(r.passenger_share*100).toFixed(3)}%</b></div>
                             </div>
                           </Popup>
                         </Polyline>

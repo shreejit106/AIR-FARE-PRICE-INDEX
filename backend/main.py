@@ -104,14 +104,12 @@ selected_pairs = [
     ("DEL","GAU"), ("DEL","BBI")
 ]
 
-# Realistic DGCA Passenger Volume Distribution (High weight for Metro Trunks)
+# Realistic Asymmetrical DGCA Passenger Volume Distribution across 80 Sovereign Corridors
 _raw_weights = []
 for i in range(80):
-    if i < 6:      _raw_weights.append(0.046 - (i // 2) * 0.005)
-    elif i < 20:   _raw_weights.append(0.030 - (i - 6) * 0.0011)
-    elif i < 46:   _raw_weights.append(0.015 - (i - 20) * 0.0003)
-    elif i < 62:   _raw_weights.append(0.009 - (i - 46) * 0.0002)
-    else:          _raw_weights.append(0.005 - (i - 62) * 0.00015)
+    base_val = 0.048 * (1.0 / (1.0 + 0.05 * i))
+    asym = 1.025 if i % 2 == 0 else 0.975
+    _raw_weights.append(base_val * asym)
 
 _tot_w = sum(_raw_weights)
 base_shares = np.array([round(w / _tot_w, 6) for w in _raw_weights])

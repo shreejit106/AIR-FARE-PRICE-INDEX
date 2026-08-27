@@ -69,18 +69,16 @@ const BASE_PAIRS: [string, string][] = [
   ["DEL","GAU"], ["DEL","BBI"]
 ];
 
-// Realistic DGCA Passenger Traffic Distribution across 80 Sovereign Corridors
+// Realistic Asymmetrical DGCA Passenger Traffic Distribution across 80 Sovereign Corridors
 const ROUTE_WEIGHT_VALUES: number[] = (() => {
-  const w: number[] = [];
+  const raw: number[] = [];
   for (let i = 0; i < 80; i++) {
-    if (i < 6)       w.push(0.046 - Math.floor(i / 2) * 0.005);
-    else if (i < 20) w.push(0.030 - (i - 6) * 0.0011);
-    else if (i < 46) w.push(0.015 - (i - 20) * 0.0003);
-    else if (i < 62) w.push(0.009 - (i - 46) * 0.0002);
-    else             w.push(0.005 - (i - 62) * 0.00015);
+    const base_val = 0.048 * (1.0 / (1.0 + 0.05 * i));
+    const asym = i % 2 === 0 ? 1.025 : 0.975;
+    raw.push(base_val * asym);
   }
-  const total = w.reduce((a, b) => a + b, 0);
-  const normalized = w.map(val => Number((val / total).toFixed(6)));
+  const total = raw.reduce((a, b) => a + b, 0);
+  const normalized = raw.map(val => Number((val / total).toFixed(6)));
   const diff = Number((1.0 - normalized.reduce((a, b) => a + b, 0)).toFixed(6));
   normalized[0] = Number((normalized[0] + diff).toFixed(6));
   return normalized;
@@ -96,6 +94,7 @@ export const DEFAULT_INDEX: Record<string, number> = {
 
 export const DEFAULT_ROUTE_SUMMARIES: RouteSummary[] = BASE_PAIRS.map(([orig, dest], i) => {
   const pshare = ROUTE_WEIGHT_VALUES[i] ?? 0.0125;
+  const pcount = Math.round(pshare * 150_000_000);
   const avg_pct = (i % 2 === 0 ? 1 : -1) * ((i * 1.7) % 28.5) + (i < 10 ? 12 : 2);
   const route_index = 100 + avg_pct;
   const oCoord = AIRPORTS[orig] || [28.5562, 77.1000];
@@ -104,8 +103,8 @@ export const DEFAULT_ROUTE_SUMMARIES: RouteSummary[] = BASE_PAIRS.map(([orig, de
     route_id: `${orig}-${dest}`,
     avg_pct_change: Number(avg_pct.toFixed(2)),
     route_index: Number(route_index.toFixed(1)),
-    passenger_share: Number(pshare.toFixed(4)),
-    passenger_count: Math.round(pshare * 150000000),
+    passenger_share: pshare,
+    passenger_count: pcount,
     origin: orig,
     destination: dest,
     origin_lat: oCoord[0],
