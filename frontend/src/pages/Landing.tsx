@@ -111,8 +111,10 @@ const Landing: React.FC = () => {
         </div>
       </header>
 
-      {/* ── Hero Section ── */}
+      {/* ── Hero Section with Airport Night Background ── */}
       <section className="apix-hero">
+        <div className="apix-hero-airport-bg" />
+        <div className="apix-hero-airport-overlay" />
         <div className="apix-hero-container">
 
           <div className="apix-kicker">

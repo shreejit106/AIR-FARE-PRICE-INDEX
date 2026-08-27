@@ -1036,14 +1036,41 @@ body {
   box-shadow: 0 0 28px rgba(255, 255, 255, 0.25);
 }
 
-/* ── Hero Section ── */
+/* ── Hero Section with Airport Night Background ── */
 .apix-hero {
   position: relative;
   z-index: 10;
   padding: 90px 24px 70px;
+  overflow: hidden;
+}
+
+.apix-hero-airport-bg {
+  position: absolute;
+  inset: 0;
+  background-image: url('/images/airport_night.png');
+  background-size: cover;
+  background-position: center 30%;
+  z-index: 0;
+  filter: brightness(0.60) contrast(1.1);
+  transform: scale(1.02);
+}
+
+.apix-hero-airport-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg,
+    rgba(0, 0, 0, 0.70) 0%,
+    rgba(0, 0, 0, 0.45) 35%,
+    rgba(0, 0, 0, 0.85) 80%,
+    #000000 100%
+  );
+  z-index: 1;
+  pointer-events: none;
 }
 
 .apix-hero-container {
+  position: relative;
+  z-index: 5;
   max-width: 1040px;
   margin: 0 auto;
   text-align: center;
