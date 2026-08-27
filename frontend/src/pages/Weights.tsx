@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import Plot from 'react-plotly.js';
 import { useTheme } from '../App';
 import { API_BASE_URL } from '../config';
+import { DEFAULT_ROUTE_SUMMARIES } from '../fallbackData';
 
 const API = API_BASE_URL;
 
@@ -10,6 +11,13 @@ interface RouteWeight {
   passenger_share: number;
   passenger_count: number;
 }
+
+const DEFAULT_WEIGHTS: RouteWeight[] = DEFAULT_ROUTE_SUMMARIES.map(r => ({
+  route_id: r.route_id,
+  passenger_share: r.passenger_share,
+  passenger_count: r.passenger_count || Math.round(r.passenger_share * 38500000)
+}));
+const DEFAULT_TOTAL_PAX = DEFAULT_WEIGHTS.reduce((s, r) => s + r.passenger_count, 0);
 
 /* ─── Shared Plotly layout builders (adapts to theme) ───────────────────── */
 function plotBase(dark: boolean): Partial<any> {
@@ -35,34 +43,29 @@ function axisStyle(dark: boolean): Partial<any> {
 
 const Weights: React.FC = () => {
   const { dark } = useTheme();
-  const [routes,      setRoutes]      = useState<RouteWeight[]>([]);
-  const [total,       setTotal]       = useState(0);
-  const [selectedId,  setSelectedId]  = useState('');
+  const [routes,      setRoutes]      = useState<RouteWeight[]>(DEFAULT_WEIGHTS);
+  const [total,       setTotal]       = useState(DEFAULT_TOTAL_PAX);
+  const [selectedId,  setSelectedId]  = useState(DEFAULT_WEIGHTS[0]?.route_id || 'DEL-BOM');
   const [spikeChange, setSpikeChange] = useState(20);
-  const [loading,     setLoading]     = useState(true);
+  const [loading,     setLoading]     = useState(false);
 
   useEffect(() => {
     fetch(`${API}/api/weights`)
-      .then(r => r.json())
+      .then(r => r.ok ? r.json() : null)
       .then(d => {
-        setRoutes(d.routes);
-        setTotal(d.total_passengers);
-        if (d.routes.length) setSelectedId(d.routes[0].route_id);
-        setLoading(false);
-      }).catch(() => setLoading(false));
+        if (d && d.routes && d.routes.length > 0) {
+          setRoutes(d.routes);
+          setTotal(d.total_passengers || d.routes.reduce((s: number, r: any) => s + r.passenger_count, 0));
+          if (!selectedId && d.routes.length) setSelectedId(d.routes[0].route_id);
+        }
+      }).catch(() => {});
   }, []);
 
   const PB = useMemo(() => plotBase(dark), [dark]);
   const AX = useMemo(() => axisStyle(dark), [dark]);
 
-  if (loading) return (
-    <div className="page-content" style={{ display: 'flex', justifyContent: 'center', paddingTop: 60 }}>
-      <div style={{ color: 'var(--cyan)', fontSize: '1.2rem', fontFamily: 'JetBrains Mono,monospace' }}>● Loading DGCA data...</div>
-    </div>
-  );
+  const selRow = routes.find(r => r.route_id === selectedId) ?? routes[0] ?? DEFAULT_WEIGHTS[0];
 
-  const selRow = routes.find(r => r.route_id === selectedId) ?? routes[0];
-  if (!selRow) return null;
 
   const pct     = selRow.passenger_share * 100;
   const rank    = routes.findIndex(r => r.route_id === selectedId) + 1;

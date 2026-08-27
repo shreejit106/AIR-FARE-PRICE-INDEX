@@ -2,12 +2,21 @@ import React, { useState, useEffect, useMemo } from 'react';
 import Plot from 'react-plotly.js';
 import { useTheme } from '../App';
 import { API_BASE_URL } from '../config';
+import { DEFAULT_ROUTE_SUMMARIES } from '../fallbackData';
 
 /* ─────────────────────────────── MATHS DATA ─────────────────────────────── */
 const RAW_FARES = [3800, 4100, 4200, 4350, 4400, 4500, 4600, 4750, 4900, 5100, 5300, 18500];
 const Q1 = 4200, Q3 = 4900, IQR = Q3 - Q1, UB = Q3 + 1.5 * IQR;
 const CLEAN = RAW_FARES.filter(x => x <= UB);
 const MEDIAN_CLEAN = CLEAN[Math.floor(CLEAN.length / 2)];
+
+const DEFAULT_WEIGHTS: RouteWeight[] = DEFAULT_ROUTE_SUMMARIES.map(r => ({
+  route_id: r.route_id,
+  passenger_share: r.passenger_share,
+  passenger_count: r.passenger_count || Math.round(r.passenger_share * 38500000)
+}));
+const DEFAULT_TOTAL_PAX = DEFAULT_WEIGHTS.reduce((s, r) => s + r.passenger_count, 0);
+
 
 const PIPELINE_STEPS = [
   { num: '01', title: 'Ingestion', color: '#06B6D4',
@@ -253,33 +262,29 @@ const IndexMath: React.FC<{ dark: boolean }> = ({ dark }) => {
    WEIGHT ALLOCATION PANEL
    ════════════════════════════════════════════════════════════════════════════ */
 const WeightAllocation: React.FC<{ dark: boolean }> = ({ dark }) => {
-  const [routes,      setRoutes]      = useState<RouteWeight[]>([]);
-  const [total,       setTotal]       = useState(0);
-  const [selectedId,  setSelectedId]  = useState('');
+  const [routes,      setRoutes]      = useState<RouteWeight[]>(DEFAULT_WEIGHTS);
+  const [total,       setTotal]       = useState(DEFAULT_TOTAL_PAX);
+  const [selectedId,  setSelectedId]  = useState(DEFAULT_WEIGHTS[0]?.route_id || 'DEL-BOM');
   const [spikeChange, setSpikeChange] = useState(20);
-  const [loading,     setLoading]     = useState(true);
+  const [loading,     setLoading]     = useState(false);
   const PB = useMemo(() => plotBase(dark), [dark]);
   const AX = useMemo(() => axisStyle(dark), [dark]);
 
   useEffect(() => {
     fetch(`${API}/api/weights`)
-      .then(r => r.json())
+      .then(r => r.ok ? r.json() : null)
       .then(d => {
-        setRoutes(d.routes);
-        setTotal(d.total_passengers);
-        if (d.routes.length) setSelectedId(d.routes[0].route_id);
-        setLoading(false);
-      }).catch(() => setLoading(false));
+        if (d && d.routes && d.routes.length > 0) {
+          setRoutes(d.routes);
+          setTotal(d.total_passengers || d.routes.reduce((s: number, r: any) => s + r.passenger_count, 0));
+          if (!selectedId && d.routes.length) setSelectedId(d.routes[0].route_id);
+        }
+      })
+      .catch(() => {});
   }, []);
 
-  if (loading) return (
-    <div style={{ display: 'flex', justifyContent: 'center', paddingTop: 60 }}>
-      <div style={{ color: 'var(--cyan)', fontSize: '1.2rem', fontFamily: 'JetBrains Mono,monospace' }}>● Loading DGCA data...</div>
-    </div>
-  );
+  const selRow = routes.find(r => r.route_id === selectedId) ?? routes[0] ?? DEFAULT_WEIGHTS[0];
 
-  const selRow = routes.find(r => r.route_id === selectedId) ?? routes[0];
-  if (!selRow) return null;
 
   const pct     = selRow.passenger_share * 100;
   const rank    = routes.findIndex(r => r.route_id === selectedId) + 1;
