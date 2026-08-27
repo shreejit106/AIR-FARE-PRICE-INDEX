@@ -856,284 +856,41 @@ body {
   background-size: cover;
   background-position: center;
   z-index: 0;
-  /* filter transition handled by Framer Motion */
-  will-change: filter;
+  filter: brightness(0.65) blur(2px);
+  transform: scale(1.02);
 }
 
 .hero-plane-overlay {
   position: absolute;
   inset: 0;
-  /* Layered overlay: dark vignette + bottom fade to black for seamless scroll join */
   background: linear-gradient(180deg,
-    rgba(3, 7, 18, 0.50) 0%,
-    rgba(3, 7, 18, 0.25) 38%,
-    rgba(0, 0, 0, 0.75) 78%,
+    rgba(2, 6, 18, 0.70) 0%,
+    rgba(2, 6, 18, 0.45) 40%,
+    rgba(0, 0, 0, 0.85) 85%,
     #000000 100%
   );
-  /* Start at opacity 0 — Framer Motion animates this to 1 when blurring starts */
-  opacity: 0;
   z-index: 1;
   pointer-events: none;
 }
 
-/* ─── Concept A: Cockpit HUD Telemetry Calibration Overlay ──────────────── */
-.cockpit-hud-overlay {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  z-index: 25;
-  background: radial-gradient(circle at center, rgba(6, 182, 212, 0.08) 0%, rgba(2, 6, 18, 0.75) 80%, rgba(0, 0, 0, 0.9) 100%);
-  padding: 24px;
-}
-
-/* Cockpit HUD Viewport Corner Targeting Brackets */
-.hud-corner {
-  position: absolute;
-  width: 28px;
-  height: 28px;
-  border-color: #06B6D4;
-  border-style: solid;
-  pointer-events: none;
-  opacity: 0.8;
-  filter: drop-shadow(0 0 8px rgba(6, 182, 212, 0.6));
-}
-.hud-top-left     { top: 24px; left: 24px; border-width: 2px 0 0 2px; }
-.hud-top-right    { top: 24px; right: 24px; border-width: 2px 2px 0 0; }
-.hud-bottom-left  { bottom: 24px; left: 24px; border-width: 0 0 2px 2px; }
-.hud-bottom-right { bottom: 24px; right: 24px; border-width: 0 2px 2px 0; }
-
-/* Central Scanning Radar */
-.hud-center-radar {
-  position: relative;
-  width: 170px;
-  height: 170px;
-  margin-bottom: 24px;
-}
-
-.radar-circle {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  border: 1px solid rgba(6, 182, 212, 0.35);
-  box-shadow: 0 0 12px rgba(6, 182, 212, 0.15);
-}
-.radar-outer { width: 170px; height: 170px; border-style: dashed; }
-.radar-mid   { width: 110px; height: 110px; }
-.radar-inner { width: 50px; height: 50px; }
-
-.radar-crosshair-h {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: rgba(6, 182, 212, 0.3);
-}
-.radar-crosshair-v {
-  position: absolute;
-  left: 50%;
-  top: 0;
-  bottom: 0;
-  width: 1px;
-  background: rgba(6, 182, 212, 0.3);
-}
-
-.radar-sweep-beam {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  background: conic-gradient(from 0deg at 50% 50%, rgba(6, 182, 212, 0.45) 0deg, transparent 60deg, transparent 360deg);
-  animation: radar-sweep 2.2s linear infinite;
-  pointer-events: none;
-}
-@keyframes radar-sweep {
-  0%   { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.radar-center-plane {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 1.1rem;
-  color: #06B6D4;
-  filter: drop-shadow(0 0 8px #06B6D4);
-}
-
-/* Carrier radar flight blips */
-.radar-blip {
-  position: absolute;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  animation: blip-pulse 1.8s infinite;
-}
-.blip-indigo   { top: 28%; left: 68%; background: #3B82F6; box-shadow: 0 0 10px #3B82F6; }
-.blip-airindia { top: 62%; left: 30%; background: #EF4444; box-shadow: 0 0 10px #EF4444; animation-delay: 0.5s; }
-.blip-spicejet { top: 75%; left: 70%; background: #F97316; box-shadow: 0 0 10px #F97316; animation-delay: 0.9s; }
-.blip-akasa    { top: 22%; left: 32%; background: #A78BFA; box-shadow: 0 0 10px #A78BFA; animation-delay: 1.3s; }
-
-@keyframes blip-pulse {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50%      { transform: scale(1.6); opacity: 0.4; }
-}
-
-/* Telemetry readout panel */
-.hud-telemetry-panel {
-  background: rgba(8, 14, 28, 0.85);
-  border: 1px solid rgba(6, 182, 212, 0.4);
-  border-radius: 18px;
-  padding: 20px 24px;
-  max-width: 520px;
-  width: 100%;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(6, 182, 212, 0.2);
-  text-align: center;
-}
-
-.hud-telemetry-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
+.hero-nav-cta-btn {
+  background: linear-gradient(135deg, #06B6D4 0%, #0284C7 100%);
+  color: #030712;
   font-weight: 800;
-  letter-spacing: 1.5px;
-  color: #06B6D4;
-  margin-bottom: 16px;
-  text-transform: uppercase;
-}
-
-.hud-metrics-row {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  margin-bottom: 18px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.hud-metric-box {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-}
-.hud-metric-label {
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
-  color: #94A3B8;
-  letter-spacing: 1px;
-}
-.hud-metric-value {
-  font-family: var(--font-mono);
-  font-size: 1.25rem;
-  font-weight: 900;
-  color: #FFFFFF;
-}
-.hud-metric-value small {
-  font-size: 0.7rem;
-  color: #06B6D4;
-}
-
-.hud-log-stream {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  text-align: left;
-  margin-bottom: 18px;
-  font-family: var(--font-mono);
-  font-size: 0.76rem;
-}
-
-.hud-log-line {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: #64748B;
-  transition: color 0.25s ease;
-}
-.hud-log-line.active {
-  color: #E2E8F0;
-}
-.hud-log-tick {
-  color: #10B981;
-  font-weight: 900;
-}
-
-.hud-skip-btn {
-  background: rgba(6, 182, 212, 0.12);
-  border: 1px solid rgba(6, 182, 212, 0.4);
-  color: #06B6D4;
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  font-weight: 800;
-  padding: 8px 20px;
-  border-radius: 9999px;
+  font-size: 0.85rem;
+  padding: 10px 22px;
+  border-radius: 10px;
+  border: none;
   cursor: pointer;
-  letter-spacing: 1px;
-  transition: all 0.2s ease;
+  box-shadow: 0 0 20px rgba(6, 182, 212, 0.35);
+  transition: all 0.25s ease;
+  font-family: 'Inter', sans-serif;
 }
-.hud-skip-btn:hover {
-  background: rgba(6, 182, 212, 0.25);
-  box-shadow: 0 0 15px rgba(6, 182, 212, 0.4);
+.hero-nav-cta-btn:hover {
   transform: translateY(-1px);
+  box-shadow: 0 0 28px rgba(6, 182, 212, 0.6);
 }
 
-/* ─── Atmospheric Altitude Descent Transition Strip ─────────────────────── */
-.altitude-descent-strip {
-  width: 100%;
-  background: linear-gradient(180deg, #000000 0%, #010A18 50%, #00050B 100%);
-  border-top: 1px solid rgba(6, 182, 212, 0.2);
-  border-bottom: 1px solid rgba(6, 182, 212, 0.2);
-  padding: 14px 20px;
-  position: relative;
-  z-index: 10;
-}
-
-.altitude-descent-inner {
-  max-width: 900px;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.alt-track-node {
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 1.5px;
-  color: #06B6D4;
-  white-space: nowrap;
-  text-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
-}
-
-.alt-track-line {
-  flex: 1;
-  height: 2px;
-  background: repeating-linear-gradient(90deg, #06B6D4 0, #06B6D4 8px, transparent 8px, transparent 16px);
-  opacity: 0.45;
-}
-
-@media (max-width: 640px) {
-  .hud-metrics-row { gap: 6px; }
-  .hud-metric-value { font-size: 1rem; }
-  .hud-log-stream { font-size: 0.7rem; }
-  .altitude-descent-inner { flex-direction: column; gap: 6px; text-align: center; }
-  .alt-track-line { display: none; }
-}
 
 
 .hero-top-nav {
