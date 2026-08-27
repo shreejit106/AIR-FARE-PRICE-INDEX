@@ -91,9 +91,11 @@ def fetch_and_process_live_data():
                 for h in HORIZONS:
                     base_fare = (np.random.randint(4000, 8000) if cab == "Economy"
                                  else np.random.randint(15000, 35000))
-                    mult = {"T+1": np.random.uniform(1.3, 2.0), "T+7": np.random.uniform(1.1, 1.5),
-                            "T+15": np.random.uniform(0.9, 1.3), "T+30": np.random.uniform(0.8, 1.1),
-                            "T+45": np.random.uniform(0.7, 0.9)}[h]
+                    mult = {"T+1": np.random.uniform(1.35, 1.42),
+                            "T+7": np.random.uniform(1.12, 1.16),
+                            "T+15": np.random.uniform(1.04, 1.08),
+                            "T+30": np.random.uniform(0.96, 1.01),
+                            "T+45": np.random.uniform(0.84, 0.89)}[h]
                     if al == "IndiGo (6E)":           mult *= 0.95
                     elif al == "Air India (AI)":       mult *= 1.10
                     elif al == "SpiceJet (SG)":        mult *= 0.90

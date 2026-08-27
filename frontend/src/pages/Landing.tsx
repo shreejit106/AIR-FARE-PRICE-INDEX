@@ -86,31 +86,6 @@ const Landing: React.FC = () => {
       <div className="apix-white-blend-orb orb-bottom" />
       <div className="apix-white-sweep-beam" />
 
-      {/* ── Header Navigation ── */}
-      <header className="apix-header">
-        <div className="apix-header-container">
-          <div className="apix-logo-group" onClick={() => navigate('/')}>
-            <span className="apix-logo-text">APIx</span>
-            <span className="apix-logo-badge">RESEARCH</span>
-          </div>
-
-          <nav className="apix-nav-links">
-            <span className="apix-nav-link" onClick={() => navigate('/dashboard')}>Index Data</span>
-            <span className="apix-nav-link" onClick={() => navigate('/methodology')}>Methodology</span>
-            <span className="apix-nav-link" onClick={() => navigate('/analysts')}>Antitrust</span>
-            <span className="apix-nav-link" onClick={() => navigate('/simulation')}>Simulation</span>
-            <span className="apix-nav-link" onClick={() => navigate('/fleet')}>Carriers</span>
-          </nav>
-
-          <div className="apix-header-actions">
-            <button className="apix-btn-launch" onClick={() => navigate('/dashboard')}>
-              <span>Open Dashboard</span>
-              <span style={{ fontSize: '0.85rem' }}>↗</span>
-            </button>
-          </div>
-        </div>
-      </header>
-
       {/* ── Hero Section with Airport Night Background ── */}
       <section className="apix-hero">
         <div className="apix-hero-airport-bg" />

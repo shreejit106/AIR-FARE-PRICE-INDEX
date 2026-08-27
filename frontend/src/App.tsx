@@ -15,12 +15,9 @@ export const useTheme = () => useContext(ThemeContext);
 
 /* ─── Inner layout (with HUD nav) ───────────────────────────────────────── */
 const AppInner: React.FC = () => {
-  const location = useLocation();
-  const showNav = location.pathname !== '/';
-
   return (
     <div className="app-inner">
-      {showNav && <HudNav />}
+      <HudNav />
       <Routes>
         <Route path="/"            element={<Landing />} />
         <Route path="/dashboard"   element={<Dashboard />} />

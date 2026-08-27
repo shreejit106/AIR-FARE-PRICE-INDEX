@@ -6,11 +6,12 @@ import GlassmorphismCTA from './GlassmorphismCTA';
 import { API_BASE_URL } from '../config';
 
 const TABS = [
-  { label: '✈ Calculator',        emoji: '✈', short: 'Calc',    path: '/dashboard'   },
-  { label: '📐 Methodology',      emoji: '📐', short: 'Method', path: '/methodology' },
-  { label: '🏛 For Analysts',     emoji: '🏛', short: 'Analyst', path: '/analysts'    },
-  { label: '🔮 Simulation',       emoji: '🔮', short: 'Sim',    path: '/simulation'  },
-  { label: '🛩 Fleet & Carriers', emoji: '🛩', short: 'Fleet',  path: '/fleet'       },
+  { label: 'Home',                  short: 'Home',        path: '/'            },
+  { label: 'Index Calculator',      short: 'Calculator',  path: '/dashboard'   },
+  { label: 'Methodology & Weights', short: 'Methodology', path: '/methodology' },
+  { label: 'Antitrust & HHI',       short: 'Antitrust',   path: '/analysts'    },
+  { label: 'Fuel Simulator',        short: 'Simulation',  path: '/simulation'  },
+  { label: 'Carrier Fleet',         short: 'Fleet',       path: '/fleet'       },
 ];
 
 const API = API_BASE_URL;
@@ -65,9 +66,8 @@ const HudNav: React.FC = () => {
           onClick={() => navigate('/')}
           aria-label="Go to home"
         >
-          <span className="hud-logo-icon" aria-hidden="true">✈</span>
           <span className="hud-logo-text">APIx</span>
-          <span className="hud-badge" aria-hidden="true">v2.0</span>
+          <span className="hud-badge" aria-hidden="true">RESEARCH</span>
         </button>
 
         {/* ── Desktop Tabs (strictly hidden on screens <= 900px) ── */}
@@ -97,7 +97,7 @@ const HudNav: React.FC = () => {
             </ThreeUIButton>
             {themeOpen && (
               <div className="hud-dropdown" role="menu">
-                {([['dark','🌙 Dark'],['light','☀ Light'],['intermediate','☁ Intermediate'],['coastal','🌊 Coastal']] as [string,string][]).map(([val, label]) => (
+                {([['dark','Dark'],['light','Light'],['intermediate','Intermediate'],['coastal','Coastal']] as [string,string][]).map(([val, label]) => (
                   <ThreeUIButton
                     key={val}
                     active={theme === val}
@@ -118,7 +118,7 @@ const HudNav: React.FC = () => {
         <div className="hud-mobile-row">
           {/* Current active page indicator pill */}
           <span className="hud-mobile-active-page">
-            {activeTab ? `${activeTab.emoji} ${activeTab.short}` : '✈ APIx'}
+            {activeTab ? activeTab.short : 'APIx'}
           </span>
 
           {/* Sync Button */}
@@ -129,7 +129,7 @@ const HudNav: React.FC = () => {
             aria-label="Fetch live fares"
             title="Fetch live fares"
           >
-            {syncing ? '↻' : '↓ Sync'}
+            {syncing ? '↻' : 'Sync'}
           </button>
 
           {/* Hamburger trigger */}
@@ -161,8 +161,7 @@ const HudNav: React.FC = () => {
                       role="menuitem"
                       aria-current={location.pathname === tab.path ? 'page' : undefined}
                     >
-                      <span className="hud-mobile-nav-emoji">{tab.emoji}</span>
-                      <span className="hud-mobile-nav-label">{tab.label.replace(/^[^\s]+\s/, '')}</span>
+                      <span className="hud-mobile-nav-label">{tab.label}</span>
                       {location.pathname === tab.path && <span className="hud-mobile-active-dot" />}
                     </button>
                   ))}
@@ -173,29 +172,16 @@ const HudNav: React.FC = () => {
                 {/* Theme selector */}
                 <div className="hud-mobile-menu-heading">DISPLAY THEME</div>
                 <div className="hud-mobile-theme-grid">
-                  {([['dark','🌙','Dark'],['light','☀','Light'],['intermediate','☁','Inter'],['coastal','🌊','Coastal']] as [string,string,string][]).map(([val, emoji, label]) => (
+                  {([['dark','Dark'],['light','Light'],['intermediate','Inter'],['coastal','Coastal']] as [string,string][]).map(([val, label]) => (
                     <button
                       key={val}
                       className={`hud-mobile-theme-btn${theme === val ? ' active' : ''}`}
                       onClick={() => { setTheme(val as any); }}
                     >
-                      <span>{emoji}</span>
                       <span>{label}</span>
                     </button>
                   ))}
                 </div>
-
-                <div className="hud-mobile-divider" />
-
-                {/* Return to hub */}
-                <button
-                  className="hud-mobile-nav-item hub-return-item"
-                  onClick={() => { navigate('/'); setMenuOpen(false); }}
-                  role="menuitem"
-                >
-                  <span className="hud-mobile-nav-emoji">🏠</span>
-                  <span className="hud-mobile-nav-label">Return to Main Hub</span>
-                </button>
               </div>
             )}
           </div>
