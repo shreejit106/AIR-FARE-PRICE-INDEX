@@ -165,11 +165,7 @@
 
 body {
   font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
-  background-color: #000000;
-  background-image: 
-    linear-gradient(to right, rgba(255, 255, 255, 0.08) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
-  background-size: 64px 64px;
+  background: var(--bg-gradient);
   background-attachment: fixed;
   color: var(--text);
   min-height: 100vh;
@@ -954,32 +950,6 @@ body {
   0%   { transform: translate(-30%, -30%); }
   50%  { transform: translate(30%, 30%); }
   100% { transform: translate(-30%, -30%); }
-}
-
-/* ── Global Dashboard Morphing Grid (Behind All Tabs) ── */
-.global-morph-grid-base {
-  position: fixed;
-  inset: 0;
-  background-size: 64px 64px;
-  background-image: 
-    linear-gradient(to right, rgba(255, 255, 255, 0.09) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.09) 1px, transparent 1px);
-  pointer-events: none;
-  z-index: 0;
-}
-
-.global-white-blend-orb {
-  position: fixed;
-  top: 10%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 900px;
-  height: 500px;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.03) 50%, transparent 75%);
-  filter: blur(90px);
-  pointer-events: none;
-  z-index: 0;
-  animation: whiteBlendPulse 10s ease-in-out infinite alternate;
 }
 
 /* ── Top Header Navigation ── */

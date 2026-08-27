@@ -20,8 +20,6 @@ const AppInner: React.FC = () => {
 
   return (
     <div className="app-inner">
-      <div className="global-morph-grid-base" />
-      <div className="global-white-blend-orb" />
       {showNav && <HudNav />}
       <Routes>
         <Route path="/"            element={<Landing />} />
