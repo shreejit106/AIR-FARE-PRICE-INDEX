@@ -57,120 +57,120 @@ const HudNav: React.FC = () => {
   const activeTab = TABS.find(t => t.path === location.pathname);
 
   return (
-    <nav className="hud-nav" role="navigation" aria-label="Main navigation">
-
-      {/* ── Logo ── */}
-      <button
-        className="hud-logo hud-logo-btn"
-        onClick={() => navigate('/')}
-        aria-label="Go to home"
-      >
-        <span className="hud-logo-icon" aria-hidden="true">✈</span>
-        <span className="hud-logo-text">APIx</span>
-        <span className="hud-badge" aria-hidden="true">v2.0</span>
-      </button>
-
-      {/* ── Desktop Tabs (hidden on mobile) ── */}
-      <div className="hud-nav-tabs" role="tablist" aria-label="Page tabs">
-        {TABS.map(tab => (
-          <ThreeUIButton
-            key={tab.path}
-            active={location.pathname === tab.path}
-            onClick={() => navigate(tab.path)}
-            role="tab"
-            aria-selected={location.pathname === tab.path}
-          >
-            {tab.label}
-          </ThreeUIButton>
-        ))}
-      </div>
-
-      {/* ── Desktop Actions (hidden on mobile) ── */}
-      <div className="hud-actions hud-actions-desktop">
-        <GlassmorphismCTA onClick={handleSync} disabled={syncing}>
-          {syncing ? '↻ Syncing…' : 'Fetch Live Fares'}
-        </GlassmorphismCTA>
-
-        <div ref={themeRef} style={{ position: 'relative' }}>
-          <ThreeUIButton onClick={() => setThemeOpen(!themeOpen)} title="Select theme" aria-expanded={themeOpen}>
-            Theme: {theme.charAt(0).toUpperCase() + theme.slice(1)} ▼
-          </ThreeUIButton>
-          {themeOpen && (
-            <div className="hud-dropdown" role="menu">
-              {([['dark','🌙 Dark'],['light','☀ Light'],['intermediate','☁ Intermediate'],['coastal','🌊 Coastal']] as [string,string][]).map(([val, label]) => (
-                <ThreeUIButton
-                  key={val}
-                  active={theme === val}
-                  onClick={() => { setTheme(val as any); setThemeOpen(false); }}
-                  role="menuitem"
-                >
-                  {label}
-                </ThreeUIButton>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* ══════════════════════════════════════════════════════════
-          MOBILE ROW: Active page label + hamburger
-          ══════════════════════════════════════════════════════════ */}
-      <div className="hud-mobile-row">
-        {/* Current page indicator */}
-        <span className="hud-mobile-active-page">
-          {activeTab ? `${activeTab.emoji} ${activeTab.short}` : '✈ APIx'}
-        </span>
-
-        {/* Fetch button — compact on mobile */}
+    <>
+      <nav className="hud-nav" role="navigation" aria-label="Main navigation">
+        {/* ── Logo ── */}
         <button
-          className="hud-mobile-sync-btn"
-          onClick={handleSync}
-          disabled={syncing}
-          aria-label="Fetch live fares"
-          title="Fetch live fares"
+          className="hud-logo hud-logo-btn"
+          onClick={() => navigate('/')}
+          aria-label="Go to home"
         >
-          {syncing ? '↻' : '⬇ Sync'}
+          <span className="hud-logo-icon" aria-hidden="true">✈</span>
+          <span className="hud-logo-text">APIx</span>
+          <span className="hud-badge" aria-hidden="true">v2.0</span>
         </button>
 
-        {/* Hamburger */}
-        <div ref={menuRef} style={{ position: 'relative' }}>
-          <button
-            className={`hud-hamburger${menuOpen ? ' open' : ''}`}
-            onClick={() => setMenuOpen(!menuOpen)}
-            aria-expanded={menuOpen}
-            aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
-          >
-            <span />
-            <span />
-            <span />
-          </button>
+        {/* ── Desktop Tabs (strictly hidden on screens <= 900px) ── */}
+        <div className="hud-nav-tabs" role="tablist" aria-label="Page tabs">
+          {TABS.map(tab => (
+            <ThreeUIButton
+              key={tab.path}
+              active={location.pathname === tab.path}
+              onClick={() => navigate(tab.path)}
+              role="tab"
+              aria-selected={location.pathname === tab.path}
+            >
+              {tab.label}
+            </ThreeUIButton>
+          ))}
+        </div>
 
-          {/* Mobile Dropdown Menu */}
-          {menuOpen && (
-            <div className="hud-mobile-menu" role="menu" aria-label="Navigation menu">
-              {/* Nav links */}
-              <div className="hud-mobile-menu-section">
-                <div className="hud-mobile-menu-heading">NAVIGATION</div>
-                {TABS.map(tab => (
-                  <button
-                    key={tab.path}
-                    className={`hud-mobile-nav-item${location.pathname === tab.path ? ' active' : ''}`}
-                    onClick={() => navigate(tab.path)}
+        {/* ── Desktop Actions (strictly hidden on screens <= 900px) ── */}
+        <div className="hud-actions hud-actions-desktop">
+          <GlassmorphismCTA onClick={handleSync} disabled={syncing}>
+            {syncing ? '↻ Syncing…' : 'Fetch Live Fares'}
+          </GlassmorphismCTA>
+
+          <div ref={themeRef} style={{ position: 'relative' }}>
+            <ThreeUIButton onClick={() => setThemeOpen(!themeOpen)} title="Select theme" aria-expanded={themeOpen}>
+              Theme: {theme.charAt(0).toUpperCase() + theme.slice(1)} ▼
+            </ThreeUIButton>
+            {themeOpen && (
+              <div className="hud-dropdown" role="menu">
+                {([['dark','🌙 Dark'],['light','☀ Light'],['intermediate','☁ Intermediate'],['coastal','🌊 Coastal']] as [string,string][]).map(([val, label]) => (
+                  <ThreeUIButton
+                    key={val}
+                    active={theme === val}
+                    onClick={() => { setTheme(val as any); setThemeOpen(false); }}
                     role="menuitem"
-                    aria-current={location.pathname === tab.path ? 'page' : undefined}
                   >
-                    <span className="hud-mobile-nav-emoji">{tab.emoji}</span>
-                    <span>{tab.label.replace(/^[^\s]+\s/, '')}</span>
-                    {location.pathname === tab.path && <span className="hud-mobile-active-dot" />}
-                  </button>
+                    {label}
+                  </ThreeUIButton>
                 ))}
               </div>
+            )}
+          </div>
+        </div>
 
-              {/* Divider */}
-              <div className="hud-mobile-divider" />
+        {/* ══════════════════════════════════════════════════════════
+            MOBILE HEADER: Active Indicator + Sync + Hamburger
+            ══════════════════════════════════════════════════════════ */}
+        <div className="hud-mobile-row">
+          {/* Current active page indicator pill */}
+          <span className="hud-mobile-active-page">
+            {activeTab ? `${activeTab.emoji} ${activeTab.short}` : '✈ APIx'}
+          </span>
 
-              {/* Theme selector */}
-              <div className="hud-mobile-menu-section">
+          {/* Sync Button */}
+          <button
+            className="hud-mobile-sync-btn"
+            onClick={handleSync}
+            disabled={syncing}
+            aria-label="Fetch live fares"
+            title="Fetch live fares"
+          >
+            {syncing ? '↻' : '↓ Sync'}
+          </button>
+
+          {/* Hamburger trigger */}
+          <div ref={menuRef} className="hud-hamburger-wrapper">
+            <button
+              className={`hud-hamburger${menuOpen ? ' open' : ''}`}
+              onClick={() => setMenuOpen(!menuOpen)}
+              aria-expanded={menuOpen}
+              aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+            >
+              <span />
+              <span />
+              <span />
+            </button>
+
+            {/* Mobile Dropdown Menu */}
+            {menuOpen && (
+              <div className="hud-mobile-menu" role="menu" aria-label="Navigation menu">
+                {/* Header inside menu */}
+                <div className="hud-mobile-menu-heading">NAVIGATION CHANNELS</div>
+
+                {/* Nav links */}
+                <div className="hud-mobile-menu-section">
+                  {TABS.map(tab => (
+                    <button
+                      key={tab.path}
+                      className={`hud-mobile-nav-item${location.pathname === tab.path ? ' active' : ''}`}
+                      onClick={() => { navigate(tab.path); setMenuOpen(false); }}
+                      role="menuitem"
+                      aria-current={location.pathname === tab.path ? 'page' : undefined}
+                    >
+                      <span className="hud-mobile-nav-emoji">{tab.emoji}</span>
+                      <span className="hud-mobile-nav-label">{tab.label.replace(/^[^\s]+\s/, '')}</span>
+                      {location.pathname === tab.path && <span className="hud-mobile-active-dot" />}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="hud-mobile-divider" />
+
+                {/* Theme selector */}
                 <div className="hud-mobile-menu-heading">DISPLAY THEME</div>
                 <div className="hud-mobile-theme-grid">
                   {([['dark','🌙','Dark'],['light','☀','Light'],['intermediate','☁','Inter'],['coastal','🌊','Coastal']] as [string,string,string][]).map(([val, emoji, label]) => (
@@ -184,25 +184,33 @@ const HudNav: React.FC = () => {
                     </button>
                   ))}
                 </div>
+
+                <div className="hud-mobile-divider" />
+
+                {/* Return to hub */}
+                <button
+                  className="hud-mobile-nav-item hub-return-item"
+                  onClick={() => { navigate('/'); setMenuOpen(false); }}
+                  role="menuitem"
+                >
+                  <span className="hud-mobile-nav-emoji">🏠</span>
+                  <span className="hud-mobile-nav-label">Return to Main Hub</span>
+                </button>
               </div>
-
-              {/* Divider */}
-              <div className="hud-mobile-divider" />
-
-              {/* Home link */}
-              <button
-                className="hud-mobile-nav-item"
-                onClick={() => navigate('/')}
-                role="menuitem"
-              >
-                <span className="hud-mobile-nav-emoji">🏠</span>
-                <span>Return to Hub</span>
-              </button>
-            </div>
-          )}
+            )}
+          </div>
         </div>
-      </div>
-    </nav>
+      </nav>
+
+      {/* Dimmed backdrop when mobile menu is open */}
+      {menuOpen && (
+        <div 
+          className="hud-mobile-backdrop" 
+          onClick={() => setMenuOpen(false)} 
+          aria-hidden="true" 
+        />
+      )}
+    </>
   );
 };
 
