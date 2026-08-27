@@ -78,9 +78,13 @@ const Landing: React.FC = () => {
   return (
     <div className="apix-landing-root">
 
-      {/* ── Background Grid & Precision Crosshairs ── */}
-      <div className="apix-large-grid" />
-      <div className="apix-grid-glow" />
+      {/* ── Pure Black Canvas with White Blending & Morphing Grids ── */}
+      <div className="apix-morph-grid-base" />
+      <div className="apix-morph-grid-animated" />
+      <div className="apix-white-blend-orb orb-top" />
+      <div className="apix-white-blend-orb orb-mid" />
+      <div className="apix-white-blend-orb orb-bottom" />
+      <div className="apix-white-sweep-beam" />
 
       {/* ── Header Navigation ── */}
       <header className="apix-header">
