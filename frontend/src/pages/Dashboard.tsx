@@ -103,8 +103,8 @@ const Dashboard: React.FC = () => {
   const [routeFilter,   setRouteFilter]   = useState('all');
   const [routes,        setRoutes]        = useState<string[]>(DEFAULT_ROUTES_LIST);
   const [activeTab,     setActiveTab]     = useState(0);
-  const [baseYear,      setBaseYear]      = useState(2012);
-  const [baseMonth,     setBaseMonth]     = useState(1);
+  const [baseYear,      setBaseYear]      = useState(2022);
+  const [baseMonth,     setBaseMonth]     = useState(9);
 
   const [indexData,    setIndexData]    = useState<IndexData>(DEFAULT_INDEX);
   const [routeSummary, setRouteSummary] = useState<RouteSummary[]>(DEFAULT_ROUTE_SUMMARIES);

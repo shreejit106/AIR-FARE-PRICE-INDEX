@@ -16,7 +16,7 @@ const MODULES: ModuleItem[] = [
     category: 'PRICE INDEX ENGINE',
     title: 'Modified Laspeyres Index',
     description: 'Computes daily national and route-level price indices weighted by quarterly passenger distributions across 80 scheduled city-pairs.',
-    tag: 'Base 2024 = 100.00',
+    tag: 'Base Sept 2022 = 100.00',
     path: '/dashboard',
   },
   {
@@ -123,7 +123,7 @@ const Landing: React.FC = () => {
             <div className="apix-terminal-header">
               <div className="apix-terminal-title">
                 <span className="terminal-pulse" />
-                <span>COMPOSITE NATIONAL APIx (BASE 2024 = 100.00)</span>
+                <span>COMPOSITE NATIONAL APIx (BASE SEPT 2022 = 100.00)</span>
               </div>
               <div className="apix-terminal-meta">
                 <span>80 ROUTES MONITORED</span>
@@ -360,7 +360,7 @@ const Landing: React.FC = () => {
               </div>
             </div>
             <div className="apix-foot-pills">
-              <span className="apix-foot-pill">Base Period: 2024 = 100.00</span>
+              <span className="apix-foot-pill">Base Period: Sept 2022 = 100.00</span>
               <span className="apix-foot-pill">80 Domestic Corridors</span>
               <span className="apix-foot-pill">5 Booking Horizons</span>
             </div>

@@ -34,9 +34,9 @@ const PIPELINE_STEPS = [
 ];
 
 const VARS = [
-  { sym: 'P(r,t)', title: 'Current Median Fare',    color: '#06B6D4', desc: 'IQR-filtered median ticket price on route r at time t, scraped live from airlines and OTAs.' },
-  { sym: 'P(r,0)', title: 'Base Period Fare',        color: '#F59E0B', desc: 'Fixed reference price for route r during the chosen base year, anchoring the index at exactly 100.' },
-  { sym: 'Q(r,0)', title: 'Passenger Weight (DGCA)', color: '#8B5CF6', desc: 'Proportion of national passengers on route r during the base period, from DGCA quarterly data.' },
+  { sym: 'P(r,t)', title: 'Current Median Fare',        color: '#06B6D4', desc: 'IQR-filtered median ticket price on route r at time t, scraped live from airlines and OTAs.' },
+  { sym: 'P(r,0)', title: 'Base Period Fare (Sept 2022)', color: '#F59E0B', desc: 'Fixed reference price for route r during September 2022 base period, anchoring the index at exactly 100.00.' },
+  { sym: 'Q(r,0)', title: 'Passenger Weight (DGCA Base)', color: '#8B5CF6', desc: 'Proportion of national passengers on route r during September 2022 base period, from DGCA quarterly traffic data.' },
 ];
 
 const API = API_BASE_URL;

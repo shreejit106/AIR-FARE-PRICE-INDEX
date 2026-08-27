@@ -28,7 +28,7 @@ $$w_r = \frac{\text{PAX}_r}{\sum_{k=1}^{80} \text{PAX}_k}, \quad \sum_{r=1}^{80}
 
 ### 2.4 Modified Laspeyres Price Index ($\text{APIx}_t$)
 $$\text{APIx}_t = \left[ \sum_{r=1}^{80} w_r \times \left( \frac{P_{r,t}}{P_{r,0}} \right) \right] \times 100$$
-* $\text{APIx}_0 = 100.0$ (Baseline).
+* $\text{APIx}_0 = 100.0$ (Baseline Reference: September 2022).
 
 ### 2.5 Market Concentration Index (HHI)
 $$HHI_r = \sum_{i=1}^{N} (s_{i,r} \times 100)^2$$
