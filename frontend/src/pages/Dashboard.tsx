@@ -268,8 +268,8 @@ const Dashboard: React.FC = () => {
             <span style={{color:'var(--text)', fontWeight:600, fontSize:'0.8rem'}}>{c.name}</span>
           </div>
         ))}
-        <div style={{marginLeft:'auto', display:'flex', gap:16, fontSize:'0.75rem', fontFamily:'JetBrains Mono,monospace', color:'var(--sub)', whiteSpace:'nowrap'}}>
-          <span>ROUTES: <b style={{color:'var(--text)'}}>{routeSummary.length}</b></span>
+        <div style={{marginLeft:'auto', display:'flex', gap:16, fontSize:'0.75rem', fontFamily:'JetBrains Mono,monospace', color:'var(--sub)', whiteSpace:'nowrap', alignItems:'center'}}>
+          <span>ROUTES: <b style={{color:'var(--text)'}}>{routeSummary.length}</b><span style={{color:'var(--cyan)', marginLeft:4}}>/ 80 {aggregation === 'Overall Industry' ? 'Sovereign' : 'Active'}</span></span>
           <span>FEED: <b style={{color:'var(--green)'}}>● LIVE</b></span>
         </div>
       </div>

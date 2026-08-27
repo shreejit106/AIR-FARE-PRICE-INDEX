@@ -134,7 +134,10 @@ def fetch_and_process_live_data():
     for i, (orig, dest) in enumerate(selected_pairs):
         pshare = float(base_shares[i])
         pcount = int(pshare * 150_000_000)
-        route_airlines = random.sample(AIRLINES, random.randint(2, 5))
+        route_airlines = ["IndiGo (6E)", "Air India (AI)"] + random.sample(
+            ["SpiceJet (SG)", "Air India Express (IX)", "Akasa Air (QP)"],
+            random.randint(1, 3)
+        )
         for al in route_airlines:
             for cab in ["Economy", "Business"]:
                 for h in HORIZONS:
