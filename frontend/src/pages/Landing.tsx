@@ -1,307 +1,286 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
 
-interface FeatureCardProps {
-  icon: string;
-  category: string;
-  title: string;
-  desc: string;
-  badge: string;
-  badgeColor: string;
-  path: string;
-  delay: number;
-}
-
-const FEATURES: FeatureCardProps[] = [
+const MODULES = [
   {
-    icon: '⚖',
-    category: 'CORE METHODOLOGY',
-    title: 'Modified Laspeyres Price Index',
-    desc: 'Computes real-time national airfare indices weighted by official DGCA quarterly passenger traffic distributions across 80 marquee routes.',
-    badge: 'Base 2012/2024 = 100',
-    badgeColor: '#06B6D4',
+    code: 'SEC-01',
+    title: 'Modified Laspeyres Index Engine',
+    desc: 'Daily national price index computation weighted by official DGCA quarterly passenger distributions across 80 scheduled corridors and 5 advance booking horizons (T+1 to T+45).',
+    badge: 'Base 2024 = 100.00',
     path: '/dashboard',
-    delay: 0.05,
+    icon: '📊',
   },
   {
-    icon: '🛡',
-    category: 'STATISTICAL INTEGRITY',
-    title: 'Robust IQR Outlier Filtration',
-    desc: 'Mathematical [Q1, Q3] interquartile range boundaries filter out predatory last-seat fare spikes, ensuring true consumer price representation.',
-    badge: 'Upper Bound = Q3 + 1.5×IQR',
-    badgeColor: '#10B981',
+    code: 'SEC-02',
+    title: 'Statistical IQR Outlier Rejection',
+    desc: 'Mathematical [Q1, Q3] interquartile boundaries discard unrepresentative last-seat surge fares, ensuring true consumer price representation for national inflation tracking.',
+    badge: 'IQR Filtered Median',
     path: '/methodology',
-    delay: 0.1,
+    icon: '🛡️',
   },
   {
-    icon: '🗺',
-    category: 'GEOSPATIAL TELEMETRY',
-    title: 'Real-Time 80-Route Geospatial Radar',
-    desc: 'Interactive GIS radar mapping domestic flight corridors across 20 airports with inflation-colored arcs and passenger density thickness.',
-    badge: '5 Lead Horizons (T+1 to T+45)',
-    badgeColor: '#3B82F6',
-    path: '/dashboard',
-    delay: 0.15,
+    code: 'SEC-03',
+    title: 'DGCA Passenger Volume Allocation',
+    desc: 'Dynamic weight matrices derived from official Directorate General of Civil Aviation city-pair data, preventing high-density trunk routes from being diluted by regional hops.',
+    badge: '80 Corridors · 100% Normalized',
+    path: '/methodology',
+    icon: '⚖️',
   },
   {
-    icon: '🏛',
-    category: 'REGULATORY & POLICY',
-    title: 'Antitrust & HHI Monopoly Analytics',
-    desc: 'Automated Herfindahl-Hirschman Index market concentration scoring, pinpointing high-barrier monopoly routes for DGCA and CCI oversight.',
-    badge: 'HHI > 2500 Alert System',
-    badgeColor: '#EF4444',
+    code: 'SEC-04',
+    title: 'Antitrust & Market Concentration (HHI)',
+    desc: 'Automated Herfindahl-Hirschman Index monitoring for the Competition Commission of India (CCI) and DGCA to identify high-barrier routes with HHI > 2500.',
+    badge: 'CCI / DGCA Oversight',
     path: '/analysts',
-    delay: 0.2,
+    icon: '🏛️',
   },
   {
-    icon: '🔮',
-    category: 'PREDICTIVE MODELING',
-    title: 'ATF Fuel Shock Sensitivity Simulator',
-    desc: 'Interactive macroeconomic engine simulating Aviation Turbine Fuel shocks (±50%) with carrier-specific cost pass-through elasticities.',
-    badge: 'Elasticity η = 0.55 – 0.80',
-    badgeColor: '#F59E0B',
+    code: 'SEC-05',
+    title: 'ATF Fuel Shock Elasticity Simulator',
+    desc: 'Macroeconomic simulation engine modeling Aviation Turbine Fuel price fluctuations (±50%) with carrier-specific cost pass-through elasticities (η = 0.55 - 0.80).',
+    badge: 'Predictive Policy Tool',
     path: '/simulation',
-    delay: 0.25,
+    icon: '🔮',
   },
   {
-    icon: '🛩',
-    category: 'INDUSTRY BENCHMARKING',
-    title: 'Carrier Fleet Intelligence Cockpit',
-    desc: 'Deep operational profiles and pricing curves for IndiGo, Air India, SpiceJet, Akasa Air, and AI Express spanning 600+ active aircraft.',
-    badge: '5 Fleets · 92% National Share',
-    badgeColor: '#A78BFA',
+    code: 'SEC-06',
+    title: 'Scheduled Carrier Fleet Register',
+    desc: 'Operational profiles, seat capacities, and yield curves across IndiGo, Air India, SpiceJet, Akasa Air, and AI Express representing 92% of domestic aviation traffic.',
+    badge: '600+ Aircraft Monitored',
     path: '/fleet',
-    delay: 0.3,
+    icon: '✈️',
   },
 ];
 
 const Landing: React.FC = () => {
   const navigate = useNavigate();
 
-  const scrollToFeatures = () => {
-    const el = document.getElementById('features-section');
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
-  };
-
   return (
-    <div className="landing-container">
+    <div className="govt-portal-container">
 
       {/* ══════════════════════════════════════════════════════
-          HERO SECTION — SOBER, CINEMATIC & INSTANT
+          TOP TRICOLOR & OFFICIAL GOVERNMENT HEADER STRIP
           ══════════════════════════════════════════════════════ */}
-      <section className="hero-plane-section">
+      <div className="govt-top-bar">
+        <div className="govt-top-bar-inner">
+          <div className="govt-emblem-text">
+            <span className="govt-tricolor-dot" />
+            <span>भारत सरकार | Government of India</span>
+            <span className="govt-bar-sep">•</span>
+            <span>नागर विमानन मंत्रालय | Ministry of Civil Aviation</span>
+          </div>
+          <div className="govt-top-meta">
+            <span className="govt-status-tag">● OFFICIAL STATISTICAL RELEASE</span>
+            <span className="govt-bar-sep">•</span>
+            <span>Ref: DGCA-MoSPI / APIx-2026</span>
+          </div>
+        </div>
+      </div>
 
-        {/* Plane Background with subtle soft focus for text readability */}
-        <div className="hero-plane-bg sober-hero-bg" />
-
-        {/* Rich dark vignette overlay */}
-        <div className="hero-plane-overlay sober-hero-overlay" />
-
-        {/* Top Navbar */}
-        <header className="hero-top-nav">
-          <div className="hud-logo" style={{ cursor: 'pointer' }} onClick={() => navigate('/')}>
-            <span className="hud-logo-icon">✈</span>
-            <span className="hud-logo-text">APIx</span>
-            <span className="hud-badge">v2.0</span>
+      {/* ══════════════════════════════════════════════════════
+          MINISTRY PORTAL HEADER
+          ══════════════════════════════════════════════════════ */}
+      <header className="govt-nav-header">
+        <div className="govt-nav-inner">
+          <div className="govt-brand" onClick={() => navigate('/')}>
+            <div className="govt-brand-icon">🏛️</div>
+            <div>
+              <div className="govt-brand-title">APIx • Airfare Price Index</div>
+              <div className="govt-brand-sub">Directorate General of Civil Aviation (DGCA) & MoSPI Standards</div>
+            </div>
           </div>
 
-          <button
-            className="hero-nav-cta-btn"
-            onClick={() => navigate('/dashboard')}
-          >
-            Enter Flight Deck →
-          </button>
-        </header>
-
-        {/* Center Content: Title Card + CTAs */}
-        <div className="hero-center-content">
-          {/* Live Status Pill */}
-          <motion.div
-            className="hero-badge-pill"
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <span className="live-dot" />
-            <span>CIVIL AVIATION ECONOMIC INTELLIGENCE</span>
-          </motion.div>
-
-          {/* Title */}
-          <motion.h1
-            className="hero-title-main"
-            initial={{ opacity: 0, scale: 0.96 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-          >
-            <span className="hero-title-icon">✈</span>
-            <span className="hero-title-gradient">APIx</span>
-          </motion.h1>
-
-          {/* Subtitle */}
-          <motion.p
-            className="hero-tagline"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.15 }}
-          >
-            Airfare Price Index of India
-          </motion.p>
-
-          {/* Description */}
-          <motion.p
-            className="hero-description"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            Real-time macroeconomic intelligence platform tracking domestic airfare inflation across{' '}
-            <strong>80 marquee routes</strong>, weighted by official <strong>DGCA quarterly passenger volume</strong>{' '}
-            using a <strong>Modified Laspeyres Index</strong> with robust statistical IQR outlier filtration.
-          </motion.p>
-
-          {/* CTA Buttons */}
-          <motion.div
-            className="hero-cta-group"
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.25 }}
-          >
-            <button
-              className="hero-cta-primary"
-              onClick={() => navigate('/dashboard')}
-            >
-              <span>Launch Flight Deck</span>
-              <span style={{ fontSize: '1.1rem' }}>✈</span>
+          <div className="govt-nav-actions">
+            <button className="govt-btn-primary" onClick={() => navigate('/dashboard')}>
+              Access National Data Portal →
             </button>
+          </div>
+        </div>
+      </header>
 
-            <button
-              className="hero-cta-secondary"
-              onClick={() => navigate('/methodology')}
-            >
-              <span>Read Methodology</span>
-              <span>📐</span>
+      {/* ══════════════════════════════════════════════════════
+          SOBER INSTITUTIONAL HERO SECTION
+          ══════════════════════════════════════════════════════ */}
+      <section className="govt-hero-section">
+        <div className="govt-hero-inner">
+
+          {/* Department / Category Pill */}
+          <div className="govt-dept-badge">
+            NATIONAL CIVIL AVIATION ECONOMIC REPOSITORY
+          </div>
+
+          {/* Main Official Title */}
+          <h1 className="govt-main-heading">
+            National Airfare Price Index of India
+          </h1>
+          <div className="govt-devanagari-title">
+            राष्ट्रीय हवाई किराया मूल्य सूचकांक (APIx)
+          </div>
+
+          {/* Institutional Executive Summary */}
+          <p className="govt-lead-text">
+            An authoritative, high-frequency macroeconomic price index tracking domestic passenger tariff
+            inflation across <strong>80 scheduled flight corridors</strong>. Standardized using a{' '}
+            <strong>Modified Laspeyres Index</strong> weighted by official <strong>DGCA quarterly passenger traffic</strong>,
+            incorporating robust statistical <strong>Interquartile Range (IQR)</strong> anomaly rejection.
+          </p>
+
+          {/* Primary Action Buttons */}
+          <div className="govt-hero-buttons">
+            <button className="govt-hero-btn-primary" onClick={() => navigate('/dashboard')}>
+              <span>Open Live Calculator & Radar</span>
+              <span>📊</span>
             </button>
-          </motion.div>
-        </div>
+            <button className="govt-hero-btn-secondary" onClick={() => navigate('/methodology')}>
+              <span>Technical Methodology & Standards</span>
+              <span>📄</span>
+            </button>
+          </div>
 
-        {/* Scroll Down Indicator */}
-        <div
-          className="hero-scroll-indicator"
-          onClick={scrollToFeatures}
-          role="button"
-          tabIndex={0}
-        >
-          <span>EXPLORE PLATFORM</span>
-          <span className="scroll-arrow">▼</span>
-        </div>
+          {/* ── 4 Key National Economic KPIs ── */}
+          <div className="govt-kpi-grid">
+            <div className="govt-kpi-card">
+              <div className="govt-kpi-label">COMPOSITE APIx (T+7)</div>
+              <div className="govt-kpi-value">114.20 <small>PTS</small></div>
+              <div className="govt-kpi-change up">▲ +14.20% vs Base (100.00)</div>
+            </div>
 
+            <div className="govt-kpi-card">
+              <div className="govt-kpi-label">SCHEDULED CORRIDORS</div>
+              <div className="govt-kpi-value">80 <small>ROUTES</small></div>
+              <div className="govt-kpi-sub">Across 20 Primary Airport Hubs</div>
+            </div>
+
+            <div className="govt-kpi-card">
+              <div className="govt-kpi-label">PASSENGER WEIGHT COVERAGE</div>
+              <div className="govt-kpi-value">98.4%</div>
+              <div className="govt-kpi-sub">DGCA Quarterly Verified Traffic</div>
+            </div>
+
+            <div className="govt-kpi-card">
+              <div className="govt-kpi-label">STATISTICAL INTEGRITY</div>
+              <div className="govt-kpi-value">IQR [Q1, Q3]</div>
+              <div className="govt-kpi-sub">Dynamic Surge Outlier Rejection</div>
+            </div>
+          </div>
+
+        </div>
       </section>
 
       {/* ══════════════════════════════════════════════════════
-          FEATURES SECTION — CLEAN BLACK & BLUE TEXTURE
+          OFFICIAL MODULES & CAPABILITIES DIRECTORY
           ══════════════════════════════════════════════════════ */}
-      <section id="features-section" className="earth-features-section">
+      <section className="govt-modules-section">
+        <div className="govt-modules-inner">
 
-        {/* 7-Layer Deep Black & Blue Texture Background */}
-        <div className="bluebk-base" />
-        <div className="bluebk-grid" />
-        <div className="bluebk-radial-1" />
-        <div className="bluebk-radial-2" />
-        <div className="bluebk-noise" />
-        <div className="bluebk-top-fade" />
-        <div className="bluebk-bottom-fade" />
-
-        {/* Features Content Container */}
-        <div className="earth-content-wrap">
-
-          {/* Section Header */}
-          <div className="features-header-block">
-            <div className="features-mini-tag">
-              ✦ CORE ARCHITECTURE
-            </div>
-            <h2 className="features-main-title">
-              Built for Civil Aviation Intelligence
-            </h2>
-            <p className="features-subtitle">
-              Engineered for policymakers, economists, and airline analysts to monitor
-              real-time fare dynamics, antitrust concentration, and fuel shock elasticities.
+          <div className="govt-section-header">
+            <div className="govt-section-tag">SYSTEM MODULES</div>
+            <h2 className="govt-section-title">Official Analytical & Regulatory Subsystems</h2>
+            <p className="govt-section-desc">
+              Six institutional modules designed for policymakers, economists, airline operators, and consumers.
             </p>
           </div>
 
-          {/* 6 Glassmorphism Feature Cards Grid */}
-          <div className="glass-features-grid">
-            {FEATURES.map((feat) => (
+          <div className="govt-cards-grid">
+            {MODULES.map(m => (
               <div
-                key={feat.title}
-                className="glass-feature-card"
-                onClick={() => navigate(feat.path)}
+                key={m.code}
+                className="govt-module-card"
+                onClick={() => navigate(m.path)}
                 role="button"
                 tabIndex={0}
               >
-                {/* Top Row: Icon + Badge */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
-                  <div className="glass-card-icon">
-                    {feat.icon}
-                  </div>
-                  <span
-                    className="glass-badge-pill"
-                    style={{
-                      color: feat.badgeColor,
-                      borderColor: `${feat.badgeColor}40`,
-                      background: `${feat.badgeColor}15`,
-                    }}
-                  >
-                    {feat.badge}
-                  </span>
+                <div className="govt-module-card-top">
+                  <span className="govt-module-icon">{m.icon}</span>
+                  <span className="govt-module-badge">{m.badge}</span>
                 </div>
 
-                {/* Category mini-tag */}
-                <div className="glass-card-category">
-                  {feat.category}
-                </div>
+                <div className="govt-module-code">{m.code}</div>
+                <h3 className="govt-module-title">{m.title}</h3>
+                <p className="govt-module-desc">{m.desc}</p>
 
-                {/* Title */}
-                <h3 className="glass-card-title">
-                  {feat.title}
-                </h3>
-
-                {/* Description */}
-                <p className="glass-card-desc">
-                  {feat.desc}
-                </p>
-
-                {/* Footer link arrow */}
-                <div className="glass-card-footer">
-                  <span>Explore module</span>
-                  <span className="glass-card-arrow">→</span>
+                <div className="govt-module-link">
+                  <span>Access Module</span>
+                  <span className="govt-arrow">→</span>
                 </div>
               </div>
             ))}
           </div>
 
-          {/* Bottom Call to Action Card */}
-          <div className="features-bottom-cta-card">
-            <div className="cta-card-content">
-              <span className="cta-card-tag">DGCA & MOSPI METHODOLOGY</span>
-              <h3 className="cta-card-title">
-                Experience the Live Airfare Calculator
-              </h3>
-              <p className="cta-card-desc">
-                Access real-time price trajectories, 80-route geospatial flight radars, and carrier yield curves.
-              </p>
-            </div>
-            <button
-              className="cta-card-button"
-              onClick={() => navigate('/dashboard')}
-            >
-              <span>Launch Flight Deck</span>
-              <span>✈</span>
-            </button>
-          </div>
-
         </div>
       </section>
+
+      {/* ══════════════════════════════════════════════════════
+          METHODOLOGY COMPARISON OVERVIEW
+          ══════════════════════════════════════════════════════ */}
+      <section className="govt-table-section">
+        <div className="govt-table-inner">
+          <div className="govt-section-header" style={{ marginBottom: 24 }}>
+            <div className="govt-section-tag">STATISTICAL BENCHMARK</div>
+            <h2 className="govt-section-title">APIx Weighted Index vs. Naive Simple Average</h2>
+          </div>
+
+          <div className="govt-table-wrapper">
+            <table className="govt-comparison-table">
+              <thead>
+                <tr>
+                  <th>Dimension</th>
+                  <th>Naive Simple Average (Unweighted)</th>
+                  <th>APIx Modified Laspeyres Standard</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Passenger Traffic Weighting</strong></td>
+                  <td>Equal weight (1.25% per route regardless of density)</td>
+                  <td className="highlight-cell">Weighted by official DGCA passenger share (DEL-BOM = ~4.8%)</td>
+                </tr>
+                <tr>
+                  <td><strong>Dynamic Surge Anomaly Filtration</strong></td>
+                  <td>None (distorted by single ₹45,000 predatory tickets)</td>
+                  <td className="highlight-cell">Robust [Q1, Q3] + 1.5×IQR statistical trimming</td>
+                </tr>
+                <tr>
+                  <td><strong>Booking Horizons Covered</strong></td>
+                  <td>Single static date snapshot</td>
+                  <td className="highlight-cell">5 Advance horizons (T+1, T+7, T+15, T+30, T+45)</td>
+                </tr>
+                <tr>
+                  <td><strong>Policy & Antitrust Utility</strong></td>
+                  <td>No market concentration or fuel elasticity tracking</td>
+                  <td className="highlight-cell">Automated HHI &gt; 2500 alerts + ATF fuel shock simulation</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════════════
+          OFFICIAL INSTITUTIONAL FOOTER
+          ══════════════════════════════════════════════════════ */}
+      <footer className="govt-footer">
+        <div className="govt-footer-inner">
+          <div className="govt-footer-main">
+            <div>
+              <div className="govt-footer-title">National Airfare Price Index of India (APIx)</div>
+              <div className="govt-footer-desc">
+                Developed in accordance with international price index standards (UN/ILO/IMF Consumer Price Index Manual)
+                and DGCA civil aviation statistics guidelines.
+              </div>
+            </div>
+            <div className="govt-footer-badges">
+              <span className="govt-footer-pill">Base Year: 2012 / 2024 = 100.00</span>
+              <span className="govt-footer-pill">Release Frequency: Daily at 00:00 IST</span>
+            </div>
+          </div>
+
+          <div className="govt-footer-bottom">
+            <div>© 2026 Directorate General of Civil Aviation (DGCA) & Ministry of Civil Aviation, Government of India.</div>
+            <div>Built for National Economic Research & Aviation Transparency</div>
+          </div>
+        </div>
+      </footer>
 
     </div>
   );
