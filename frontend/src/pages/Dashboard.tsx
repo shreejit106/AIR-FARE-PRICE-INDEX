@@ -193,8 +193,17 @@ const Dashboard: React.FC = () => {
     [routeSummary]
   );
 
+  /* ── Map routes: filter to selected route when Route Specific mode is on ── */
+  const mapRoutes = useMemo(() => {
+    if (aggregation === 'Route Specific' && routeFilter !== 'all') {
+      return routeSummary.filter(r => r.route_id === routeFilter);
+    }
+    return routeSummary;
+  }, [routeSummary, aggregation, routeFilter]);
+
   const PB = plotBase(dark);
   const AX = axisStyle(dark);
+
 
   /* ──────────────────────────────── RENDER ──────────────────────────────── */
   return (
@@ -367,14 +376,14 @@ const Dashboard: React.FC = () => {
                 <div className="map-wrap">
                   <MapContainer center={[22.5,80]} zoom={5} style={{height:'100%',width:'100%'}} zoomControl>
                     <TileLayer url="https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}" attribution="&copy; Esri, DeLorme, NAVTEQ" />
-                    {routeSummary.map(r => {
+                    {mapRoutes.map(r => {
                       const pts = bezier([r.origin_lat,r.origin_lon],[r.dest_lat,r.dest_lon]);
-                      const shares = routeSummary.map(x=>x.passenger_share);
+                      const shares = mapRoutes.map(x=>x.passenger_share);
                       const mn=Math.min(...shares), mx=Math.max(...shares);
-                      const weight = 1+5*((r.passenger_share-mn)/(mx-mn+1e-9));
+                      const weight = mapRoutes.length === 1 ? 4 : 1+5*((r.passenger_share-mn)/(mx-mn+1e-9));
                       return (
                         <Polyline key={r.route_id} positions={pts}
-                          pathOptions={{color:pctColor(r.avg_pct_change), weight, opacity:0.75}}>
+                          pathOptions={{color:pctColor(r.avg_pct_change), weight, opacity:0.85}}>
                           <Popup>
                             <div style={{fontFamily:'Inter,sans-serif', minWidth:160}}>
                               <div style={{fontSize:'1.05rem', fontWeight:800, color:'#06B6D4', marginBottom:6}}>{r.route_id}</div>
@@ -388,14 +397,14 @@ const Dashboard: React.FC = () => {
                         </Polyline>
                       );
                     })}
-                    {Array.from(new Set(routeSummary.flatMap(r=>[r.origin,r.destination]))).map(code => {
-                      const row = routeSummary.find(r=>r.origin===code||r.destination===code);
+                    {Array.from(new Set(mapRoutes.flatMap(r=>[r.origin,r.destination]))).map(code => {
+                      const row = mapRoutes.find(r=>r.origin===code||r.destination===code);
                       if(!row) return null;
                       const lat = row.origin===code ? row.origin_lat : row.dest_lat;
                       const lon = row.origin===code ? row.origin_lon : row.dest_lon;
                       return (
-                        <CircleMarker key={code} center={[lat,lon]} radius={5}
-                          pathOptions={{color:'#06B6D4',fillColor:'#06B6D4',fillOpacity:0.9,weight:1}}>
+                        <CircleMarker key={code} center={[lat,lon]} radius={6}
+                          pathOptions={{color:'#06B6D4',fillColor:'#06B6D4',fillOpacity:1,weight:2}}>
                           <Popup><b style={{color:'#06B6D4'}}>{code}</b></Popup>
                         </CircleMarker>
                       );

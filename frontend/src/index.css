@@ -179,13 +179,14 @@ body {
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--cyan); }
 
-/* ─── Layout ─────────────────────────────────────────────────────────────── */
+/* ─── Layout ───────────────────────────────────────────────────── */
 #root { min-height: 100vh; display: flex; flex-direction: column; }
 
 .app-inner {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
 .page-content {
@@ -193,7 +194,9 @@ body {
   margin: 0 auto;
   padding: 2rem 2.5rem 4rem;
   width: 100%;
+  overflow-x: hidden;
 }
+
 
 /* ─── HUD Navigation Bar ─────────────────────────────────────────────────── */
 .hud-nav {
@@ -297,6 +300,196 @@ body {
   align-items: center;
   gap: 10px;
   flex-shrink: 0;
+}
+
+/* Logo as button */
+.hud-logo-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+/* Desktop-only action group class */
+.hud-actions-desktop { display: flex; }
+
+/* Desktop-only dropdown */
+.hud-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: var(--surface-glass);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 150px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+  z-index: 1000;
+}
+
+/* ── Mobile row (hidden on desktop) ── */
+.hud-mobile-row {
+  display: none;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+}
+.hud-mobile-active-page {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--cyan);
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+.hud-mobile-sync-btn {
+  background: var(--cyan-dim);
+  border: 1px solid var(--border-glow);
+  color: var(--cyan);
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  font-family: 'Inter', sans-serif;
+  transition: opacity 0.2s;
+}
+.hud-mobile-sync-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ── Hamburger button ── */
+.hud-hamburger {
+  background: var(--surface-glass);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  padding: 0;
+  transition: border-color 0.2s ease, background 0.2s ease;
+  flex-shrink: 0;
+}
+.hud-hamburger:hover, .hud-hamburger.open {
+  border-color: var(--cyan);
+  background: var(--cyan-dim);
+}
+.hud-hamburger span {
+  display: block;
+  width: 18px;
+  height: 2px;
+  background: var(--sub);
+  border-radius: 2px;
+  transition: all 0.25s ease;
+}
+.hud-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); background: var(--cyan); }
+.hud-hamburger.open span:nth-child(2) { opacity: 0; width: 0; }
+.hud-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); background: var(--cyan); }
+
+/* ── Mobile dropdown menu ── */
+.hud-mobile-menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: min(320px, 88vw);
+  background: var(--surface-glass);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 14px;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  z-index: 2000;
+  animation: menu-slide-in 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+@keyframes menu-slide-in {
+  from { opacity: 0; transform: translateY(-10px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.hud-mobile-menu-section { display: flex; flex-direction: column; gap: 4px; }
+.hud-mobile-menu-heading {
+  font-size: 0.62rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: var(--sub);
+  text-transform: uppercase;
+  padding: 4px 10px 8px;
+}
+.hud-mobile-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  background: none;
+  color: var(--text);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  width: 100%;
+  font-family: 'Inter', sans-serif;
+  position: relative;
+}
+.hud-mobile-nav-item:hover { background: var(--cyan-dim); border-color: var(--border-glow); color: var(--cyan); }
+.hud-mobile-nav-item.active { background: var(--cyan-dim); border-color: var(--cyan); color: var(--cyan); font-weight: 800; }
+.hud-mobile-nav-emoji { font-size: 1.15rem; width: 26px; text-align: center; flex-shrink: 0; }
+.hud-mobile-active-dot {
+  width: 6px; height: 6px;
+  background: var(--cyan); border-radius: 50%;
+  margin-left: auto;
+  box-shadow: 0 0 8px var(--cyan);
+}
+.hud-mobile-divider { height: 1px; background: var(--border); margin: 10px 0; }
+.hud-mobile-theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px; }
+.hud-mobile-theme-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 11px 8px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--card-glass);
+  color: var(--sub);
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  font-family: 'Inter', sans-serif;
+}
+.hud-mobile-theme-btn span:first-child { font-size: 1.2rem; }
+.hud-mobile-theme-btn:hover { border-color: var(--border-glow); background: var(--cyan-dim); color: var(--cyan); }
+.hud-mobile-theme-btn.active { border-color: var(--cyan); background: var(--cyan-dim); color: var(--cyan); }
+
+/* ── Responsive Nav Breakpoints ── */
+@media (max-width: 900px) {
+  .hud-nav {
+    padding: 0 1rem;
+    height: 60px;
+    gap: 0;
+    justify-content: space-between;
+  }
+  .hud-nav-tabs,
+  .hud-actions-desktop { display: none !important; }
+  .hud-mobile-row { display: flex; }
+  .hud-logo-text { font-size: 1.6rem; }
+  .hud-logo-icon { font-size: 1.5rem; }
+}
+@media (max-width: 480px) {
+  .hud-nav { padding: 0 0.75rem; }
+  .hud-logo-text { font-size: 1.35rem; }
+  .hud-badge { display: none; }
 }
 
 .btn {

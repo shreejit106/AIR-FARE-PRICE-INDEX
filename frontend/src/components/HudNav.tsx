@@ -6,11 +6,11 @@ import GlassmorphismCTA from './GlassmorphismCTA';
 import { API_BASE_URL } from '../config';
 
 const TABS = [
-  { label: '✈ Calculator',       path: '/dashboard'   },
-  { label: '📐 Methodology',     path: '/methodology' },
-  { label: '🏛 For Analysts',    path: '/analysts'    },
-  { label: '🔮 Simulation',      path: '/simulation'  },
-  { label: '🛩 Fleet & Carriers',path: '/fleet'       },
+  { label: '✈ Calculator',        emoji: '✈', short: 'Calc',    path: '/dashboard'   },
+  { label: '📐 Methodology',      emoji: '📐', short: 'Method', path: '/methodology' },
+  { label: '🏛 For Analysts',     emoji: '🏛', short: 'Analyst', path: '/analysts'    },
+  { label: '🔮 Simulation',       emoji: '🔮', short: 'Sim',    path: '/simulation'  },
+  { label: '🛩 Fleet & Carriers', emoji: '🛩', short: 'Fleet',  path: '/fleet'       },
 ];
 
 const API = API_BASE_URL;
@@ -19,28 +19,34 @@ const HudNav: React.FC = () => {
   const navigate  = useNavigate();
   const location  = useLocation();
   const { theme, setTheme } = useTheme();
-  const [syncing, setSyncing] = useState(false);
-  const [themeOpen, setThemeOpen] = useState(false);
+  const [syncing, setSyncing]       = useState(false);
+  const [themeOpen, setThemeOpen]   = useState(false);
+  const [menuOpen, setMenuOpen]     = useState(false);
   const themeRef = useRef<HTMLDivElement>(null);
+  const menuRef  = useRef<HTMLDivElement>(null);
 
+  // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
       if (themeRef.current && !themeRef.current.contains(e.target as Node)) {
         setThemeOpen(false);
+      }
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClick);
     return () => document.removeEventListener('mousedown', handleClick);
   }, []);
 
+  // Close mobile menu on route change
+  useEffect(() => { setMenuOpen(false); }, [location.pathname]);
+
   const handleSync = async () => {
     setSyncing(true);
     try {
       const res = await fetch(`${API}/api/sync`, { method: 'POST' });
-      if (res.ok) {
-        // Optional: you can force a reload or trigger a global state update to refresh Dashboard
-        window.location.reload();
-      }
+      if (res.ok) window.location.reload();
     } catch (e) {
       console.error(e);
     } finally {
@@ -48,68 +54,153 @@ const HudNav: React.FC = () => {
     }
   };
 
-  return (
-    <nav className="hud-nav">
-      {/* Logo */}
-      <div className="hud-logo">
-        <span className="hud-logo-icon">✈</span>
-        <span className="hud-logo-text">APIx</span>
-        <span className="hud-badge">v2.0</span>
-      </div>
+  const activeTab = TABS.find(t => t.path === location.pathname);
 
-      {/* Tabs */}
-      <div className="hud-nav-tabs">
+  return (
+    <nav className="hud-nav" role="navigation" aria-label="Main navigation">
+
+      {/* ── Logo ── */}
+      <button
+        className="hud-logo hud-logo-btn"
+        onClick={() => navigate('/')}
+        aria-label="Go to home"
+      >
+        <span className="hud-logo-icon" aria-hidden="true">✈</span>
+        <span className="hud-logo-text">APIx</span>
+        <span className="hud-badge" aria-hidden="true">v2.0</span>
+      </button>
+
+      {/* ── Desktop Tabs (hidden on mobile) ── */}
+      <div className="hud-nav-tabs" role="tablist" aria-label="Page tabs">
         {TABS.map(tab => (
           <ThreeUIButton
             key={tab.path}
             active={location.pathname === tab.path}
             onClick={() => navigate(tab.path)}
+            role="tab"
+            aria-selected={location.pathname === tab.path}
           >
             {tab.label}
           </ThreeUIButton>
         ))}
       </div>
 
-      {/* Actions */}
-      <div className="hud-actions">
-        <GlassmorphismCTA 
-          onClick={handleSync} 
-          disabled={syncing}
-        >
-          {syncing ? '↻ Scraping...' : 'Fetch Live Fares'}
+      {/* ── Desktop Actions (hidden on mobile) ── */}
+      <div className="hud-actions hud-actions-desktop">
+        <GlassmorphismCTA onClick={handleSync} disabled={syncing}>
+          {syncing ? '↻ Syncing…' : 'Fetch Live Fares'}
         </GlassmorphismCTA>
+
         <div ref={themeRef} style={{ position: 'relative' }}>
-          <ThreeUIButton onClick={() => setThemeOpen(!themeOpen)} title="Select theme">
+          <ThreeUIButton onClick={() => setThemeOpen(!themeOpen)} title="Select theme" aria-expanded={themeOpen}>
             Theme: {theme.charAt(0).toUpperCase() + theme.slice(1)} ▼
           </ThreeUIButton>
           {themeOpen && (
-            <div style={{
-              position: 'absolute',
-              top: '100%',
-              right: 0,
-              marginTop: '8px',
-              background: 'var(--surface-glass)',
-              border: '1px solid var(--border)',
-              borderRadius: '12px',
-              padding: '8px',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '6px',
-              minWidth: '140px',
-              backdropFilter: 'blur(16px)',
-              boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
-              zIndex: 1000
-            }}>
-              <ThreeUIButton active={theme === 'dark'} onClick={() => { setTheme('dark'); setThemeOpen(false); }}>🌙 Dark</ThreeUIButton>
-              <ThreeUIButton active={theme === 'light'} onClick={() => { setTheme('light'); setThemeOpen(false); }}>☀ Light</ThreeUIButton>
-              <ThreeUIButton active={theme === 'intermediate'} onClick={() => { setTheme('intermediate'); setThemeOpen(false); }}>☁ Inter</ThreeUIButton>
-              <ThreeUIButton active={theme === 'coastal'} onClick={() => { setTheme('coastal'); setThemeOpen(false); }}>🌊 Coastal</ThreeUIButton>
+            <div className="hud-dropdown" role="menu">
+              {([['dark','🌙 Dark'],['light','☀ Light'],['intermediate','☁ Intermediate'],['coastal','🌊 Coastal']] as [string,string][]).map(([val, label]) => (
+                <ThreeUIButton
+                  key={val}
+                  active={theme === val}
+                  onClick={() => { setTheme(val as any); setThemeOpen(false); }}
+                  role="menuitem"
+                >
+                  {label}
+                </ThreeUIButton>
+              ))}
             </div>
           )}
         </div>
-        <ThreeUIButton onClick={() => navigate('/')}>
-          ← Hub
-        </ThreeUIButton>
+      </div>
+
+      {/* ══════════════════════════════════════════════════════════
+          MOBILE ROW: Active page label + hamburger
+          ══════════════════════════════════════════════════════════ */}
+      <div className="hud-mobile-row">
+        {/* Current page indicator */}
+        <span className="hud-mobile-active-page">
+          {activeTab ? `${activeTab.emoji} ${activeTab.short}` : '✈ APIx'}
+        </span>
+
+        {/* Fetch button — compact on mobile */}
+        <button
+          className="hud-mobile-sync-btn"
+          onClick={handleSync}
+          disabled={syncing}
+          aria-label="Fetch live fares"
+          title="Fetch live fares"
+        >
+          {syncing ? '↻' : '⬇ Sync'}
+        </button>
+
+        {/* Hamburger */}
+        <div ref={menuRef} style={{ position: 'relative' }}>
+          <button
+            className={`hud-hamburger${menuOpen ? ' open' : ''}`}
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-expanded={menuOpen}
+            aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+          >
+            <span />
+            <span />
+            <span />
+          </button>
+
+          {/* Mobile Dropdown Menu */}
+          {menuOpen && (
+            <div className="hud-mobile-menu" role="menu" aria-label="Navigation menu">
+              {/* Nav links */}
+              <div className="hud-mobile-menu-section">
+                <div className="hud-mobile-menu-heading">NAVIGATION</div>
+                {TABS.map(tab => (
+                  <button
+                    key={tab.path}
+                    className={`hud-mobile-nav-item${location.pathname === tab.path ? ' active' : ''}`}
+                    onClick={() => navigate(tab.path)}
+                    role="menuitem"
+                    aria-current={location.pathname === tab.path ? 'page' : undefined}
+                  >
+                    <span className="hud-mobile-nav-emoji">{tab.emoji}</span>
+                    <span>{tab.label.replace(/^[^\s]+\s/, '')}</span>
+                    {location.pathname === tab.path && <span className="hud-mobile-active-dot" />}
+                  </button>
+                ))}
+              </div>
+
+              {/* Divider */}
+              <div className="hud-mobile-divider" />
+
+              {/* Theme selector */}
+              <div className="hud-mobile-menu-section">
+                <div className="hud-mobile-menu-heading">DISPLAY THEME</div>
+                <div className="hud-mobile-theme-grid">
+                  {([['dark','🌙','Dark'],['light','☀','Light'],['intermediate','☁','Inter'],['coastal','🌊','Coastal']] as [string,string,string][]).map(([val, emoji, label]) => (
+                    <button
+                      key={val}
+                      className={`hud-mobile-theme-btn${theme === val ? ' active' : ''}`}
+                      onClick={() => { setTheme(val as any); }}
+                    >
+                      <span>{emoji}</span>
+                      <span>{label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Divider */}
+              <div className="hud-mobile-divider" />
+
+              {/* Home link */}
+              <button
+                className="hud-mobile-nav-item"
+                onClick={() => navigate('/')}
+                role="menuitem"
+              >
+                <span className="hud-mobile-nav-emoji">🏠</span>
+                <span>Return to Hub</span>
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </nav>
   );
