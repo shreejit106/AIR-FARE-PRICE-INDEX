@@ -363,7 +363,7 @@ const Dashboard: React.FC = () => {
                 </div>
                 <div className="map-wrap">
                   <MapContainer center={[22.5,80]} zoom={5} style={{height:'100%',width:'100%'}} zoomControl>
-                    <TileLayer url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png" attribution="CartoDB" />
+                    <TileLayer url="https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}" attribution="&copy; Esri, DeLorme, NAVTEQ" />
                     {routeSummary.map(r => {
                       const pts = bezier([r.origin_lat,r.origin_lon],[r.dest_lat,r.dest_lon]);
                       const shares = routeSummary.map(x=>x.passenger_share);
