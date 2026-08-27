@@ -256,40 +256,110 @@ const Landing: React.FC = () => {
       <section className="apix-table-sec">
         <div className="apix-table-container">
 
-          <div className="apix-sec-head" style={{ marginBottom: 32 }}>
+          <div className="apix-sec-head" style={{ marginBottom: 36 }}>
             <span className="apix-sec-tag">METHODOLOGY COMPARISON</span>
             <h2 className="apix-sec-title">APIx Laspeyres Standard vs. Simple Average</h2>
+            <p className="apix-sec-desc">
+              Why unweighted simple arithmetic averages fail for national airfare inflation and how APIx resolves statistical distortion.
+            </p>
           </div>
 
           <div className="apix-table-wrapper">
             <table className="apix-comp-table">
               <thead>
                 <tr>
-                  <th>Methodological Dimension</th>
-                  <th>Naive Simple Average (Unweighted)</th>
-                  <th>APIx Modified Laspeyres Standard</th>
+                  <th style={{ width: '26%' }}>
+                    <span className="th-label">METHODOLOGICAL DIMENSION</span>
+                  </th>
+                  <th style={{ width: '37%' }}>
+                    <div className="th-col-header">
+                      <span className="th-title">Naive Simple Average</span>
+                      <span className="th-pill-bad">✕ UNWEIGHTED</span>
+                    </div>
+                  </th>
+                  <th style={{ width: '37%' }} className="th-highlight">
+                    <div className="th-col-header">
+                      <span className="th-title">APIx Modified Laspeyres Standard</span>
+                      <span className="th-pill-good">✓ PASSENGER WEIGHTED</span>
+                    </div>
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td><strong>Passenger Traffic Weighting</strong></td>
-                  <td>Equal weight (1.25% per route regardless of density)</td>
-                  <td className="col-highlight">Weighted by quarterly passenger volume share (DEL-BOM = ~4.8%)</td>
+                  <td className="row-dim">
+                    <div className="dim-title">Passenger Traffic Weighting</div>
+                    <div className="dim-sub">Route density distribution</div>
+                  </td>
+                  <td className="row-naive">
+                    <div className="cell-content">
+                      <span className="status-cross">✕</span>
+                      <span>Equal 1.25% weight per route. High-density trunk corridors are diluted by low-traffic regional hops.</span>
+                    </div>
+                  </td>
+                  <td className="row-apix">
+                    <div className="cell-content">
+                      <span className="status-check">✓</span>
+                      <span><strong>Quarterly volume weighted.</strong> DEL-BOM carries ~4.8% weight, accurately mirroring real consumer spend.</span>
+                    </div>
+                  </td>
                 </tr>
+
                 <tr>
-                  <td><strong>Dynamic Surge Anomaly Filtration</strong></td>
-                  <td>None (distorted by single ₹45,000 predatory tickets)</td>
-                  <td className="col-highlight">Robust [Q1, Q3] + 1.5×IQR statistical trimming</td>
+                  <td className="row-dim">
+                    <div className="dim-title">Dynamic Surge Outliers</div>
+                    <div className="dim-sub">Last-seat predatory fares</div>
+                  </td>
+                  <td className="row-naive">
+                    <div className="cell-content">
+                      <span className="status-cross">✕</span>
+                      <span>Unfiltered arithmetic mean. A single ₹45,000 last-seat ticket artificially inflates the entire index.</span>
+                    </div>
+                  </td>
+                  <td className="row-apix">
+                    <div className="cell-content">
+                      <span className="status-check">✓</span>
+                      <span><strong>Robust [Q1, Q3] IQR trimming.</strong> Outliers violating Q3 + 1.5×IQR are discarded before median aggregation.</span>
+                    </div>
+                  </td>
                 </tr>
+
                 <tr>
-                  <td><strong>Booking Horizons Covered</strong></td>
-                  <td>Single static departure date</td>
-                  <td className="col-highlight">5 Advance horizons (T+1, T+7, T+15, T+30, T+45)</td>
+                  <td className="row-dim">
+                    <div className="dim-title">Advance Booking Horizons</div>
+                    <div className="dim-sub">Yield curve segmentation</div>
+                  </td>
+                  <td className="row-naive">
+                    <div className="cell-content">
+                      <span className="status-cross">✕</span>
+                      <span>Single static departure date. Fails to separate last-minute business travel from leisure booking.</span>
+                    </div>
+                  </td>
+                  <td className="row-apix">
+                    <div className="cell-content">
+                      <span className="status-check">✓</span>
+                      <span><strong>5 Lead horizons (T+1 to T+45).</strong> Captures the full dynamic yield curve across all booking segments.</span>
+                    </div>
+                  </td>
                 </tr>
+
                 <tr>
-                  <td><strong>Antitrust & Fuel Shock Utility</strong></td>
-                  <td>No concentration or cost elasticity modeling</td>
-                  <td className="col-highlight">Automated HHI &gt; 2500 alerts + ATF fuel shock simulation</td>
+                  <td className="row-dim">
+                    <div className="dim-title">Antitrust & Fuel Simulation</div>
+                    <div className="dim-sub">Macroeconomic policy utility</div>
+                  </td>
+                  <td className="row-naive">
+                    <div className="cell-content">
+                      <span className="status-cross">✕</span>
+                      <span>Zero market concentration or fuel price shock elasticity tracking.</span>
+                    </div>
+                  </td>
+                  <td className="row-apix">
+                    <div className="cell-content">
+                      <span className="status-check">✓</span>
+                      <span><strong>Automated HHI &gt; 2500 alerts</strong> and interactive ATF crude oil fuel shock elasticity modeling (η = 0.55 to 0.80).</span>
+                    </div>
+                  </td>
                 </tr>
               </tbody>
             </table>
