@@ -5,24 +5,19 @@ import 'leaflet/dist/leaflet.css';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../App';
 import { API_BASE_URL } from '../config';
+import {
+  DEFAULT_INDEX,
+  DEFAULT_ROUTE_SUMMARIES,
+  DEFAULT_ROUTES_LIST,
+  DEFAULT_HEATMAP,
+  DEFAULT_MOSPI,
+} from '../fallbackData';
+import type { RouteSummary, HeatmapData, MospiRow } from '../fallbackData';
 
 const API = API_BASE_URL;
 
 /* ─── Types ─────────────────────────────────────────────────────────────── */
-interface RouteSummary {
-  route_id: string; avg_pct_change: number; route_index: number;
-  passenger_share: number; passenger_count: number;
-  origin: string; destination: string;
-  origin_lat: number; origin_lon: number;
-  dest_lat: number; dest_lon: number;
-}
 interface IndexData { [horizon: string]: number; }
-interface HeatmapData {
-  routes: string[]; horizons: string[];
-  z: (number | null)[][]; text: string[][];
-  hover: string[][]; weights: number[];
-}
-interface MospiRow { date: string; cpi_index: number; inflation_pct: number; }
 
 /* ─── Stable seeded pseudo-random (no Math.random — avoids re-render flicker) */
 function seededRand(seed: number, i: number): number {
@@ -106,24 +101,27 @@ const Dashboard: React.FC = () => {
   const [aggregation,   setAggregation]   = useState('Overall Industry');
   const [airlineFilter, setAirlineFilter] = useState('all');
   const [routeFilter,   setRouteFilter]   = useState('all');
-  const [routes,        setRoutes]        = useState<string[]>([]);
+  const [routes,        setRoutes]        = useState<string[]>(DEFAULT_ROUTES_LIST);
   const [activeTab,     setActiveTab]     = useState(0);
   const [baseYear,      setBaseYear]      = useState(2012);
   const [baseMonth,     setBaseMonth]     = useState(1);
 
-  const [indexData,    setIndexData]    = useState<IndexData>({});
-  const [routeSummary, setRouteSummary] = useState<RouteSummary[]>([]);
-  const [heatmapData,  setHeatmapData]  = useState<HeatmapData | null>(null);
-  const [mospiData,    setMospiData]    = useState<MospiRow[]>([]);
-  const [loading,      setLoading]      = useState(true);
+  const [indexData,    setIndexData]    = useState<IndexData>(DEFAULT_INDEX);
+  const [routeSummary, setRouteSummary] = useState<RouteSummary[]>(DEFAULT_ROUTE_SUMMARIES);
+  const [heatmapData,  setHeatmapData]  = useState<HeatmapData | null>(DEFAULT_HEATMAP);
+  const [mospiData,    setMospiData]    = useState<MospiRow[]>(DEFAULT_MOSPI);
+  const [loading,      setLoading]      = useState(false);
+  const [liveConnected, setLiveConnected] = useState(false);
 
   const airlineParam = aggregation === 'Airline Specific' ? airlineFilter : 'all';
   const routeParam   = aggregation === 'Route Specific'   ? routeFilter   : 'all';
 
   useEffect(() => {
     fetch(`${API}/api/routes/list`)
-      .then(r => r.json())
-      .then(d => setRoutes(d.routes || []))
+      .then(r => r.ok ? r.json() : null)
+      .then(d => {
+        if (d && d.routes && d.routes.length > 0) setRoutes(d.routes);
+      })
       .catch(() => {});
   }, []);
 
@@ -131,15 +129,20 @@ const Dashboard: React.FC = () => {
     setLoading(true);
     const qs = `cabin_class=${cabinClass}&airline=${airlineParam}&route=${routeParam}`;
     Promise.all([
-      fetch(`${API}/api/index?${qs}`).then(r => r.json()),
-      fetch(`${API}/api/route-summary?${qs}`).then(r => r.json()),
-      fetch(`${API}/api/heatmap?${qs}`).then(r => r.json()),
-      fetch(`${API}/api/mospi`).then(r => r.json()),
+      fetch(`${API}/api/index?${qs}`).then(r => r.ok ? r.json() : null).catch(() => null),
+      fetch(`${API}/api/route-summary?${qs}`).then(r => r.ok ? r.json() : null).catch(() => null),
+      fetch(`${API}/api/heatmap?${qs}`).then(r => r.ok ? r.json() : null).catch(() => null),
+      fetch(`${API}/api/mospi`).then(r => r.ok ? r.json() : null).catch(() => null),
     ]).then(([idx, summary, hm, mospi]) => {
-      setIndexData(idx); setRouteSummary(summary);
-      setHeatmapData(hm); setMospiData(mospi);
+      if (idx && Object.keys(idx).length > 0) setIndexData(idx);
+      if (summary && summary.length > 0) setRouteSummary(summary);
+      if (hm && hm.routes && hm.routes.length > 0) setHeatmapData(hm);
+      if (mospi && mospi.length > 0) setMospiData(mospi);
+      setLiveConnected(Boolean(idx && summary));
       setLoading(false);
-    }).catch(() => setLoading(false));
+    }).catch(() => {
+      setLoading(false);
+    });
   }, [cabinClass, airlineParam, routeParam]);
 
   useEffect(() => { fetchData(); }, [fetchData]);

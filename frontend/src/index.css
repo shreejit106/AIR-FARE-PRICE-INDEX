@@ -736,23 +736,160 @@ input[type="range"]::-webkit-slider-thumb {
 }
 @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
 
-/* ─── Responsive ─────────────────────────────────────────────────────────── */
+/* ─── Responsive & Mobile Optimization ────────────────────────────────────── */
 @media (max-width: 900px) {
+  .hud-nav {
+    height: auto !important;
+    padding: 10px 14px !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    justify-content: space-between !important;
+  }
+  .hud-logo {
+    gap: 8px !important;
+  }
+  .hud-logo-icon {
+    font-size: 1.6rem !important;
+  }
+  .hud-logo-text {
+    font-size: 1.5rem !important;
+  }
+  .hud-actions {
+    gap: 6px !important;
+  }
+  .hud-actions button {
+    padding: 5px 9px !important;
+    font-size: 0.72rem !important;
+  }
+  .hud-nav-tabs {
+    order: 3 !important;
+    width: 100% !important;
+    display: flex !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding: 4px 2px 6px !important;
+    gap: 6px !important;
+    justify-content: flex-start !important;
+    scrollbar-width: none !important;
+  }
+  .hud-nav-tabs::-webkit-scrollbar {
+    display: none !important;
+  }
+  .hud-nav-tabs button, .hud-tab {
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+    font-size: 0.72rem !important;
+    padding: 6px 12px !important;
+  }
   .control-panel { grid-template-columns: 1fr 1fr; }
   .landing-features { grid-template-columns: 1fr 1fr; }
-  .landing-title { font-size: 3rem; }
-  .hud-nav-tabs { display: none; }
+  .landing-title { font-size: 2.8rem; }
   .grid-4 { grid-template-columns: 1fr 1fr; }
 }
-@media (max-width: 600px) {
-  .page-content { padding: 1rem; }
-  .landing-title { font-size: 2.2rem; letter-spacing: -2px; }
+
+@media (max-width: 640px) {
+  .page-content {
+    padding: 1rem 0.75rem 4rem !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+  }
+  .landing-title { font-size: 2rem; letter-spacing: -1.5px; }
   .landing-features { grid-template-columns: 1fr; }
-  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
-  .control-panel { grid-template-columns: 1fr; }
+  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr !important; gap: 14px !important; }
+  .control-panel { grid-template-columns: 1fr !important; gap: 10px !important; }
+  
+  .hud-ticker {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 12px !important;
+    padding: 16px !important;
+    border-radius: 14px !important;
+    overflow-x: visible !important;
+  }
+  .hud-ticker-item {
+    padding: 0 !important;
+    border-right: none !important;
+  }
+  .hud-ticker-item:first-child {
+    grid-column: 1 / -1 !important;
+    border-bottom: 1px solid var(--border) !important;
+    padding-bottom: 10px !important;
+  }
+  .hud-ticker-live {
+    font-size: 2.2rem !important;
+  }
+  .hud-ticker-value {
+    font-size: 1.1rem !important;
+  }
+
+  .tabs-header {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    white-space: nowrap !important;
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    padding: 4px !important;
+    scrollbar-width: none !important;
+  }
+  .tabs-header::-webkit-scrollbar {
+    display: none !important;
+  }
+  .tab-btn {
+    flex-shrink: 0 !important;
+    padding: 7px 12px !important;
+    font-size: 0.75rem !important;
+  }
+
+  .map-wrap {
+    height: 340px !important;
+    border-radius: 12px !important;
+  }
+
+  .carrier-strip {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    padding: 8px 12px !important;
+  }
+  .carrier-strip::-webkit-scrollbar {
+    display: none !important;
+  }
+
   .stat-strip { flex-direction: column; gap: 12px; }
   .stat-cell { border-right: none; border-bottom: 1px solid var(--border); padding: 0 0 12px 0; }
   .stat-cell:last-child { border-bottom: none; padding-bottom: 0; }
+
+  /* Responsive tables */
+  table {
+    display: block !important;
+    width: 100% !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  /* Fleet carrier spotlight responsive */
+  .fleet-banner-header {
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+  }
+  .fleet-banner-logo-wrap {
+    width: 100% !important;
+    justify-content: center !important;
+    padding: 20px 16px 10px !important;
+  }
+  .fleet-banner-text-wrap {
+    padding: 16px !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+  .fleet-banner-text-wrap > div {
+    text-align: center !important;
+  }
+  .fleet-body-grid {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
 }
 
 /* ─── Print & PDF Export Styles ──────────────────────────────────────────── */

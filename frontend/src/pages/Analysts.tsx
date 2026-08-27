@@ -2,6 +2,12 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import Plot from 'react-plotly.js';
 import { useTheme } from '../App';
 import { API_BASE_URL } from '../config';
+import {
+  DEFAULT_ANOMALIES,
+  DEFAULT_COMPETITION,
+  DEFAULT_MOSPI,
+  DEFAULT_ROUTES_LIST
+} from '../fallbackData';
 
 const API = API_BASE_URL;
 
@@ -98,17 +104,17 @@ export const Analysts: React.FC = () => {
   const [threshold, setThreshold] = useState<number>(25);
   const [selectedHorizon, setSelectedHorizon] = useState<string>('all');
   const [selectedRoute, setSelectedRoute] = useState<string>('all');
-  const [routesList, setRoutesList] = useState<string[]>([]);
+  const [routesList, setRoutesList] = useState<string[]>(DEFAULT_ROUTES_LIST);
   
   /* HHI Interactive Zoom & Filter States */
   const [hhiZoomPreset, setHhiZoomPreset] = useState<'all' | 'competitive' | 'moderate' | 'monopoly' | 'surge'>('all');
   const [showHhiLabels, setShowHhiLabels] = useState<boolean>(false);
   const [searchHhiRoute, setSearchHhiRoute] = useState<string>('all');
 
-  const [anomalyData, setAnomalyData] = useState<AnomalyResponse | null>(null);
-  const [competitionData, setCompetitionData] = useState<CompetitionResponse | null>(null);
-  const [mospiData, setMospiData] = useState<MospiRow[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [anomalyData, setAnomalyData] = useState<AnomalyResponse | null>(DEFAULT_ANOMALIES);
+  const [competitionData, setCompetitionData] = useState<CompetitionResponse | null>(DEFAULT_COMPETITION);
+  const [mospiData, setMospiData] = useState<MospiRow[]>(DEFAULT_MOSPI);
+  const [loading, setLoading] = useState<boolean>(false);
   const [downloading, setDownloading] = useState<string | null>(null);
 
   /* Plot Styles */
@@ -118,17 +124,21 @@ export const Analysts: React.FC = () => {
   /* Fetch initial routes */
   useEffect(() => {
     fetch(`${API}/api/routes/list`)
-      .then(r => r.json())
-      .then(d => setRoutesList(d.routes || []))
-      .catch(console.error);
+      .then(r => r.ok ? r.json() : null)
+      .then(d => {
+        if (d && d.routes && d.routes.length > 0) setRoutesList(d.routes);
+      })
+      .catch(() => {});
   }, []);
 
   /* Fetch MoSPI CPI data */
   useEffect(() => {
     fetch(`${API}/api/mospi`)
-      .then(r => r.json())
-      .then(d => setMospiData(d || []))
-      .catch(console.error);
+      .then(r => r.ok ? r.json() : null)
+      .then(d => {
+        if (d && d.length > 0) setMospiData(d);
+      })
+      .catch(() => {});
   }, []);
 
   /* Fetch Anomaly and Competition Data */
@@ -139,11 +149,16 @@ export const Analysts: React.FC = () => {
         fetch(`${API}/api/analysts/anomalies?threshold=${threshold}&horizon=${selectedHorizon}&route=${selectedRoute}`),
         fetch(`${API}/api/analysts/competition`)
       ]);
-      const [anomJson, compJson] = await Promise.all([anomRes.json(), compRes.json()]);
-      setAnomalyData(anomJson);
-      setCompetitionData(compJson);
+      if (anomRes.ok) {
+        const anomJson = await anomRes.json();
+        if (anomJson && anomJson.anomalies) setAnomalyData(anomJson);
+      }
+      if (compRes.ok) {
+        const compJson = await compRes.json();
+        if (compJson && compJson.routes) setCompetitionData(compJson);
+      }
     } catch (err) {
-      console.error('Failed to load analyst datasets', err);
+      console.warn('Backend waking up, using baseline dataset', err);
     } finally {
       setLoading(false);
     }

@@ -274,7 +274,7 @@ const Fleet: React.FC = () => {
         boxShadow: `0 0 60px ${c.color}25`,
       }}>
         {/* ── Header banner with blended logo on left ── */}
-        <div style={{
+        <div className="fleet-banner-header" style={{
           background: c.bannerBg,
           padding: '0',
           display: 'flex', alignItems: 'stretch', minHeight: 140,
@@ -288,7 +288,7 @@ const Fleet: React.FC = () => {
           }} />
 
           {/* LEFT — seamlessly blended floating logo */}
-          <div style={{
+          <div className="fleet-banner-logo-wrap" style={{
             width: 280, minHeight: '100%', flexShrink: 0,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             padding: '16px 24px',
@@ -316,9 +316,9 @@ const Fleet: React.FC = () => {
           </div>
 
           {/* RIGHT — airline name, codes, rating */}
-          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '24px 36px', flexWrap: 'wrap', gap: 12 }}>
+          <div className="fleet-banner-text-wrap" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '24px 36px', flexWrap: 'wrap', gap: 12 }}>
             <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 6 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 6, flexWrap: 'wrap' }}>
                 <span style={{ fontSize: '0.65rem', fontWeight: 700, letterSpacing: 2.5, color: 'rgba(255,255,255,0.65)', textTransform: 'uppercase', background: 'rgba(0,0,0,0.15)', padding: '2px 8px', borderRadius: 4 }}>IATA: {c.iata}</span>
                 <span style={{ fontSize: '0.65rem', fontWeight: 700, letterSpacing: 2.5, color: 'rgba(255,255,255,0.65)', textTransform: 'uppercase', background: 'rgba(0,0,0,0.15)', padding: '2px 8px', borderRadius: 4 }}>ICAO: {c.icao}</span>
               </div>
@@ -336,7 +336,7 @@ const Fleet: React.FC = () => {
 
         {/* Body */}
         <div style={{ padding: 28, background: dark ? '#080F1F' : '#FFFFFF' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 24, flexWrap: 'wrap' }}>
+          <div className="fleet-body-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 24 }}>
 
             {/* Col 1 — Info */}
             <div>
