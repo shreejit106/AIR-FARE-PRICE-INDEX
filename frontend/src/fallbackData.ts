@@ -27,26 +27,67 @@ export const AIRPORTS: Record<string, [number, number]> = {
 };
 
 const BASE_PAIRS: [string, string][] = [
-  ["DEL","BOM"], ["DEL","BLR"], ["BOM","BLR"], ["DEL","HYD"], ["BOM","GOI"],
-  ["DEL","MAA"], ["DEL","CCU"], ["BOM","MAA"], ["BLR","HYD"], ["DEL","AMD"],
-  ["BOM","HYD"], ["BLR","MAA"], ["DEL","PNQ"], ["BOM","CCU"], ["DEL","COK"],
-  ["BLR","CCU"], ["BOM","AMD"], ["HYD","MAA"], ["DEL","JAI"], ["BOM","PNQ"],
-  ["DEL","LKO"], ["DEL","GAU"], ["BOM","COK"], ["BLR","PNQ"], ["DEL","PAT"],
-  ["HYD","CCU"], ["DEL","IXC"], ["BOM","JAI"], ["BLR","COK"], ["DEL","BBI"],
-  ["BOM","LKO"], ["BLR","AMD"], ["MAA","CCU"], ["HYD","BLR"], ["DEL","ATQ"],
-  ["BOM","PAT"], ["DEL","IXB"], ["BLR","GOI"], ["HYD","COK"], ["BOM","IXC"],
-  ["MAA","COK"], ["DEL","VTZ"], ["BOM","BBI"], ["BLR","JAI"], ["HYD","PNQ"],
-  ["DEL","TRV"], ["BOM","GAU"], ["BLR","LKO"], ["MAA","HYD"], ["CCU","GAU"],
-  ["BOM","ATQ"], ["BLR","IXC"], ["HYD","JAI"], ["DEL","GOI"], ["BOM","IXB"],
-  ["BLR","PAT"], ["MAA","PNQ"], ["CCU","PAT"], ["HYD","GOI"], ["BOM","TRV"],
-  ["BLR","GAU"], ["DEL","AMD"], ["MAA","AMD"], ["CCU","IXB"], ["HYD","LKO"],
-  ["BOM","VTZ"], ["BLR","BBI"], ["DEL","PNQ"], ["MAA","JAI"], ["CCU","BBI"],
-  ["HYD","BBI"], ["BLR","ATQ"], ["DEL","BOM"], ["MAA","LKO"], ["CCU","LKO"],
-  ["HYD","ATQ"], ["BLR","IXB"], ["BOM","GOI"], ["MAA","GAU"], ["CCU","IXC"]
+  ["DEL","BOM"], ["BOM","DEL"],
+  ["DEL","BLR"], ["BLR","DEL"],
+  ["BOM","BLR"], ["BLR","BOM"],
+  ["HYD","BOM"], ["BOM","HYD"],
+  ["DEL","HYD"], ["HYD","DEL"],
+  ["DEL","PNQ"], ["PNQ","DEL"],
+  ["BOM","PNQ"], ["PNQ","BOM"],
+  ["DEL","AMD"], ["AMD","DEL"],
+  ["BOM","AMD"], ["AMD","BOM"],
+  ["BLR","HYD"], ["HYD","BLR"],
+  ["DEL","MAA"], ["MAA","DEL"],
+  ["DEL","CCU"], ["CCU","DEL"],
+  ["BOM","MAA"], ["MAA","BOM"],
+  ["BOM","CCU"], ["CCU","BOM"],
+  ["BLR","PNQ"], ["PNQ","BLR"],
+  ["BLR","AMD"], ["AMD","BLR"],
+  ["BLR","MAA"], ["MAA","BLR"],
+  ["BLR","CCU"], ["CCU","BLR"],
+  ["HYD","MAA"], ["MAA","HYD"],
+  ["HYD","CCU"], ["CCU","HYD"],
+  ["HYD","PNQ"], ["PNQ","HYD"],
+  ["HYD","AMD"], ["AMD","HYD"],
+  ["PNQ","AMD"], ["AMD","PNQ"],
+  ["BOM","GOI"], ["GOI","BOM"],
+  ["DEL","GOI"], ["GOI","DEL"],
+  ["BLR","GOI"], ["GOI","BLR"],
+  ["HYD","GOI"], ["GOI","HYD"],
+  ["DEL","COK"], ["COK","DEL"],
+  ["BOM","COK"], ["COK","BOM"],
+  ["BLR","COK"], ["COK","BLR"],
+  ["HYD","COK"], ["COK","HYD"],
+  ["DEL","JAI"], ["JAI","DEL"],
+  ["BOM","JAI"], ["JAI","BOM"],
+  ["DEL","LKO"], ["LKO","DEL"],
+  ["BOM","LKO"], ["LKO","BOM"],
+  ["DEL","IXC"], ["IXC","DEL"],
+  ["BOM","IXC"], ["IXC","BOM"],
+  ["DEL","PAT"], ["PAT","DEL"],
+  ["BOM","PAT"], ["PAT","BOM"],
+  ["DEL","GAU"], ["DEL","BBI"]
 ];
 
+// Realistic DGCA Passenger Traffic Distribution across 80 Sovereign Corridors
+const ROUTE_WEIGHT_VALUES: number[] = (() => {
+  const w: number[] = [];
+  for (let i = 0; i < 80; i++) {
+    if (i < 6)       w.push(0.046 - Math.floor(i / 2) * 0.005);
+    else if (i < 20) w.push(0.030 - (i - 6) * 0.0011);
+    else if (i < 46) w.push(0.015 - (i - 20) * 0.0003);
+    else if (i < 62) w.push(0.009 - (i - 46) * 0.0002);
+    else             w.push(0.005 - (i - 62) * 0.00015);
+  }
+  const total = w.reduce((a, b) => a + b, 0);
+  const normalized = w.map(val => Number((val / total).toFixed(6)));
+  const diff = Number((1.0 - normalized.reduce((a, b) => a + b, 0)).toFixed(6));
+  normalized[0] = Number((normalized[0] + diff).toFixed(6));
+  return normalized;
+})();
+
 export const DEFAULT_INDEX: Record<string, number> = {
-  "T+1": 138.45,
+  "T+1": 138.40,
   "T+7": 114.20,
   "T+15": 105.80,
   "T+30": 98.40,
@@ -54,7 +95,7 @@ export const DEFAULT_INDEX: Record<string, number> = {
 };
 
 export const DEFAULT_ROUTE_SUMMARIES: RouteSummary[] = BASE_PAIRS.map(([orig, dest], i) => {
-  const pshare = Math.max(0.005, (80 - i) / 3240);
+  const pshare = ROUTE_WEIGHT_VALUES[i] ?? 0.0125;
   const avg_pct = (i % 2 === 0 ? 1 : -1) * ((i * 1.7) % 28.5) + (i < 10 ? 12 : 2);
   const route_index = 100 + avg_pct;
   const oCoord = AIRPORTS[orig] || [28.5562, 77.1000];
