@@ -31,8 +31,9 @@ const CARRIERS = [
     name: 'Air India', fullName: 'Air India Limited (Tata Sons)',
     color: '#C8102E', accent: '#F5A623', textColor: '#fff',
     bannerBg: 'linear-gradient(to bottom, #D9174E 0%, #B81342 50%, #981342 100%)',
-    logo: `${LOGO_BASE}/AIR%20INDIA.png`,
+    logo: `${LOGO_BASE}/AirIndia_Clean.png`,
     domain: 'airindia.com',
+
     rating: 'PREMIUM', ratingColor: '#F59E0B',
     tagline: "National carrier reborn. Tata premium push.",
     fleet: 188, fleetType: 'Mixed Wide + Narrow body',

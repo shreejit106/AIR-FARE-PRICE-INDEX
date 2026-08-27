@@ -78,13 +78,46 @@ const FEATURES: FeatureCardProps[] = [
 
 const Landing: React.FC = () => {
   const navigate = useNavigate();
-  // Phase: 'plane' = full-screen plane only, 'content' = blurred plane + content
-  const [phase, setPhase] = useState<'plane' | 'content'>('plane');
+  // 'hud' -> Cockpit telemetry boot, 'content' -> blurred hero + active flight deck
+  const [phase, setPhase] = useState<'hud' | 'content'>('hud');
+  const [altimeter, setAltimeter] = useState(0);
+  const [hudStep, setHudStep] = useState(1);
 
+  // Altimeter count-up and HUD telemetry sequence
   useEffect(() => {
-    const timer = setTimeout(() => setPhase('content'), 3200);
-    return () => clearTimeout(timer);
-  }, []);
+    if (phase !== 'hud') return;
+
+    // Altimeter tick up
+    const altInterval = setInterval(() => {
+      setAltimeter(prev => {
+        if (prev >= 34000) {
+          clearInterval(altInterval);
+          return 34000;
+        }
+        return prev + 1700;
+      });
+    }, 100);
+
+    // Step progress
+    const s1 = setTimeout(() => setHudStep(2), 600);
+    const s2 = setTimeout(() => setHudStep(3), 1200);
+    const s3 = setTimeout(() => setHudStep(4), 1800);
+    const s4 = setTimeout(() => setPhase('content'), 2600);
+
+    return () => {
+      clearInterval(altInterval);
+      clearTimeout(s1);
+      clearTimeout(s2);
+      clearTimeout(s3);
+      clearTimeout(s4);
+    };
+  }, [phase]);
+
+  const skipIntro = () => {
+    setAltimeter(34000);
+    setHudStep(4);
+    setPhase('content');
+  };
 
   const scrollToFeatures = () => {
     const el = document.getElementById('features-section');
@@ -99,32 +132,98 @@ const Landing: React.FC = () => {
           ══════════════════════════════════════════════════════ */}
       <section className="hero-plane-section">
 
-        {/* PLANE BACKGROUND — always present, blurs after phase change */}
+        {/* PLANE BACKGROUND — crystal clear during HUD, softly blurred during content */}
         <motion.div
           className="hero-plane-bg"
-          animate={{ filter: phase === 'content' ? 'blur(12px) brightness(0.55)' : 'blur(0px) brightness(1)' }}
+          animate={{ filter: phase === 'content' ? 'blur(12px) brightness(0.55)' : 'blur(0px) brightness(0.85)' }}
           transition={{ duration: 1.2, ease: 'easeInOut' }}
         />
 
-        {/* Dark gradient overlay — strengthens when content appears */}
+        {/* Dark gradient overlay */}
         <motion.div
           className="hero-plane-overlay"
-          animate={{ opacity: phase === 'content' ? 1 : 0 }}
+          animate={{ opacity: phase === 'content' ? 1 : 0.4 }}
           transition={{ duration: 1.2, ease: 'easeInOut' }}
         />
 
-        {/* Phase 'plane': just show the plane for a clean cinematic moment */}
+        {/* ── CONCEPT A: COCKPIT HUD TELEMETRY CALIBRATION LOADER ── */}
         <AnimatePresence>
-          {phase === 'plane' && (
+          {phase === 'hud' && (
             <motion.div
-              key="plane-label"
-              className="hero-plane-label"
+              key="hud-loader"
+              className="cockpit-hud-overlay"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.6 }}
+              exit={{ opacity: 0, scale: 1.05, filter: 'blur(10px)' }}
+              transition={{ duration: 0.6, ease: 'easeInOut' }}
             >
-              <span className="hero-plane-hud-text">COCKPIT VIEW — RUNWAY APPROACH ▌</span>
+              {/* Cockpit HUD Viewport Border */}
+              <div className="hud-corner hud-top-left" />
+              <div className="hud-corner hud-top-right" />
+              <div className="hud-corner hud-bottom-left" />
+              <div className="hud-corner hud-bottom-right" />
+
+              {/* Center Radar Scanner */}
+              <div className="hud-center-radar">
+                <div className="radar-circle radar-outer" />
+                <div className="radar-circle radar-mid" />
+                <div className="radar-circle radar-inner" />
+                <div className="radar-crosshair-h" />
+                <div className="radar-crosshair-v" />
+                <div className="radar-sweep-beam" />
+                {/* Simulated carrier flight blips */}
+                <div className="radar-blip blip-indigo" title="6E DEL-BOM" />
+                <div className="radar-blip blip-airindia" title="AI BOM-BLR" />
+                <div className="radar-blip blip-spicejet" title="SG DEL-HYD" />
+                <div className="radar-blip blip-akasa" title="QP BOM-GOI" />
+                <div className="radar-center-plane">✈</div>
+              </div>
+
+              {/* Altimeter & Speed HUD Readout */}
+              <div className="hud-telemetry-panel">
+                <div className="hud-telemetry-badge">
+                  <span className="live-dot" /> COCKPIT TELEMETRY INITIALIZATION
+                </div>
+                <div className="hud-metrics-row">
+                  <div className="hud-metric-box">
+                    <span className="hud-metric-label">ALTITUDE</span>
+                    <span className="hud-metric-value">{altimeter.toLocaleString()} <small>FT</small></span>
+                  </div>
+                  <div className="hud-metric-box">
+                    <span className="hud-metric-label">AIRSPEED</span>
+                    <span className="hud-metric-value">460 <small>KTS</small></span>
+                  </div>
+                  <div className="hud-metric-box">
+                    <span className="hud-metric-label">CORRIDORS</span>
+                    <span className="hud-metric-value">80 <small>ROUTES</small></span>
+                  </div>
+                </div>
+
+                {/* Monospace diagnostic boot steps */}
+                <div className="hud-log-stream">
+                  <div className={`hud-log-line ${hudStep >= 1 ? 'active' : ''}`}>
+                    <span className="hud-log-tick">{hudStep >= 1 ? '✓' : '○'}</span>
+                    <span>[01/04] Ingesting 80 DGCA Domestic Flight Corridors...</span>
+                  </div>
+                  <div className={`hud-log-line ${hudStep >= 2 ? 'active' : ''}`}>
+                    <span className="hud-log-tick">{hudStep >= 2 ? '✓' : '○'}</span>
+                    <span>[02/04] Calibrating Modified Laspeyres Base (2024=100)...</span>
+                  </div>
+                  <div className={`hud-log-line ${hudStep >= 3 ? 'active' : ''}`}>
+                    <span className="hud-log-tick">{hudStep >= 3 ? '✓' : '○'}</span>
+                    <span>[03/04] Engaging Robust [Q1, Q3] IQR Outlier Rejection...</span>
+                  </div>
+                  <div className={`hud-log-line ${hudStep >= 4 ? 'active' : ''}`}>
+                    <span className="hud-log-tick">{hudStep >= 4 ? '✓' : '○'}</span>
+                    <span>[04/04] Multi-Horizon Yield Curves Online (T+1 to T+45)...</span>
+                  </div>
+                </div>
+
+                {/* Skip button */}
+                <button className="hud-skip-btn" onClick={skipIntro}>
+                  Skip Intro ⏭
+                </button>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
@@ -158,91 +257,112 @@ const Landing: React.FC = () => {
                     border: 'none',
                     padding: '10px 20px',
                     borderRadius: '10px',
-                    boxShadow: '0 0 25px rgba(6, 182, 212, 0.45)',
+                    cursor: 'pointer',
+                    boxShadow: '0 0 20px rgba(6, 182, 212, 0.4)',
                   }}
                 >
-                  ENTER FLIGHT DECK →
+                  Enter Flight Deck →
                 </motion.button>
               </motion.header>
 
-              {/* Centered Hero Content */}
+              {/* Center Content: Title Card + CTAs */}
               <motion.div
-                key="hero-content"
+                key="center-content"
                 className="hero-center-content"
-                initial={{ opacity: 0, y: 40, scale: 0.96 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ duration: 0.9, ease: 'easeOut' }}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.9, delay: 0.1, ease: 'easeOut' }}
               >
+                {/* Live Pill Badge */}
                 <motion.div
                   className="hero-badge-pill"
-                  initial={{ opacity: 0, scale: 0.9 }}
+                  initial={{ opacity: 0, scale: 0.85 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.1, duration: 0.6 }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
                 >
                   <span className="live-dot" />
-                  LIVE TELEMETRY · 80 ROUTES · 5 CARRIERS · DGCA WEIGHTED
+                  <span>NATIONAL CIVIL AVIATION TELEMETRY</span>
                 </motion.div>
 
+                {/* Big Title: Plane Icon + APIx Gradient */}
                 <h1 className="hero-title-main">
                   <span className="hero-title-icon">✈</span>
                   <span className="hero-title-gradient">APIx</span>
                 </h1>
 
-                <div className="hero-tagline">
-                  National Airfare Price Index & Aviation Intelligence Platform
-                </div>
-
-                <p className="hero-description">
-                  A high-frequency macroeconomic price index tracking Indian domestic airfares using{' '}
-                  <strong>Modified Laspeyres Passenger Weighting</strong>,{' '}
-                  <strong>IQR Outlier Filtration</strong>, and automated{' '}
-                  <strong>HHI Market Concentration Surveillance</strong> across 20 airports.
+                {/* Gold Tagline */}
+                <p className="hero-tagline">
+                  Airfare Price Index of India
                 </p>
 
+                {/* Description */}
+                <p className="hero-description">
+                  Real-time macroeconomic intelligence platform tracking domestic airfare inflation across{' '}
+                  <strong>80 routes</strong>, weighted by official <strong>DGCA passenger volume</strong>{' '}
+                  using a <strong>Modified Laspeyres Index</strong> with robust IQR outlier filtration.
+                </p>
+
+                {/* CTA Buttons */}
                 <div className="hero-cta-group">
                   <motion.button
                     className="hero-cta-primary"
                     onClick={() => navigate('/dashboard')}
-                    whileHover={{ scale: 1.05, boxShadow: '0 0 35px rgba(6, 182, 212, 0.6)' }}
-                    whileTap={{ scale: 0.96 }}
+                    whileHover={{ scale: 1.05, boxShadow: '0 0 45px rgba(6,182,212,0.8)' }}
+                    whileTap={{ scale: 0.95 }}
                   >
-                    <span>🚀</span> Launch Interactive Dashboard
+                    <span>Launch Flight Deck</span>
+                    <span style={{ fontSize: '1.2rem' }}>✈</span>
                   </motion.button>
+
                   <motion.button
                     className="hero-cta-secondary"
-                    onClick={() => navigate('/analysts')}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.96 }}
+                    onClick={() => navigate('/methodology')}
+                    whileHover={{ scale: 1.03, background: 'rgba(255,255,255,0.1)' }}
+                    whileTap={{ scale: 0.97 }}
                   >
-                    <span>🏛</span> Regulatory Intelligence
+                    <span>Read Methodology</span>
+                    <span>📐</span>
                   </motion.button>
                 </div>
               </motion.div>
 
-              {/* Scroll Down */}
+              {/* Scroll Down Indicator */}
               <motion.div
-                key="scroll-hint"
+                key="scroll"
                 className="hero-scroll-indicator"
                 onClick={scrollToFeatures}
-                animate={{ y: [0, 8, 0] }}
-                transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
                 initial={{ opacity: 0 }}
-                // @ts-ignore
-                whileInView={{ opacity: 1 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.7, delay: 0.4 }}
               >
-                <span>EXPLORE 6 INTELLIGENCE MODULES</span>
-                <div className="scroll-arrow">▼</div>
+                <span>EXPLORE CAPABILITIES</span>
+                <span className="scroll-arrow">▼</span>
               </motion.div>
             </>
           )}
         </AnimatePresence>
+
       </section>
 
       {/* ══════════════════════════════════════════════════════
-          FEATURES SECTION — Deep Black & Blue Layered Texture
+          ATMOSPHERIC ALTITUDE DESCENT STRIP (TRANSITION LAYER)
+          ══════════════════════════════════════════════════════ */}
+      <div className="altitude-descent-strip">
+        <div className="altitude-descent-inner">
+          <span className="alt-track-node">✈ FL340 CRUISE</span>
+          <span className="alt-track-line" />
+          <span className="alt-track-node">⚡ DESCENT VECTOR</span>
+          <span className="alt-track-line" />
+          <span className="alt-track-node">🗺 GROUND RADAR MATRIX</span>
+        </div>
+      </div>
+
+      {/* ══════════════════════════════════════════════════════
+          FEATURES SECTION — LAYERED BLACK & BLUE TEXTURE
           ══════════════════════════════════════════════════════ */}
       <section id="features-section" className="earth-features-section">
-        {/* Layered black-blue texture background layers */}
+
+        {/* 7-Layer Deep Black & Blue Texture Background */}
         <div className="bluebk-base" />
         <div className="bluebk-grid" />
         <div className="bluebk-radial-1" />
@@ -251,100 +371,112 @@ const Landing: React.FC = () => {
         <div className="bluebk-top-fade" />
         <div className="bluebk-bottom-fade" />
 
+        {/* Features Content Container */}
         <div className="earth-content-wrap">
-          {/* Section Heading */}
+
+          {/* Section Header */}
           <div className="features-header-block">
-            <div className="features-mini-tag">✦ SYSTEM CAPABILITIES</div>
+            <div className="features-mini-tag">
+              ✦ PLATFORM CAPABILITIES
+            </div>
             <h2 className="features-main-title">
-              6 Core Aviation Intelligence Engines
+              Built for Civil Aviation Intelligence
             </h2>
             <p className="features-subtitle">
-              Engineered for precision macroeconomic indexing, predatory surge monitoring, and antitrust transparency.
+              Engineered from the ground up for policymakers, economists, and airline analysts.
+              Six dedicated intelligence modules powering the future of airfare transparency.
             </p>
           </div>
 
-          {/* 6 Glassmorphism Cards Grid */}
+          {/* 6 Glassmorphism Feature Cards Grid */}
           <div className="glass-features-grid">
-            {FEATURES.map((feat, idx) => (
+            {FEATURES.map((feat) => (
               <motion.div
-                key={idx}
+                key={feat.title}
                 className="glass-feature-card"
-                initial={{ opacity: 0, y: 35 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-50px' }}
-                transition={{ duration: 0.6, delay: feat.delay }}
-                whileHover={{
-                  y: -6,
-                  borderColor: feat.badgeColor,
-                  boxShadow: `0 20px 40px -10px ${feat.badgeColor}33`,
-                }}
                 onClick={() => navigate(feat.path)}
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-60px' }}
+                transition={{ duration: 0.6, delay: feat.delay, ease: 'easeOut' }}
+                whileHover={{
+                  y: -8,
+                  borderColor: 'rgba(6, 182, 212, 0.45)',
+                  boxShadow: '0 25px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(6, 182, 212, 0.25)',
+                }}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                {/* Top Row: Icon + Badge */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
+                  <div className="glass-card-icon">
+                    {feat.icon}
+                  </div>
                   <span
                     className="glass-badge-pill"
                     style={{
                       color: feat.badgeColor,
-                      background: `${feat.badgeColor}18`,
                       borderColor: `${feat.badgeColor}40`,
+                      background: `${feat.badgeColor}15`,
                     }}
                   >
                     {feat.badge}
                   </span>
-                  <span className="glass-card-icon" style={{ textShadow: `0 0 20px ${feat.badgeColor}` }}>
-                    {feat.icon}
-                  </span>
                 </div>
 
-                <div className="glass-card-category" style={{ color: feat.badgeColor }}>
+                {/* Category mini-tag */}
+                <div className="glass-card-category">
                   {feat.category}
                 </div>
-                <h3 className="glass-card-title">{feat.title}</h3>
-                <p className="glass-card-desc">{feat.desc}</p>
 
+                {/* Title */}
+                <h3 className="glass-card-title">
+                  {feat.title}
+                </h3>
+
+                {/* Description */}
+                <p className="glass-card-desc">
+                  {feat.desc}
+                </p>
+
+                {/* Footer link arrow */}
                 <div className="glass-card-footer">
-                  <span className="glass-launch-text" style={{ color: feat.badgeColor }}>
-                    Launch Engine <span>→</span>
-                  </span>
+                  <span>Explore module</span>
+                  <span className="glass-card-arrow">→</span>
                 </div>
               </motion.div>
             ))}
           </div>
 
-          {/* Bottom Banner */}
+          {/* Bottom Call to Action Card */}
           <motion.div
-            className="bottom-cockpit-banner"
+            className="features-bottom-cta-card"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7 }}
           >
-            <div className="banner-tag">🇮🇳 SMART INDIA HACKATHON 2026</div>
-            <h3 className="banner-title">Ready to explore real-time domestic airfare telemetry?</h3>
-            <p className="banner-desc">
-              Access live 80-route pricing dynamics, interactive elasticity simulators, and antitrust HHI market surveillance.
-            </p>
+            <div className="cta-card-content">
+              <span className="cta-card-tag">DGCA & MOSPI COMPLIANT</span>
+              <h3 className="cta-card-title">
+                Experience the Live Airfare Calculator
+              </h3>
+              <p className="cta-card-desc">
+                Access real-time price trends, 80-route geospatial flight radars, and carrier yield curves now.
+              </p>
+            </div>
             <motion.button
-              className="btn btn-primary"
+              className="cta-card-button"
               onClick={() => navigate('/dashboard')}
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.96 }}
-              style={{
-                background: 'linear-gradient(135deg, #06B6D4 0%, #0284C7 100%)',
-                color: '#030712',
-                fontSize: '1rem',
-                fontWeight: 900,
-                padding: '14px 36px',
-                borderRadius: '12px',
-                border: 'none',
-                boxShadow: '0 0 30px rgba(6, 182, 212, 0.5)',
-              }}
+              whileHover={{ scale: 1.05, boxShadow: '0 0 35px rgba(6,182,212,0.8)' }}
+              whileTap={{ scale: 0.95 }}
             >
-              ENTER COCKPIT NOW ✈
+              <span>Launch Live Dashboard</span>
+              <span>✈</span>
             </motion.button>
           </motion.div>
+
         </div>
       </section>
+
     </div>
   );
 };
