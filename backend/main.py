@@ -307,12 +307,28 @@ def get_index(
     airline: str     = Query("all"),
     route: str       = Query("all"),
 ):
-    """APIx index values for T+7, T+15, T+30, T+45."""
+    """APIx index values for T+1, T+7, T+15, T+30, T+45 using Laspeyres passenger-weighted formula."""
     records = _filter_records(cabin_class, airline, route)
     result = {}
+    from collections import defaultdict
     for h in HORIZONS:
-        vals = [r["pct_change"] for r in records if r["horizon"] == h]
-        result[h] = round(100 + float(np.mean(vals)), 2) if vals else 100.0
+        h_recs = [r for r in records if r["horizon"] == h]
+        if not h_recs:
+            result[h] = 100.0
+            continue
+        
+        route_groups = defaultdict(list)
+        route_weights = {}
+        for r in h_recs:
+            rid = r["route_id"]
+            price_rel = (r["fare_current"] / r["fare_base"]) * 100.0
+            route_groups[rid].append(price_rel)
+            route_weights[rid] = r["passenger_share"]
+            
+        weighted_sum = sum(route_weights[rid] * float(np.median(rels)) for rid, rels in route_groups.items())
+        total_weight = sum(route_weights.values())
+        
+        result[h] = round(weighted_sum / total_weight, 2) if total_weight > 0 else 100.0
     return result
 
 
