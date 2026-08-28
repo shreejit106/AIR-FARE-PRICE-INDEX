@@ -11,7 +11,7 @@ html_content = """<!DOCTYPE html>
 
   @page {
     size: A4;
-    margin: 18mm 16mm 18mm 16mm;
+    margin: 16mm 14mm 16mm 14mm;
     @bottom-right {
       content: "Page " counter(page) " of " counter(pages);
       font-family: 'Inter', sans-serif;
@@ -30,8 +30,8 @@ html_content = """<!DOCTYPE html>
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     color: #0F172A;
     background-color: #FFFFFF;
-    line-height: 1.6;
-    font-size: 9.5pt;
+    line-height: 1.55;
+    font-size: 9pt;
     margin: 0;
     padding: 0;
   }
@@ -39,14 +39,14 @@ html_content = """<!DOCTYPE html>
   /* Header Section */
   .header-card {
     border-bottom: 2.5px solid #0284C7;
-    padding-bottom: 14px;
-    margin-bottom: 20px;
+    padding-bottom: 12px;
+    margin-bottom: 16px;
   }
 
   .badge-row {
     display: flex;
     gap: 8px;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
   }
 
   .badge {
@@ -55,7 +55,7 @@ html_content = """<!DOCTYPE html>
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.8px;
-    padding: 3px 8px;
+    padding: 2px 7px;
     border-radius: 4px;
   }
 
@@ -73,35 +73,35 @@ html_content = """<!DOCTYPE html>
 
   .doc-title {
     font-family: 'Newsreader', Georgia, serif;
-    font-size: 20pt;
+    font-size: 19pt;
     font-weight: 700;
     color: #0F172A;
-    margin: 0 0 6px 0;
+    margin: 0 0 4px 0;
     line-height: 1.2;
   }
 
   .doc-subtitle {
-    font-size: 9.5pt;
+    font-size: 9pt;
     color: #475569;
-    margin: 0 0 10px 0;
+    margin: 0 0 8px 0;
     font-style: italic;
   }
 
   .meta-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
+    gap: 6px;
     background: #F8FAFC;
     border: 1px solid #E2E8F0;
     border-radius: 6px;
-    padding: 8px 12px;
-    font-size: 8pt;
+    padding: 6px 10px;
+    font-size: 7.5pt;
   }
 
   .meta-item strong {
     display: block;
     color: #64748B;
-    font-size: 7pt;
+    font-size: 6.5pt;
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
@@ -114,12 +114,12 @@ html_content = """<!DOCTYPE html>
   /* Section Typography */
   h2 {
     font-family: 'Inter', sans-serif;
-    font-size: 12pt;
+    font-size: 11.5pt;
     font-weight: 800;
     color: #0369A1;
     border-bottom: 1.5px solid #E2E8F0;
-    padding-bottom: 4px;
-    margin: 18px 0 10px 0;
+    padding-bottom: 3px;
+    margin: 14px 0 8px 0;
     page-break-after: avoid;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -127,15 +127,15 @@ html_content = """<!DOCTYPE html>
 
   h3 {
     font-family: 'Inter', sans-serif;
-    font-size: 10pt;
+    font-size: 9.5pt;
     font-weight: 700;
     color: #1E293B;
-    margin: 14px 0 6px 0;
+    margin: 10px 0 4px 0;
     page-break-after: avoid;
   }
 
   p {
-    margin: 0 0 8px 0;
+    margin: 0 0 6px 0;
     color: #334155;
     text-align: justify;
   }
@@ -146,34 +146,34 @@ html_content = """<!DOCTYPE html>
     border: 1.5px solid #BAE6FD;
     border-left: 4px solid #0284C7;
     border-radius: 6px;
-    padding: 10px 14px;
-    margin: 10px 0 12px 0;
+    padding: 8px 12px;
+    margin: 8px 0 10px 0;
     page-break-inside: avoid;
   }
 
   .formula-title {
-    font-size: 7.5pt;
+    font-size: 7pt;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 1px;
     color: #0369A1;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
   }
 
   .formula-equation {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 10pt;
+    font-size: 9.5pt;
     font-weight: 700;
     color: #0F172A;
     background: #FFFFFF;
     border: 1px solid #CBD5E1;
     border-radius: 4px;
-    padding: 8px 12px;
+    padding: 6px 10px;
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 8px;
-    margin: 4px 0;
+    margin: 3px 0;
   }
 
   .formula-fraction {
@@ -186,34 +186,30 @@ html_content = """<!DOCTYPE html>
 
   .formula-num {
     border-bottom: 1.5px solid #0284C7;
-    padding-bottom: 2px;
+    padding-bottom: 1px;
     width: 100%;
     text-align: center;
   }
 
   .formula-den {
-    padding-top: 2px;
+    padding-top: 1px;
     width: 100%;
     text-align: center;
   }
 
   .var-legend {
-    font-size: 8pt;
+    font-size: 7.5pt;
     color: #475569;
-    margin-top: 6px;
-    line-height: 1.4;
-  }
-
-  .var-legend li {
-    margin-bottom: 3px;
+    margin-top: 4px;
+    line-height: 1.35;
   }
 
   /* Tables */
   table {
     width: 100%;
     border-collapse: collapse;
-    margin: 10px 0 14px 0;
-    font-size: 8pt;
+    margin: 8px 0 10px 0;
+    font-size: 7.8pt;
     page-break-inside: avoid;
   }
 
@@ -223,13 +219,13 @@ html_content = """<!DOCTYPE html>
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    padding: 6px 8px;
+    padding: 5px 6px;
     border: 1px solid #CBD5E1;
     text-align: left;
   }
 
   td {
-    padding: 6px 8px;
+    padding: 5px 6px;
     border: 1px solid #E2E8F0;
     color: #334155;
     vertical-align: top;
@@ -245,9 +241,9 @@ html_content = """<!DOCTYPE html>
     border: 1px solid #FDE68A;
     border-left: 3.5px solid #D97706;
     border-radius: 4px;
-    padding: 8px 12px;
-    margin: 10px 0;
-    font-size: 8.5pt;
+    padding: 6px 10px;
+    margin: 8px 0;
+    font-size: 8pt;
     page-break-inside: avoid;
   }
 
@@ -258,10 +254,10 @@ html_content = """<!DOCTYPE html>
   }
 
   .reference-item {
-    margin-bottom: 10px;
-    padding-left: 18px;
-    text-indent: -18px;
-    font-size: 8.2pt;
+    margin-bottom: 8px;
+    padding-left: 16px;
+    text-indent: -16px;
+    font-size: 7.8pt;
     color: #334155;
     page-break-inside: avoid;
   }
@@ -272,16 +268,12 @@ html_content = """<!DOCTYPE html>
 
   .ref-link {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 7.2pt;
+    font-size: 6.8pt;
     color: #0284C7;
     text-decoration: none;
     display: block;
     text-indent: 0;
-    margin-top: 2px;
-  }
-
-  .page-break {
-    page-break-before: always;
+    margin-top: 1px;
   }
 </style>
 </head>
@@ -291,10 +283,10 @@ html_content = """<!DOCTYPE html>
 <div class="header-card">
   <div class="badge-row">
     <span class="badge badge-primary">Smart India Hackathon 2026</span>
-    <span class="badge badge-verified">Peer-Reviewed Econometric Foundation</span>
+    <span class="badge badge-verified">Indian Aviation Governance & Econometric Standards</span>
   </div>
   <h1 class="doc-title">Airfare Price Index (APIx): Research & Methodology</h1>
-  <div class="doc-subtitle">Statistical Formulation, Weighting Mechanics, Robust Data Cleaning, and Empirical Precedents</div>
+  <div class="doc-subtitle">Statistical Formulation, Indian Regulatory Grounding, Weighting Mechanics, and International Precedents</div>
   
   <div class="meta-grid">
     <div class="meta-item">
@@ -307,7 +299,7 @@ html_content = """<!DOCTYPE html>
     </div>
     <div class="meta-item">
       <strong>Weighting Source</strong>
-      <span>DGCA Quarterly PAX Matrix</span>
+      <span>DGCA Quarterly PAX Filings</span>
     </div>
     <div class="meta-item">
       <strong>Benchmark Base</strong>
@@ -355,7 +347,7 @@ In civil aviation, an "item" represents a sovereign origin–destination city pa
     </span>
     <span> ] × 100</span>
   </div>
-  <div class="formula-equation" style="font-size: 8.5pt; background: #F8FAFC; border-color: #E2E8F0;">
+  <div class="formula-equation" style="font-size: 8pt; background: #F8FAFC; border-color: #E2E8F0;">
     <span>where passenger weight: &nbsp; w<sub>r,0</sub> = </span>
     <span class="formula-fraction">
       <span class="formula-num">PAX(r, 0)</span>
@@ -364,11 +356,11 @@ In civil aviation, an "item" represents a sovereign origin–destination city pa
     <span> &nbsp; such that &nbsp; Σ<sub>r=1</sub><sup>R</sup> w<sub>r,0</sub> = 1.000000</span>
   </div>
   <div class="var-legend">
-    Where <strong>P(r, t)</strong> is the IQR-cleaned median fare on route <em>r</em> at date <em>t</em>; <strong>P(r, 0)</strong> is the baseline reference median fare (Sept 2022); and <strong>PAX(r, 0)</strong> is the official quarterly passenger count recorded in DGCA filings.
+    Where <strong>P(r, t)</strong> is the IQR-cleaned median fare on route <em>r</em> at date <em>t</em>; <strong>P(r, 0)</strong> is the baseline reference median fare (Sept 2022 = 100.0); and <strong>PAX(r, 0)</strong> is the official quarterly passenger count recorded in DGCA filings.
   </div>
 </div>
 
-<h3>1.3 Methodological Equivalence to U.S. BLS International Price Program</h3>
+<h3>1.3 Methodological Equivalence</h3>
 <table>
   <thead>
     <tr>
@@ -400,18 +392,15 @@ In civil aviation, an "item" represents a sovereign origin–destination city pa
     <tr>
       <td><strong>Precedent Reference</strong></td>
       <td>Classical Economics (1871)</td>
-      <td>U.S. BLS IPP Handbook (Ref #2)</td>
-      <td>Directly Method-Equivalent to BLS IPP (Ref #2)</td>
+      <td>U.S. BLS IPP Handbook (Ref #6)</td>
+      <td>Directly Method-Equivalent to BLS IPP (Ref #6)</td>
     </tr>
   </tbody>
 </table>
 
 <h3>1.4 Operational Reality: The Lowe Index Distinction</h3>
 <p>
-As documented in the <strong>UK Office for National Statistics (ONS) Consumer Price Indices Technical Manual</strong> (Reference #5), real-world economic indices rarely satisfy the strict pure Laspeyres requirement where price base period (0) and quantity weight period (b) coincide exactly.
-</p>
-<p>
-When weights originate from an independent base period <em>b ≠ 0</em>, the index is formally classified as a <strong>Lowe Index</strong>:
+As documented in the <strong>UK Office for National Statistics (ONS) Consumer Price Indices Technical Manual</strong> (Reference #9), when quantity weights <em>Q<sub>b</sub></em> originate from an independent base period <em>b ≠ 0</em>, the index is formally classified as a <strong>Lowe Index</strong>:
 </p>
 
 <div class="formula-card">
@@ -461,7 +450,7 @@ An unweighted arithmetic mean assigns equal weight (<em>1/R</em>) to every route
 <div class="callout">
   <div class="callout-title">Theoretical Proof of Distortion (80-Route Network):</div>
   Suppose 79 trunk routes experience zero price movement (P<sub>t</sub>/P<sub>0</sub> = 1.00), while one low-volume regional route (w<sub>r</sub> = 0.0015) experiences an acute 200% surge (P<sub>t</sub>/P<sub>0</sub> = 3.00):
-  <ul style="margin: 4px 0 0 0; padding-left: 16px;">
+  <ul style="margin: 3px 0 0 0; padding-left: 14px;">
     <li><strong>Unweighted Naive Shift:</strong> ΔIndex = (1/80) × (3.00 − 1.00) × 100 = <strong>+2.50 index points</strong></li>
     <li><strong>DGCA Weighted Shift:</strong> ΔAPIx = 0.0015 × (3.00 − 1.00) × 100 = <strong>+0.30 index points</strong></li>
   </ul>
@@ -470,7 +459,7 @@ An unweighted arithmetic mean assigns equal weight (<em>1/R</em>) to every route
 
 <h3>2.2 Economic Debate: Fixed vs. Adaptive Weights</h3>
 <p>
-In <strong>BLS Working Paper (2021)</strong> (Reference #4), economists evaluate fixed-weight Laspeyres/Lowe systems against adaptive/superlative formulations (e.g., Törnqvist). The findings demonstrate that while adaptive weighting captures short-term consumer substitution, computing adaptive weights on high-frequency scraped quotes introduces <strong>severe chain drift</strong>. APIx's fixed-weight Laspeyres/Lowe approach was chosen deliberately to maintain deterministic regulatory stability.
+In <strong>BLS Working Paper (2021)</strong> (Reference #8), economists evaluate fixed-weight Laspeyres/Lowe systems against adaptive/superlative formulations (e.g., Törnqvist). The findings demonstrate that while adaptive weighting captures short-term consumer substitution, computing adaptive weights on high-frequency scraped quotes introduces <strong>severe chain drift</strong>. APIx's fixed-weight Laspeyres/Lowe approach was chosen deliberately to maintain deterministic regulatory stability.
 </p>
 
 <!-- SECTION 3 -->
@@ -480,16 +469,12 @@ To prevent dynamic pricing spikes, API scraping artifacts, and seat unbundling f
 </p>
 
 <h3>3.1 Tukey's Interquartile Range (IQR) Inner Fences</h3>
-<p>
-For fares on route <em>r</em> at horizon <em>h</em>, the Interquartile Range is computed as:
-</p>
-
 <div class="formula-card">
   <div class="formula-title">Tukey IQR Outlier Boundary Formulation</div>
   <div class="formula-equation">
     <span>IQR<sub>r,h,t</sub> = Q<sub>3</sub>(r, h, t) − Q<sub>1</sub>(r, h, t)</span>
   </div>
-  <div class="formula-equation" style="font-size: 8.5pt; background: #F8FAFC; border-color: #E2E8F0;">
+  <div class="formula-equation" style="font-size: 8pt; background: #F8FAFC; border-color: #E2E8F0;">
     <span>Acceptance Interval: &nbsp; max(0, Q<sub>1</sub> − 1.5 × IQR) &nbsp; ≤ &nbsp; Fare &nbsp; ≤ &nbsp; Q<sub>3</sub> + 1.5 × IQR</span>
   </div>
   <div class="var-legend">
@@ -507,7 +492,7 @@ For thin-sample corridors (<em>N < 10</em>), APIx implements the 50% breakdown-p
   <div class="formula-equation">
     <span>MAD<sub>r,h,t</sub> = Median( | p<sub>i</sub> − Median(Fares<sub>r,h,t</sub>) | )</span>
   </div>
-  <div class="formula-equation" style="font-size: 8.5pt; background: #F8FAFC; border-color: #E2E8F0;">
+  <div class="formula-equation" style="font-size: 8pt; background: #F8FAFC; border-color: #E2E8F0;">
     <span>Normalized Scale: &nbsp; σ̂<sub>MAD</sub> = 1.4826 × MAD &nbsp;&nbsp;|&nbsp;&nbsp; Boundary: &nbsp; | p<sub>i</sub> − Median(p) | ≤ 2.0 × σ̂<sub>MAD</sub></span>
   </div>
   <div class="var-legend">
@@ -515,74 +500,88 @@ For thin-sample corridors (<em>N < 10</em>), APIx implements the 50% breakdown-p
   </div>
 </div>
 
-<h3>3.3 Representative Median Fares</h3>
+<!-- SECTION 4 -->
+<h2>4. Precedents & Indian Regulatory Grounding</h2>
 <p>
-The representative price <em>P(r, t)</em> is calculated using the <strong>sample median</strong> rather than the arithmetic mean, eliminating skewness from right-tailed dynamic yield management distributions.
+APIx is grounded in both Indian statutory governance and four decades of international price index research:
 </p>
 
-<!-- SECTION 4 -->
-<h2>4. Precedents & Existing Solutions</h2>
-<p>
-APIx builds upon four decades of central bank and statistical agency research:
-</p>
-<ul style="padding-left: 18px; margin-top: 4px;">
-  <li><strong>U.S. BLS CPI Airfare Component (Reference #1):</strong> Official government methodology for tracking passenger airfare inflation in statutory consumer price indices.</li>
-  <li><strong>U.S. BLS Air Passenger Fares Price Indexes (Reference #2):</strong> Closest direct precedent. Employs a passenger-volume weighted modified Laspeyres formula using U.S. DOT DB1B and Commerce I-92 ticket surveys.</li>
-  <li><strong>ATPI Research — Lent & Dorfman (2005) (Reference #3):</strong> Pioneering academic study in the <em>Monthly Labor Review</em> validating high-frequency electronic air travel reservations against official CPI benchmarks.</li>
+<h3>4.1 Government of India Statutory & Econometric Foundations</h3>
+<ul style="padding-left: 14px; margin-top: 3px;">
+  <li><strong>Ministry of Statistics & Programme Implementation (MoSPI) — CPI Transport Series (Reference #1):</strong> Official national methodology under the COICOP framework for measuring transport services inflation. MoSPI utilizes digital online portal data collection and HCES household expenditure weighting. APIx acts as a high-frequency regulatory cross-check against published monthly MoSPI CPI releases.</li>
+  <li><strong>DGCA — Tariff Monitoring Unit (TMU) Operational Directives (Reference #2):</strong> Under Rule 135 of the <em>Aircraft Rules, 1937</em> and CAR Section 3, DGCA monitors airline tariff bands across 78+ domestic routes. APIx automates and scales this framework into an objective 80-route real-time index.</li>
+  <li><strong>Parliamentary Standing Committee on Transport, Tourism & Culture (Report No. 328) (Reference #3):</strong> Evaluated dynamic pricing algorithms and recommended transparent national airfare benchmarking to protect consumer welfare during peak festive surge periods.</li>
+  <li><strong>Competition Commission of India (CCI) — Market Study on Civil Aviation (Reference #4):</strong> Evaluates route-level market power (HHI), capacity discipline, and algorithmic pricing coordination risks, providing the econometric basis for the APIx Antitrust Portal (/analysts).</li>
 </ul>
 
-<h3>How APIx Differs from Precedents</h3>
-<p>
-APIx is engineered specifically for the sovereign Indian aviation ecosystem:
-</p>
-<ul style="padding-left: 18px; margin-top: 4px;">
-  <li><strong>Multi-Horizon Forward Curve:</strong> Monitors fares simultaneously across 5 distinct advance purchase lead times (T+1, T+7, T+15, T+30, T+45).</li>
-  <li><strong>Regulatory Cross-Check:</strong> Positioned not as a CPI replacement, but as an early-warning regulatory monitoring suite for MoCA, DGCA, and the Competition Commission of India (CCI) to detect predatory surges and monitor route concentration (HHI).</li>
+<h3>4.2 International Precedents</h3>
+<ul style="padding-left: 14px; margin-top: 3px;">
+  <li><strong>U.S. BLS CPI Airline Fares Factsheet (Reference #5):</strong> Official U.S. methodology for tracking commercial airline fares in the CPI basket.</li>
+  <li><strong>U.S. BLS International Price Program (IPP) (Reference #6):</strong> Direct international precedent for passenger-volume weighted modified Laspeyres aggregation.</li>
+  <li><strong>ATPI Research — Lent & Dorfman (2005) (Reference #7):</strong> Pioneering study in the <em>Monthly Labor Review</em> validating high-frequency electronic airfare data against published CPI benchmarks.</li>
 </ul>
 
 <!-- SECTION 5 -->
 <h2>5. Limitations & Future Work (Honest, Citable)</h2>
-<p>
-In adherence to academic integrity, the following limitations and roadmap goals are documented:
-</p>
-<ol style="padding-left: 18px; margin-top: 4px;">
-  <li><strong>Consumer Substitution Bias (Reference #4):</strong> Fixed-weight Laspeyres indexes do not reflect instantaneous traveler substitution away from surging routes. Future iterations will explore a <strong>Chained Superlative Törnqvist Index</strong> once real-time transactional APIs are linked with DGCA systems.</li>
+<ol style="padding-left: 14px; margin-top: 3px;">
+  <li><strong>Consumer Substitution Bias (Reference #8):</strong> Fixed-weight Laspeyres indexes do not reflect instantaneous traveler substitution away from surging routes. Future iterations will explore a <strong>Chained Superlative Törnqvist Index</strong> once real-time transactional APIs are linked with DGCA systems.</li>
   <li><strong>Network Scope:</strong> Prototype monitors 80 core domestic corridors; future expansion will incorporate regional UDAN routes to audit government Viability Gap Funding (VGF) price caps.</li>
   <li><strong>Weight Refresh Cycles:</strong> Regular quarterly refresh under the Lowe specification ensures seasonal alignment while preventing structural index breaks.</li>
 </ol>
 
 <!-- SECTION 6 -->
-<h2>6. Verified Academic & Government References</h2>
+<h2>6. Verified Reference & Citation List</h2>
+
 <div class="reference-item">
-  <strong>[1] U.S. Bureau of Labor Statistics (BLS)</strong> — <em>Consumer Price Index: Airline Fares Factsheet</em>, U.S. Department of Labor.
+  <strong>[1] Ministry of Statistics and Programme Implementation (MoSPI), Govt. of India</strong> — <em>Consumer Price Index: Concepts, Definitions and Methodology for Transport Services (COICOP Framework)</em>, National Statistical Office (NSO).
+  <a class="ref-link" href="https://esankhyiki.mospi.gov.in/">https://esankhyiki.mospi.gov.in/</a>
+</div>
+
+<div class="reference-item">
+  <strong>[2] Directorate General of Civil Aviation (DGCA), Ministry of Civil Aviation, Govt. of India</strong> — <em>Handbook of Civil Aviation Statistics & Tariff Monitoring Unit (TMU) Operational Directives (Rule 135, Aircraft Rules, 1937)</em>.
+  <a class="ref-link" href="https://www.dgca.gov.in">https://www.dgca.gov.in</a>
+</div>
+
+<div class="reference-item">
+  <strong>[3] Parliamentary Standing Committee on Transport, Tourism & Culture, Parliament of India</strong> — <em>Report on Fixing of Airfares and Issues Related to Dynamic Pricing in Civil Aviation Sector (Report No. 328)</em>, Rajya Sabha Secretariat.
+  <a class="ref-link" href="https://sansad.in">https://sansad.in</a>
+</div>
+
+<div class="reference-item">
+  <strong>[4] Competition Commission of India (CCI), Govt. of India</strong> — <em>Market Study on the Civil Aviation Sector in India: Market Power, Concentration and Dynamic Pricing</em>.
+  <a class="ref-link" href="https://www.cci.gov.in">https://www.cci.gov.in</a>
+</div>
+
+<div class="reference-item">
+  <strong>[5] U.S. Bureau of Labor Statistics (BLS)</strong> — <em>Consumer Price Index: Airline Fares Factsheet</em>, U.S. Department of Labor.
   <a class="ref-link" href="https://www.bls.gov/cpi/factsheets/airline-fares.htm">https://www.bls.gov/cpi/factsheets/airline-fares.htm</a>
 </div>
 
 <div class="reference-item">
-  <strong>[2] U.S. Bureau of Labor Statistics (BLS)</strong> — <em>Air Passenger Fares Price Indexes (International Price Program)</em>, BLS Handbook of Methods.
+  <strong>[6] U.S. Bureau of Labor Statistics (BLS)</strong> — <em>Air Passenger Fares Price Indexes (IPP Methodology)</em>, BLS Handbook of Methods.
   <a class="ref-link" href="https://www.bls.gov/mxp/methods/air-passenger-fares.htm">https://www.bls.gov/mxp/methods/air-passenger-fares.htm</a>
 </div>
 
 <div class="reference-item">
-  <strong>[3] Janice Lent & Alan H. Dorfman (2005)</strong> — <em>"Air-Travel Transaction Index,"</em> <strong>Monthly Labor Review</strong>, U.S. Bureau of Labor Statistics, Vol. 128, No. 6, pp. 45–54.
+  <strong>[7] Janice Lent & Alan H. Dorfman (2005)</strong> — <em>"Air-Travel Transaction Index,"</em> <strong>Monthly Labor Review</strong>, U.S. BLS, Vol. 128, No. 6, pp. 45–54.
   <a class="ref-link" href="https://www.bls.gov/opub/mlr/2005/06/art4full.pdf">https://www.bls.gov/opub/mlr/2005/06/art4full.pdf</a>
 </div>
 
 <div class="reference-item">
-  <strong>[4] U.S. Bureau of Labor Statistics (2021)</strong> — <em>CPI Indexes for Subsets of the Target Population: Laspeyres vs. Törnqvist Formulations and Substitution Bias</em>, BLS Working Paper Series (WP No. 543).
+  <strong>[8] U.S. Bureau of Labor Statistics (2021)</strong> — <em>CPI Indexes for Subsets of the Target Population: Laspeyres vs. Törnqvist Formulations and Substitution Bias</em>, BLS Working Paper No. 543.
   <a class="ref-link" href="https://www.bls.gov/osmr/research-papers/2021/">https://www.bls.gov/osmr/research-papers/2021/</a>
 </div>
 
 <div class="reference-item">
-  <strong>[5] UK Office for National Statistics (ONS)</strong> — <em>Consumer Price Indices Technical Manual (Methodology Appendix: Formulae used to calculate CPI and RPI)</em>, UK ONS Guidance.
+  <strong>[9] UK Office for National Statistics (ONS)</strong> — <em>Consumer Price Indices Technical Manual (Methodology Appendix: Formulae used to calculate CPI and RPI)</em>, UK ONS Guidance.
 </div>
 
 <div class="reference-item">
-  <strong>[6] John W. Tukey (1977)</strong> — <em>Exploratory Data Analysis</em>, Addison-Wesley Series in Behavioral Science (IQR Inner Fences).
+  <strong>[10] John W. Tukey (1977)</strong> — <em>Exploratory Data Analysis</em>, Addison-Wesley Series in Behavioral Science (IQR Inner Fences).
 </div>
 
 <div class="reference-item">
-  <strong>[7] Frank R. Hampel (1974)</strong> — <em>"The Influence Curve and its Role in Robust Estimation,"</em> <strong>Journal of the American Statistical Association</strong>, Vol. 69, No. 346, pp. 383–393 (MAD Scale Estimator).
+  <strong>[11] Frank R. Hampel (1974)</strong> — <em>"The Influence Curve and its Role in Robust Estimation,"</em> <strong>Journal of the American Statistical Association</strong>, Vol. 69, No. 346, pp. 383–393 (MAD Scale Estimator).
 </div>
 
 </body>

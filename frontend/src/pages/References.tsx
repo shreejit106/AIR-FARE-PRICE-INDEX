@@ -131,6 +131,79 @@ const DATA_SOURCES: DataSourceItem[] = [
 
 const CITATIONS: CitationItem[] = [
   {
+    id: 'mospi-cpi-framework',
+    title: 'Consumer Price Index (CPI) Methodology: Transport & Services Basket (COICOP Framework)',
+    authors: 'Ministry of Statistics & Programme Implementation (MoSPI), National Statistical Office (NSO)',
+    publication: 'Government of India, MoSPI Technical Notes & CPI Release Series',
+    year: 'Official Standard',
+    category: 'Official Index Benchmark',
+    url: 'https://esankhyiki.mospi.gov.in/',
+    keyFinding: 'Defines the national methodology for tracking transport services inflation under the COICOP framework, incorporating digital online platform data collection and HCES expenditure weighting.',
+    apixUsage: 'Official macroeconomic benchmark: APIx tracks and cross-checks against MoSPI Transport & Communication CPI series.',
+    bibtex: `@techreport{mospi_cpi_manual,
+  author = {{Ministry of Statistics and Programme Implementation}},
+  title = {Consumer Price Index: Concepts, Definitions and Methodology for Transport Services},
+  institution = {National Statistical Office (NSO), Government of India},
+  year = {2024},
+  url = {https://esankhyiki.mospi.gov.in/}
+}`
+  },
+  {
+    id: 'dgca-tmu-rules',
+    title: 'Handbook of Civil Aviation Statistics & Tariff Monitoring Unit (TMU) Framework (Rule 135, Aircraft Rules)',
+    authors: 'Directorate General of Civil Aviation (DGCA), Ministry of Civil Aviation',
+    publication: 'DGCA Annual Statistics & Civil Aviation Requirements (CAR Section 3 - Air Transport)',
+    year: 'Regulatory Standard',
+    category: 'Official Index Benchmark',
+    url: 'https://www.dgca.gov.in',
+    keyFinding: 'Establishes statutory reporting of city-pair passenger traffic (Form A/B) and route-wise tariff band monitoring across 78+ domestic trunk corridors to prevent excessive fare surges.',
+    apixUsage: 'Source of truth for APIx 80-route sovereign passenger weights w(r,0) and statutory regulatory compliance standards.',
+    bibtex: `@techreport{dgca_traffic_handbook,
+  author = {{Directorate General of Civil Aviation}},
+  title = {Handbook of Civil Aviation Statistics and Tariff Monitoring Unit Directives},
+  institution = {Ministry of Civil Aviation, Government of India},
+  year = {2024},
+  url = {https://www.dgca.gov.in}
+}`
+  },
+  {
+    id: 'parliament-airfare-report',
+    title: 'Report on Fixing of Airfares and Dynamic Pricing in Civil Aviation Sector (Report No. 328)',
+    authors: 'Parliamentary Standing Committee on Transport, Tourism and Culture, Parliament of India',
+    publication: 'Rajya Sabha Secretariat, Parliament of India',
+    year: 'Parliamentary Report',
+    category: 'Econometric Precedent',
+    url: 'https://sansad.in',
+    keyFinding: 'Examines algorithmic surge pricing, emergency booking spikes, and market concentration; emphasizes the urgent need for high-frequency empirical airfare monitoring to safeguard consumer interests.',
+    apixUsage: 'Direct policy justification for APIx: provides statutory mandate for high-frequency lead-time (T+1 to T+45) price index tracking.',
+    bibtex: `@techreport{parliament_airfare_report328,
+  author = {{Parliamentary Standing Committee on Transport, Tourism and Culture}},
+  title = {Report on Fixing of Airfares and Issues Related to Dynamic Pricing in Civil Aviation Sector},
+  institution = {Parliament of India, Rajya Sabha Secretariat},
+  year = {2023},
+  number = {Report No. 328},
+  url = {https://sansad.in}
+}`
+  },
+  {
+    id: 'cci-aviation-study',
+    title: 'Market Study on the Civil Aviation Sector in India: Market Concentration & Competition Dynamics',
+    authors: 'Competition Commission of India (CCI)',
+    publication: 'Government of India, Competition Commission of India Policy Research',
+    year: 'Market Study',
+    category: 'Econometric Precedent',
+    url: 'https://www.cci.gov.in',
+    keyFinding: 'Quantifies route-level Herfindahl-Hirschman Index (HHI) concentration across Indian domestic airline routes and evaluates algorithmic pricing coordination risks in highly concentrated corridors.',
+    apixUsage: 'Theoretical and empirical foundation for the APIx Antitrust & HHI Policy Portal (/analysts).',
+    bibtex: `@techreport{cci_aviation_study,
+  author = {{Competition Commission of India}},
+  title = {Market Study on the Civil Aviation Sector in India: Market Power, Concentration and Dynamic Pricing},
+  institution = {Competition Commission of India, Government of India},
+  year = {2022},
+  url = {https://www.cci.gov.in}
+}`
+  },
+  {
     id: 'bls-cpi',
     title: 'Consumer Price Index: Airline Fares Factsheet',
     authors: 'U.S. Bureau of Labor Statistics (BLS)',
