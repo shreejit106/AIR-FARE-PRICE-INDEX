@@ -179,30 +179,30 @@ export const DEFAULT_ROUTE_SUMMARIES: RouteSummary[] = BASE_PAIRS.map(([orig, de
 export const DEFAULT_ROUTES_LIST: string[] = BASE_PAIRS.map(([o, d]) => `${o}-${d}`);
 
 export const DEFAULT_HEATMAP: HeatmapData = {
-  routes: DEFAULT_ROUTES_LIST.slice(0, 30),
+  routes: DEFAULT_ROUTES_LIST,
   horizons: ["T+1", "T+7", "T+15", "T+30", "T+45"],
-  z: DEFAULT_ROUTES_LIST.slice(0, 30).map((_, ri) => [
+  z: DEFAULT_ROUTES_LIST.map((_, ri) => [
     35 + (ri % 15) * 2,
     14 + (ri % 10) * 1.5,
     5 + (ri % 8) * 1.2,
     -2 + (ri % 6) * 1.0,
     -12 - (ri % 5) * 1.1
   ]),
-  text: DEFAULT_ROUTES_LIST.slice(0, 30).map((_, ri) => [
+  text: DEFAULT_ROUTES_LIST.map((_, ri) => [
     `+${(35 + (ri % 15) * 2).toFixed(1)}%`,
     `+${(14 + (ri % 10) * 1.5).toFixed(1)}%`,
     `+${(5 + (ri % 8) * 1.2).toFixed(1)}%`,
     `${(-2 + (ri % 6) * 1.0).toFixed(1)}%`,
     `${(-12 - (ri % 5) * 1.1).toFixed(1)}%`
   ]),
-  hover: DEFAULT_ROUTES_LIST.slice(0, 30).map((r, ri) => [
+  hover: DEFAULT_ROUTES_LIST.map((r, ri) => [
     `Route ${r} (T+1): +${(35 + (ri % 15) * 2).toFixed(1)}%`,
     `Route ${r} (T+7): +${(14 + (ri % 10) * 1.5).toFixed(1)}%`,
     `Route ${r} (T+15): +${(5 + (ri % 8) * 1.2).toFixed(1)}%`,
     `Route ${r} (T+30): ${(-2 + (ri % 6) * 1.0).toFixed(1)}%`,
     `Route ${r} (T+45): ${(-12 - (ri % 5) * 1.1).toFixed(1)}%`
   ]),
-  weights: DEFAULT_ROUTES_LIST.slice(0, 30).map((_, i) => Number((Math.max(0.005, (30 - i) / 465)).toFixed(4)))
+  weights: ROUTE_WEIGHT_VALUES
 };
 
 export const DEFAULT_MOSPI: MospiRow[] = [

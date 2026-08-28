@@ -48,6 +48,8 @@ const Weights: React.FC = () => {
   const [selectedId,  setSelectedId]  = useState(DEFAULT_WEIGHTS[0]?.route_id || 'DEL-BOM');
   const [spikeChange, setSpikeChange] = useState(20);
   const [loading,     setLoading]     = useState(false);
+  const [chartLimit,  setChartLimit]  = useState<25 | 80>(25);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     fetch(`${API}/api/weights`)
@@ -66,7 +68,6 @@ const Weights: React.FC = () => {
 
   const selRow = routes.find(r => r.route_id === selectedId) ?? routes[0] ?? DEFAULT_WEIGHTS[0];
 
-
   const pct     = selRow.passenger_share * 100;
   const rank    = routes.findIndex(r => r.route_id === selectedId) + 1;
   const naive   = (1 / routes.length) * 100;
@@ -74,9 +75,16 @@ const Weights: React.FC = () => {
   const top5s   = routes.slice(0, 5).reduce((s, r) => s + r.passenger_share, 0) * 100;
   const top10s  = routes.slice(0, 10).reduce((s, r) => s + r.passenger_share, 0) * 100;
 
-  const top25   = routes.slice(0, 25);
+  const barData = useMemo(() => {
+    return routes.slice(0, chartLimit);
+  }, [routes, chartLimit]);
+
   const naiveImpact  = spikeChange / routes.length;
   const weightImpact = spikeChange * selRow.passenger_share;
+
+  const filteredList = useMemo(() => {
+    return routes.filter(r => r.route_id.toLowerCase().includes(searchQuery.toLowerCase()));
+  }, [routes, searchQuery]);
 
   return (
     <div className="page-content">
@@ -155,19 +163,29 @@ const Weights: React.FC = () => {
       </div>
 
       {/* Charts row */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+        <div className="section-label">Route Weight Distribution Graphs</div>
+        <button 
+          onClick={() => setChartLimit(prev => prev === 25 ? 80 : 25)}
+          className="btn btn-secondary"
+          style={{ fontSize: '0.8rem', padding: '6px 12px' }}
+        >
+          Show {chartLimit === 25 ? 'All 80 Routes' : 'Top 25 Routes'}
+        </button>
+      </div>
       <div className="grid-2" style={{ gap: 20, marginBottom: 32 }}>
-        {/* Top 25 bar */}
+        {/* Horizontal Bar Chart */}
         <Plot
-          key={`bar25-${dark}`}
+          key={`bar-${chartLimit}-${dark}`}
           data={[{
             type: 'bar',
-            x: top25.map(r => r.passenger_share * 100),
-            y: top25.map(r => r.route_id),
+            x: barData.map(r => r.passenger_share * 100),
+            y: barData.map(r => r.route_id),
             orientation: 'h',
-            marker: { color: top25.map(r => r.route_id === selectedId ? '#8B5CF6' : (dark ? '#1F2D54' : '#E2E8F0')) },
-            text: top25.map(r => `${(r.passenger_share * 100).toFixed(2)}%`),
+            marker: { color: barData.map(r => r.route_id === selectedId ? '#8B5CF6' : (dark ? '#1F2D54' : '#E2E8F0')) },
+            text: barData.map(r => `${(r.passenger_share * 100).toFixed(2)}%`),
             textposition: 'outside',
-            textfont: { color: dark ? '#94A3B8' : '#475569', size: 10 },
+            textfont: { color: dark ? '#94A3B8' : '#475569', size: 9 },
             hovertemplate: '<b>%{y}</b><br>Weight: %{x:.3f}%<extra></extra>',
             hoverlabel: {
               bgcolor: dark ? '#121B32' : '#FFFFFF',
@@ -177,8 +195,8 @@ const Weights: React.FC = () => {
           }]}
           layout={{
             ...PB,
-            title: { text: 'Top 25 Routes by Passenger Weight', font: { color: dark ? '#E2E8F0' : '#0F172A', size: 13 } },
-            height: 560,
+            title: { text: chartLimit === 25 ? 'Top 25 Routes by Passenger Weight' : 'All 80 Routes by Passenger Weight', font: { color: dark ? '#E2E8F0' : '#0F172A', size: 13 } },
+            height: chartLimit === 25 ? 560 : 1600,
             margin: { l: 90, r: 50, t: 40, b: 60 },
             xaxis: {
               ...AX,
@@ -189,7 +207,7 @@ const Weights: React.FC = () => {
               ...AX,
               showgrid: false,
               autorange: 'reversed',
-              tickfont: { size: 10, family: 'JetBrains Mono, monospace' }
+              tickfont: { size: 9, family: 'JetBrains Mono, monospace' }
             },
           }}
           config={{ displayModeBar: false, responsive: true }}
@@ -246,6 +264,7 @@ const Weights: React.FC = () => {
           </div>
         </div>
       </div>
+
 
       {/* Index Impact Simulator */}
       <div className="section-label">Index Impact Simulator</div>
@@ -324,6 +343,91 @@ const Weights: React.FC = () => {
             <span style={{ color: 'var(--sub)', fontSize: '0.88rem' }}>Naive index error: </span>
             <span style={{ color: 'var(--red)', fontWeight: 800, fontFamily: 'JetBrains Mono,monospace' }}>{Math.abs(naiveImpact - weightImpact).toFixed(3)} pts</span>
             <span style={{ color: 'var(--sub)', fontSize: '0.88rem' }}> — a misleading signal for policymakers.</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Sovereign 80-Route Weight Ledger */}
+      <div style={{ marginTop: 40, marginBottom: 24 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12, marginBottom: 16 }}>
+          <div>
+            <div className="section-label" style={{ marginBottom: 4 }}>Sovereign Basket Ledger — {routes.length} Active Routes</div>
+            <div style={{ color: 'var(--sub)', fontSize: '0.8rem' }}>
+              Full distribution matrix of passenger traffic and index weight assignments
+            </div>
+          </div>
+          <div>
+            <input 
+              type="text" 
+              placeholder="Search route (e.g. DEL-BOM)..."
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              className="control-select"
+              style={{ width: '220px', padding: '6px 12px', fontSize: '0.85rem' }}
+            />
+          </div>
+        </div>
+
+        <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+          <div style={{ maxHeight: '420px', overflowY: 'auto' }}>
+            <table className="ledger-table" style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.88rem', textAlign: 'left' }}>
+              <thead>
+                <tr style={{ background: 'var(--card-border)', borderBottom: '1px solid var(--card-border)', color: 'var(--text)' }}>
+                  <th style={{ padding: '12px 16px', fontWeight: 700 }}>Rank</th>
+                  <th style={{ padding: '12px 16px', fontWeight: 700 }}>Route ID</th>
+                  <th style={{ padding: '12px 16px', fontWeight: 700, textAlign: 'right' }}>Quarterly Passengers</th>
+                  <th style={{ padding: '12px 16px', fontWeight: 700, textAlign: 'right' }}>Passenger Share</th>
+                  <th style={{ padding: '12px 16px', fontWeight: 700, textAlign: 'center' }}>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredList.map((r) => {
+                  const rIdx = routes.findIndex(x => x.route_id === r.route_id) + 1;
+                  const isSelected = r.route_id === selectedId;
+                  return (
+                    <tr 
+                      key={r.route_id} 
+                      style={{ 
+                        borderBottom: '1px solid rgba(255,255,255,0.04)',
+                        background: isSelected ? 'rgba(139,92,246,0.1)' : 'transparent',
+                        transition: 'background 0.2s'
+                      }}
+                    >
+                      <td style={{ padding: '12px 16px', color: 'var(--sub)', fontWeight: 600 }}>#{rIdx}</td>
+                      <td style={{ padding: '12px 16px', fontWeight: 700, color: 'var(--cyan)' }}>{r.route_id}</td>
+                      <td style={{ padding: '12px 16px', textAlign: 'right', fontFamily: 'JetBrains Mono, monospace' }}>
+                        {r.passenger_count.toLocaleString()}
+                      </td>
+                      <td style={{ padding: '12px 16px', textAlign: 'right', fontWeight: 700, color: 'var(--purple)', fontFamily: 'JetBrains Mono, monospace' }}>
+                        {(r.passenger_share * 100).toFixed(4)}%
+                      </td>
+                      <td style={{ padding: '12px 16px', textAlign: 'center' }}>
+                        <button 
+                          onClick={() => setSelectedId(r.route_id)}
+                          className="btn btn-secondary"
+                          style={{ 
+                            fontSize: '0.75rem', 
+                            padding: '4px 10px',
+                            background: isSelected ? 'var(--purple)' : undefined,
+                            borderColor: isSelected ? 'var(--purple)' : undefined,
+                            color: isSelected ? '#fff' : undefined
+                          }}
+                        >
+                          {isSelected ? 'Simulating' : 'Simulate'}
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+                {filteredList.length === 0 && (
+                  <tr>
+                    <td colSpan={5} style={{ padding: '32px', textAlign: 'center', color: 'var(--sub)' }}>
+                      No routes match your search criteria.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>

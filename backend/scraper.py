@@ -13,13 +13,39 @@ except ImportError:
 AMADEUS_CLIENT_ID = os.getenv("AMADEUS_CLIENT_ID")
 AMADEUS_CLIENT_SECRET = os.getenv("AMADEUS_CLIENT_SECRET")
 
-ROUTES = [
-    {"origin": "DEL", "destination": "BOM", "weight": 0.35, "distance_km": 1148},
-    {"origin": "DEL", "destination": "BLR", "weight": 0.25, "distance_km": 1740},
-    {"origin": "BOM", "destination": "BLR", "weight": 0.15, "distance_km": 845},
-    {"origin": "DEL", "destination": "HYD", "weight": 0.15, "distance_km": 1253},
-    {"origin": "BOM", "destination": "GOI", "weight": 0.10, "distance_km": 425},
-]
+try:
+    from backend.static_data import SELECTED_PAIRS, ROUTE_WEIGHTS
+except ModuleNotFoundError:
+    from static_data import SELECTED_PAIRS, ROUTE_WEIGHTS
+
+AIRPORT_DISTANCES = {
+    ("DEL", "BOM"): 1148, ("DEL", "BLR"): 1740, ("BOM", "BLR"): 845,
+    ("HYD", "BOM"): 620,  ("DEL", "HYD"): 1253, ("DEL", "PNQ"): 1173,
+    ("BOM", "PNQ"): 120,  ("DEL", "AMD"): 775,  ("BOM", "AMD"): 441,
+    ("BLR", "HYD"): 500,  ("DEL", "MAA"): 1757, ("DEL", "CCU"): 1305,
+    ("BOM", "MAA"): 1033, ("BOM", "CCU"): 1654, ("BLR", "PNQ"): 735,
+    ("BLR", "AMD"): 1235, ("BLR", "MAA"): 290,  ("BLR", "CCU"): 1560,
+    ("HYD", "MAA"): 520,  ("HYD", "CCU"): 1180, ("HYD", "PNQ"): 510,
+    ("HYD", "AMD"): 880,  ("PNQ", "AMD"): 520,  ("BOM", "GOI"): 425,
+    ("DEL", "GOI"): 1515, ("BLR", "GOI"): 480,  ("HYD", "GOI"): 540,
+    ("DEL", "COK"): 2045, ("BOM", "COK"): 1065, ("BLR", "COK"): 365,
+    ("HYD", "COK"): 860,  ("DEL", "JAI"): 240,  ("BOM", "JAI"): 915,
+    ("DEL", "LKO"): 420,  ("BOM", "LKO"): 1190, ("DEL", "IXC"): 235,
+    ("BOM", "IXC"): 1350, ("DEL", "PAT"): 850,  ("BOM", "PAT"): 1460,
+    ("DEL", "GAU"): 1460, ("DEL", "BBI"): 1270
+}
+
+ROUTES = []
+for orig, dest in SELECTED_PAIRS:
+    dist = AIRPORT_DISTANCES.get((orig, dest)) or AIRPORT_DISTANCES.get((dest, orig)) or 1000
+    w = ROUTE_WEIGHTS.get(f"{orig}-{dest}", 0.0125)
+    ROUTES.append({
+        "origin": orig,
+        "destination": dest,
+        "weight": w,
+        "distance_km": dist
+    })
+
 
 HORIZONS = {
     "T+1": 1,
