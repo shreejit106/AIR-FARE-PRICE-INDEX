@@ -157,7 +157,8 @@ export function computeDynamicIndex(
 export const DEFAULT_ROUTE_SUMMARIES: RouteSummary[] = BASE_PAIRS.map(([orig, dest], i) => {
   const pshare = ROUTE_WEIGHT_VALUES[i] ?? 0.0125;
   const pcount = Math.round(pshare * 150_000_000);
-  const avg_pct = (i % 2 === 0 ? 1 : -1) * ((i * 1.7) % 28.5) + (i < 10 ? 12 : 2);
+  const seed = (i * 23 + 17) % 100;
+  const avg_pct = -8 + (seed % 28) + Math.sin(i * 0.15) * 4;
   const route_index = 100 + avg_pct;
   const oCoord = AIRPORTS[orig] || [28.5562, 77.1000];
   const dCoord = AIRPORTS[dest] || [19.0896, 72.8656];
