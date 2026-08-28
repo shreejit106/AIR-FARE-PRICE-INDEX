@@ -6,13 +6,13 @@ import GlassmorphismCTA from './GlassmorphismCTA';
 import { API_BASE_URL } from '../config';
 
 const TABS = [
-  { label: 'Home',                  short: 'Home',        path: '/'            },
-  { label: 'Index Calculator',      short: 'Calculator',  path: '/dashboard'   },
-  { label: 'Methodology & Weights', short: 'Methodology', path: '/methodology' },
-  { label: 'Antitrust & HHI',       short: 'Antitrust',   path: '/analysts'    },
-  { label: 'Fuel Simulator',        short: 'Simulation',  path: '/simulation'  },
-  { label: 'Carrier Fleet',         short: 'Fleet',       path: '/fleet'       },
-  { label: 'Data & References',     short: 'References',  path: '/references'  },
+  { label: 'Home',              short: 'Home',        path: '/'            },
+  { label: 'Index Calculator',  short: 'Calculator',  path: '/dashboard'   },
+  { label: 'Methodology',       short: 'Methodology', path: '/methodology' },
+  { label: 'Antitrust & HHI',   short: 'Antitrust',   path: '/analysts'    },
+  { label: 'Fuel Simulator',    short: 'Simulation',  path: '/simulation'  },
+  { label: 'Carrier Fleet',     short: 'Fleet',       path: '/fleet'       },
+  { label: 'Data & References', short: 'References',  path: '/references'  },
 ];
 
 const API = API_BASE_URL;

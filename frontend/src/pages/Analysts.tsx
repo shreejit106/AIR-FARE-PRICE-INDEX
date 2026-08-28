@@ -665,6 +665,31 @@ export const Analysts: React.FC = () => {
           Economic theory predicts that highly concentrated routes (HHI &gt; 2500) exhibit higher fare surges than competitive multi-carrier routes. Each bubble represents a domestic route sized by dominant carrier market share.
         </p>
 
+        {/* ── Mathematical Typesetting for HHI Formulation ── */}
+        <div style={{
+          background: dark ? '#081120' : '#F1F5F9',
+          border: dark ? '1px solid #1E2E48' : '1px solid #CBD5E1',
+          borderRadius: 8,
+          padding: '16px 20px',
+          marginBottom: 18,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: 8,
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: '1.15rem', color: 'var(--text)', fontFamily: 'JetBrains Mono, monospace' }}>
+            <span style={{ color: '#F59E0B', fontWeight: 800 }}>HHI</span>
+            <sub style={{ fontSize: '0.7rem', color: 'var(--sub)' }}>r</sub>
+            <span> = </span>
+            <span>Σ<sub style={{ fontSize: '0.7rem' }}>i=1</sub><sup style={{ fontSize: '0.7rem' }}>N</sup> ( s<sub style={{ fontSize: '0.7rem' }}>i,r</sub> × 100 )<sup>2</sup></span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: 20, fontSize: '0.8rem', color: 'var(--sub)', borderTop: dark ? '1px solid #142033' : '1px solid #E2E8F0', paddingTop: 8, width: '100%' }}>
+            <span><strong style={{ color: '#10B981' }}>● &lt; 1500:</strong> Competitive (Unconcentrated)</span>
+            <span><strong style={{ color: '#F59E0B' }}>● 1500 – 2500:</strong> Moderately Concentrated</span>
+            <span><strong style={{ color: '#EF4444' }}>● &gt; 2500:</strong> Highly Concentrated (Monopoly / Duopoly Risk)</span>
+          </div>
+        </div>
+
         {/* ── Interactive Zoom & Filter Toolbar for HHI ── */}
         <div 
           style={{ 

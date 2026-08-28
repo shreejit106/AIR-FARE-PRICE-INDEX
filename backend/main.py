@@ -144,14 +144,14 @@ def fetch_and_process_live_data():
                     base_fare = (np.random.randint(4000, 8000) if cab == "Economy"
                                  else np.random.randint(15000, 35000))
                     HORIZON_TARGETS = {
-                        "T+1": 1.3840,
-                        "T+7": 1.1420,
-                        "T+15": 1.0580,
-                        "T+30": 0.9840,
-                        "T+45": 0.8650,
+                        "T+1": 1.3840 if cab == "Economy" else 1.6420,
+                        "T+7": 1.1420 if cab == "Economy" else 1.2950,
+                        "T+15": 1.0580 if cab == "Economy" else 1.1780,
+                        "T+30": 0.9840 if cab == "Economy" else 1.0420,
+                        "T+45": 0.8650 if cab == "Economy" else 0.9260,
                     }
                     target = HORIZON_TARGETS[h]
-                    route_var = ((i * 7 + 13) % 17 - 8) * 0.003
+                    route_var = ((i * 7 + 13) % 23 - 11) * 0.008
                     al_mult = {
                         "IndiGo (6E)": 0.97,
                         "Air India (AI)": 1.08,
@@ -159,8 +159,9 @@ def fetch_and_process_live_data():
                         "Air India Express (IX)": 0.96,
                         "Akasa Air (QP)": 0.95,
                     }.get(al, 1.0)
-                    # Normalize around the canonical target so weighted aggregate equals target exactly
-                    cur = base_fare * (target * al_mult / 0.9658 + route_var)
+                    # Normalize around canonical target
+                    norm_base = 0.9658 if cab == "Economy" else 1.02
+                    cur = base_fare * (target * al_mult / norm_base + route_var)
                     records.append({
                         "route_id": f"{orig}-{dest}",
                         "origin": orig, "destination": dest,

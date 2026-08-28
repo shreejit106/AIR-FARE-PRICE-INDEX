@@ -288,14 +288,94 @@ const IndexMathPanel: React.FC<{ dark: boolean }> = ({ dark }) => {
 
         <div style={{ 
           background: dark ? '#060B14' : '#F1F5F9', 
-          padding: '10px 14px', 
-          borderRadius: 6, 
+          padding: '16px 20px', 
+          borderRadius: 8, 
+          border: `1px solid ${activeIdx.badgeColor}30`,
           fontFamily: 'JetBrains Mono, monospace', 
-          fontSize: '0.92rem', 
+          fontSize: '1.05rem', 
           color: activeIdx.badgeColor,
-          marginBottom: 12
+          marginBottom: 14,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          minHeight: 56,
+          overflowX: 'auto'
         }}>
-          {activeIdx.formula}
+          {activeIdx.id === 'laspeyres' && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span>APIx<sub>t</sub> = </span>
+              <span className="formula-fraction">
+                <span className="formula-num" style={{ borderColor: activeIdx.badgeColor }}>
+                  Σ<sub>r=1</sub><sup>R</sup> P(r,t) × Q(r,0)
+                </span>
+                <span className="formula-den">
+                  Σ<sub>r=1</sub><sup>R</sup> P(r,0) × Q(r,0)
+                </span>
+              </span>
+              <span>× 100</span>
+            </div>
+          )}
+
+          {activeIdx.id === 'tornqvist' && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span>ln</span>
+              <span className="formula-fraction" style={{ margin: '0 4px' }}>
+                <span className="formula-num" style={{ borderColor: activeIdx.badgeColor }}>I<sub>t</sub></span>
+                <span className="formula-den">I<sub>t−1</sub></span>
+              </span>
+              <span>= Σ<sub>r=1</sub><sup>R</sup></span>
+              <span style={{ display: 'inline-flex', alignItems: 'center', margin: '0 4px' }}>
+                <span style={{ fontSize: '1.3rem' }}>[</span>
+                <span className="formula-fraction">
+                  <span className="formula-num" style={{ borderColor: activeIdx.badgeColor }}>w<sub>r,t</sub> + w<sub>r,t−1</sub></span>
+                  <span className="formula-den">2</span>
+                </span>
+                <span style={{ fontSize: '1.3rem' }}>]</span>
+              </span>
+              <span>× ln</span>
+              <span className="formula-fraction" style={{ margin: '0 4px' }}>
+                <span className="formula-num" style={{ borderColor: activeIdx.badgeColor }}>P(r,t)</span>
+                <span className="formula-den">P(r,t−1)</span>
+              </span>
+            </div>
+          )}
+
+          {activeIdx.id === 'paasche' && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span>I<sub>P,t</sub> = </span>
+              <span className="formula-fraction">
+                <span className="formula-num" style={{ borderColor: activeIdx.badgeColor }}>
+                  Σ<sub>r=1</sub><sup>R</sup> P(r,t) × Q(r,t)
+                </span>
+                <span className="formula-den">
+                  Σ<sub>r=1</sub><sup>R</sup> P(r,0) × Q(r,t)
+                </span>
+              </span>
+              <span>× 100</span>
+            </div>
+          )}
+
+          {activeIdx.id === 'fisher' && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span>I<sub>F,t</sub> = √( I<sub>Laspeyres,t</sub> × I<sub>Paasche,t</sub> )</span>
+            </div>
+          )}
+
+          {activeIdx.id === 'naive' && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span>I<sub>Naive,t</sub> = </span>
+              <span className="formula-fraction">
+                <span className="formula-num" style={{ borderColor: activeIdx.badgeColor }}>1</span>
+                <span className="formula-den">R</span>
+              </span>
+              <span>Σ<sub>r=1</sub><sup>R</sup></span>
+              <span className="formula-fraction">
+                <span className="formula-num" style={{ borderColor: activeIdx.badgeColor }}>P(r,t)</span>
+                <span className="formula-den">P(r,0)</span>
+              </span>
+              <span>× 100</span>
+            </div>
+          )}
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 12, fontSize: '0.84rem' }}>

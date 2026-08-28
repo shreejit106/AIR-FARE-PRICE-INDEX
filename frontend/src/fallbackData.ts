@@ -92,6 +92,68 @@ export const DEFAULT_INDEX: Record<string, number> = {
   "T+45": 86.50
 };
 
+export function computeDynamicIndex(
+  cabinClass: string,
+  aggregation: string,
+  airline: string,
+  route: string,
+  summaries: RouteSummary[] = DEFAULT_ROUTE_SUMMARIES
+): Record<string, number> {
+  let baseT1 = 138.40;
+  let baseT7 = 114.20;
+  let baseT15 = 105.80;
+  let baseT30 = 98.40;
+  let baseT45 = 86.50;
+
+  if (cabinClass === 'Business') {
+    baseT1 = 164.20;
+    baseT7 = 129.50;
+    baseT15 = 117.80;
+    baseT30 = 104.20;
+    baseT45 = 92.60;
+  }
+
+  if (aggregation === 'Airline Specific' && airline !== 'all') {
+    const alMultipliers: Record<string, number> = {
+      'IndiGo (6E)': -2.8,
+      'Air India (AI)': +5.4,
+      'SpiceJet (SG)': -0.6,
+      'Air India Express (IX)': -1.4,
+      'Akasa Air (QP)': -6.5,
+    };
+    const delta = alMultipliers[airline] ?? 0;
+    return {
+      'T+1': Number((baseT1 + delta * 1.5).toFixed(2)),
+      'T+7': Number((baseT7 + delta).toFixed(2)),
+      'T+15': Number((baseT15 + delta * 0.8).toFixed(2)),
+      'T+30': Number((baseT30 + delta * 0.5).toFixed(2)),
+      'T+45': Number((baseT45 + delta * 0.3).toFixed(2)),
+    };
+  }
+
+  if (aggregation === 'Route Specific' && route !== 'all') {
+    const rSummary = summaries.find(s => s.route_id === route);
+    if (rSummary) {
+      const delta = rSummary.avg_pct_change - 14.2;
+      return {
+        'T+1': Number((baseT1 + delta * 1.35).toFixed(2)),
+        'T+7': Number((baseT7 + delta).toFixed(2)),
+        'T+15': Number((baseT15 + delta * 0.75).toFixed(2)),
+        'T+30': Number((baseT30 + delta * 0.5).toFixed(2)),
+        'T+45': Number((baseT45 + delta * 0.3).toFixed(2)),
+      };
+    }
+  }
+
+  return {
+    'T+1': baseT1,
+    'T+7': baseT7,
+    'T+15': baseT15,
+    'T+30': baseT30,
+    'T+45': baseT45,
+  };
+}
+
 export const DEFAULT_ROUTE_SUMMARIES: RouteSummary[] = BASE_PAIRS.map(([orig, dest], i) => {
   const pshare = ROUTE_WEIGHT_VALUES[i] ?? 0.0125;
   const pcount = Math.round(pshare * 150_000_000);

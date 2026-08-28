@@ -11,6 +11,7 @@ import {
   DEFAULT_ROUTES_LIST,
   DEFAULT_HEATMAP,
   DEFAULT_MOSPI,
+  computeDynamicIndex,
 } from '../fallbackData';
 import type { RouteSummary, HeatmapData, MospiRow } from '../fallbackData';
 
@@ -125,6 +126,10 @@ const Dashboard: React.FC = () => {
       .catch(() => {});
   }, []);
 
+  const dynamicFallbackIndex = useMemo(() => {
+    return computeDynamicIndex(cabinClass, aggregation, airlineParam, routeParam, routeSummary);
+  }, [cabinClass, aggregation, airlineParam, routeParam, routeSummary]);
+
   const fetchData = useCallback(() => {
     setLoading(true);
     const qs = `cabin_class=${cabinClass}&airline=${airlineParam}&route=${routeParam}`;
@@ -134,24 +139,33 @@ const Dashboard: React.FC = () => {
       fetch(`${API}/api/heatmap?${qs}`).then(r => r.ok ? r.json() : null).catch(() => null),
       fetch(`${API}/api/mospi`).then(r => r.ok ? r.json() : null).catch(() => null),
     ]).then(([idx, summary, hm, mospi]) => {
-      if (idx && Object.keys(idx).length > 0) setIndexData(idx);
+      if (idx && Object.keys(idx).length > 0) {
+        setIndexData(idx);
+        setLiveConnected(true);
+      } else {
+        setIndexData(dynamicFallbackIndex);
+        setLiveConnected(false);
+      }
       if (summary && summary.length > 0) setRouteSummary(summary);
       if (hm && hm.routes && hm.routes.length > 0) setHeatmapData(hm);
       if (mospi && mospi.length > 0) setMospiData(mospi);
-      setLiveConnected(Boolean(idx && summary));
       setLoading(false);
     }).catch(() => {
+      setIndexData(dynamicFallbackIndex);
+      setLiveConnected(false);
       setLoading(false);
     });
-  }, [cabinClass, airlineParam, routeParam]);
+  }, [cabinClass, airlineParam, routeParam, dynamicFallbackIndex]);
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
-  /* ── Index values ── */
-  const ti7  = indexData['T+7']  ?? 100;
-  const ti15 = indexData['T+15'] ?? 100;
-  const ti30 = indexData['T+30'] ?? 100;
-  const ti45 = indexData['T+45'] ?? 100;
+  /* ── Dynamic Index values (Instant update on filter change) ── */
+  const activeIndex = (liveConnected && indexData) ? indexData : dynamicFallbackIndex;
+  const ti1  = activeIndex['T+1']  ?? 138.4;
+  const ti7  = activeIndex['T+7']  ?? 114.2;
+  const ti15 = activeIndex['T+15'] ?? 105.8;
+  const ti30 = activeIndex['T+30'] ?? 98.4;
+  const ti45 = activeIndex['T+45'] ?? 86.5;
 
   /* ── STABLE trend — seeded from the actual index values so never re-randomises on theme toggle ── */
   const { trendDates, trendVals, yMin, yMax, fillBase } = useMemo(() => {
