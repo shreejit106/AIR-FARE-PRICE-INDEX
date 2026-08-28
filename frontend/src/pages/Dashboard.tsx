@@ -69,10 +69,9 @@ function bezier(p1: [number,number], p2: [number,number], n = 22): [number,numbe
 }
 
 function pctColor(val: number): string {
-  const norm = Math.max(0, Math.min(1, (val+10)/40));
-  const r = norm < 0.5 ? Math.round(16 + norm*2*(239-16)) : 239;
-  const g = norm < 0.5 ? Math.round(185 + norm*2*(68-185)) : Math.round(68*(1-(norm-0.5)*2));
-  return `rgb(${r},${Math.max(0,g)},0)`;
+  if (val < -3) return '#10B981'; // Emerald (deflating)
+  if (val > 3) return '#EF4444';  // Crimson (inflating)
+  return '#475569';               // Muted slate gray (stable)
 }
 
 /* ─── Carrier strip data ────────────────────────────────────────────────── */
@@ -104,6 +103,7 @@ const Dashboard: React.FC = () => {
   const [routeFilter,   setRouteFilter]   = useState('all');
   const [routes,        setRoutes]        = useState<string[]>(DEFAULT_ROUTES_LIST);
   const [activeTab,     setActiveTab]     = useState(0);
+  const [mapFilter,     setMapFilter]     = useState<'all' | 'inflating' | 'deflating' | 'stable'>('all');
   const [baseYear,      setBaseYear]      = useState(2022);
   const [baseMonth,     setBaseMonth]     = useState(9);
 
@@ -209,11 +209,21 @@ const Dashboard: React.FC = () => {
 
   /* ── Map routes: filter to selected route when Route Specific mode is on ── */
   const mapRoutes = useMemo(() => {
+    let list = routeSummary;
     if (aggregation === 'Route Specific' && routeFilter !== 'all') {
-      return routeSummary.filter(r => r.route_id === routeFilter);
+      list = routeSummary.filter(r => r.route_id === routeFilter);
     }
-    return routeSummary;
-  }, [routeSummary, aggregation, routeFilter]);
+    if (mapFilter === 'inflating') {
+      return list.filter(r => r.avg_pct_change > 3);
+    }
+    if (mapFilter === 'deflating') {
+      return list.filter(r => r.avg_pct_change < -3);
+    }
+    if (mapFilter === 'stable') {
+      return list.filter(r => r.avg_pct_change >= -3 && r.avg_pct_change <= 3);
+    }
+    return list;
+  }, [routeSummary, aggregation, routeFilter, mapFilter]);
 
   const PB = plotBase(dark);
   const AX = axisStyle(dark);
@@ -383,9 +393,52 @@ const Dashboard: React.FC = () => {
           {activeTab===0 && (
             <div className="grid-2" style={{gridTemplateColumns:'3fr 1fr', gap:16}}>
               <div>
-                <div className="section-label">Live Route Map — {routeSummary.length} Routes</div>
-                <div style={{fontSize:'0.8rem', color:'var(--sub)', marginBottom:10}}>
-                  🟢 deflating → 🔴 inflating · Arc thickness = passenger volume · Click for details
+                <div className="section-label">Live Route Map — {mapRoutes.length} / {routeSummary.length} Routes Shown</div>
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 12, flexWrap: 'wrap' }}>
+                  <button 
+                    onClick={() => setMapFilter('all')} 
+                    style={{ 
+                      fontSize: '0.78rem', padding: '4px 10px', borderRadius: 6, cursor: 'pointer',
+                      background: mapFilter === 'all' ? 'var(--purple)' : 'rgba(255,255,255,0.06)',
+                      color: '#fff', border: '1px solid ' + (mapFilter === 'all' ? 'var(--purple)' : 'rgba(255,255,255,0.1)'),
+                      fontWeight: 600, transition: 'all 0.2s'
+                    }}
+                  >
+                    All Corridors
+                  </button>
+                  <button 
+                    onClick={() => setMapFilter('inflating')} 
+                    style={{ 
+                      fontSize: '0.78rem', padding: '4px 10px', borderRadius: 6, cursor: 'pointer',
+                      background: mapFilter === 'inflating' ? 'rgba(239,68,68,0.2)' : 'rgba(255,255,255,0.06)',
+                      color: '#EF4444', border: '1px solid ' + (mapFilter === 'inflating' ? '#EF4444' : 'rgba(255,255,255,0.1)'),
+                      fontWeight: 600, transition: 'all 0.2s'
+                    }}
+                  >
+                    🔴 Inflating (&gt; +3%)
+                  </button>
+                  <button 
+                    onClick={() => setMapFilter('stable')} 
+                    style={{ 
+                      fontSize: '0.78rem', padding: '4px 10px', borderRadius: 6, cursor: 'pointer',
+                      background: mapFilter === 'stable' ? 'rgba(148,163,184,0.15)' : 'rgba(255,255,255,0.06)',
+                      color: '#94A3B8', border: '1px solid ' + (mapFilter === 'stable' ? '#94A3B8' : 'rgba(255,255,255,0.1)'),
+                      fontWeight: 600, transition: 'all 0.2s'
+                    }}
+                  >
+                    ⚪ Stable (-3% to +3%)
+                  </button>
+                  <button 
+                    onClick={() => setMapFilter('deflating')} 
+                    style={{ 
+                      fontSize: '0.78rem', padding: '4px 10px', borderRadius: 6, cursor: 'pointer',
+                      background: mapFilter === 'deflating' ? 'rgba(16,185,129,0.2)' : 'rgba(255,255,255,0.06)',
+                      color: '#10B981', border: '1px solid ' + (mapFilter === 'deflating' ? '#10B981' : 'rgba(255,255,255,0.1)'),
+                      fontWeight: 600, transition: 'all 0.2s'
+                    }}
+                  >
+                    🟢 Deflating (&lt; -3%)
+                  </button>
                 </div>
                 <div className="map-wrap">
                   <MapContainer center={[22.5,80]} zoom={5} style={{height:'100%',width:'100%'}} zoomControl>
@@ -395,9 +448,12 @@ const Dashboard: React.FC = () => {
                       const shares = mapRoutes.map(x=>x.passenger_share);
                       const mn=Math.min(...shares), mx=Math.max(...shares);
                       const weight = mapRoutes.length === 1 ? 4 : 1+5*((r.passenger_share-mn)/(mx-mn+1e-9));
+                      const isNeutral = r.avg_pct_change >= -3 && r.avg_pct_change <= 3;
+                      const lineOpacity = isNeutral ? 0.12 : 0.85;
+                      const lineDash = r.avg_pct_change < -3 ? '4, 4' : undefined;
                       return (
                         <Polyline key={r.route_id} positions={pts}
-                          pathOptions={{color:pctColor(r.avg_pct_change), weight, opacity:0.85}}>
+                          pathOptions={{color:pctColor(r.avg_pct_change), weight, opacity:lineOpacity, dashArray:lineDash}}>
                           <Popup>
                             <div style={{fontFamily:'Inter,sans-serif', minWidth:180, color:'#0F172A'}}>
                               <div style={{fontSize:'1.05rem', fontWeight:800, color:'#0284C7', marginBottom:6, display:'flex', alignItems:'center', gap:6}}>
