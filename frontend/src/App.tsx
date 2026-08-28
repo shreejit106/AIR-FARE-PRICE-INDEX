@@ -11,7 +11,7 @@ import HudNav from './components/HudNav';
 
 type ThemeMode = 'light' | 'intermediate' | 'coastal' | 'dark';
 interface ThemeCtx { theme: ThemeMode; dark: boolean; setTheme: (t: ThemeMode) => void; }
-export const ThemeContext = createContext<ThemeCtx>({ theme: 'dark', dark: true, setTheme: () => {} });
+export const ThemeContext = createContext<ThemeCtx>({ theme: 'light', dark: false, setTheme: () => {} });
 export const useTheme = () => useContext(ThemeContext);
 
 /* ─── Inner layout (with HUD nav) ───────────────────────────────────────── */
@@ -35,7 +35,7 @@ const AppInner: React.FC = () => {
 };
 
 const App: React.FC = () => {
-  const [theme, setTheme] = useState<ThemeMode>('dark');
+  const [theme, setTheme] = useState<ThemeMode>('light');
   const dark = theme === 'dark';
 
   React.useEffect(() => {
@@ -58,7 +58,7 @@ const App: React.FC = () => {
       body.style.color = '#3F4F5F'; // DARK BLUE-GREY
     } else {
       html.style.colorScheme = 'light';
-      body.style.backgroundColor = '#F0F4F8';
+      body.style.backgroundColor = '#F8FAFC';
       body.style.color = '#0F172A';
     }
   }, [theme]);

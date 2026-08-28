@@ -1,128 +1,132 @@
-.threeui-button-stage {
-  --threeui-button-bg: #0a0a0a;
-  --threeui-button-color: rgba(255, 255, 255, 0.95);
-}
-
 .threeui-button {
   position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 40px; /* Adapted from 52px for nav bar fit */
-  padding: 0 20px; /* Adapted from 32px */
+  height: 40px;
+  padding: 0 18px;
   overflow: hidden;
-  border: 0;
-  border-radius: 20px; /* Adapted from 32px */
-  color: rgba(255, 255, 255, 0.7);
-  background: transparent;
-  font-size: 14px;
+  border-radius: 20px;
+  font-size: 13.5px;
   font-weight: 600;
   line-height: 1.4;
   cursor: pointer;
-  font-family: inherit;
-  transition: transform 0.1s ease;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   white-space: nowrap;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--sub);
+}
+
+.threeui-button:hover {
+  color: var(--text);
+  border-color: var(--cyan);
+  background: var(--surface);
+  transform: translateY(-1px);
 }
 
 .threeui-button.active {
-  color: rgba(255, 255, 255, 1);
+  color: #FFFFFF !important;
+  background: var(--cyan) !important;
+  border-color: var(--cyan) !important;
+  box-shadow: 0 2px 12px rgba(2, 132, 199, 0.35);
 }
 
-.threeui-button::before,
-.threeui-button::after {
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  content: "";
+/* ── Theme Specific Overrides ── */
+
+/* Dark Mode */
+[data-theme="dark"] .threeui-button {
+  color: rgba(255, 255, 255, 0.75);
+  background: rgba(18, 26, 43, 0.7);
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
-.threeui-button::before {
-  background: rgba(23, 23, 23, 0.7);
-  box-shadow: inset 2px 4px 16px rgba(255, 255, 255, 0.06);
-  -webkit-backdrop-filter: blur(50px);
-  backdrop-filter: blur(50px);
+[data-theme="dark"] .threeui-button:hover {
+  color: #FFFFFF;
+  background: rgba(26, 38, 64, 0.85);
+  border-color: var(--cyan);
 }
 
-/* Optional active state background */
-.threeui-button.active::before {
-  background: rgba(40, 40, 40, 0.7);
+[data-theme="dark"] .threeui-button.active {
+  color: #FFFFFF !important;
+  background: rgba(6, 182, 212, 0.25) !important;
+  border-color: var(--cyan) !important;
+  box-shadow: 0 0 15px rgba(6, 182, 212, 0.35);
 }
 
-.threeui-button::after {
-  z-index: 2;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  opacity: 0.25;
-  pointer-events: none;
-  -webkit-mask-image: linear-gradient(170deg, #000, transparent 50%);
-  mask-image: linear-gradient(170deg, #000, transparent 50%);
+/* Light Mode */
+[data-theme="light"] .threeui-button {
+  color: #334155;
+  background: #FFFFFF;
+  border: 1px solid #CBD5E1;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="light"] .threeui-button:hover {
+  color: #0F172A;
+  background: #F8FAFC;
+  border-color: #0284C7;
+}
+
+[data-theme="light"] .threeui-button.active {
+  color: #FFFFFF !important;
+  background: #0284C7 !important;
+  border-color: #0284C7 !important;
+  box-shadow: 0 2px 10px rgba(2, 132, 199, 0.35);
+}
+
+/* Intermediate Theme (Warm Sand / Royal Blue) */
+[data-theme="intermediate"] .threeui-button {
+  color: #3C507D;
+  background: #FFFFFF;
+  border: 1px solid #D9CBC2;
+}
+
+[data-theme="intermediate"] .threeui-button:hover {
+  color: #112250;
+  background: #F5F0E9;
+  border-color: #3C507D;
+}
+
+[data-theme="intermediate"] .threeui-button.active {
+  color: #FFFFFF !important;
+  background: #112250 !important;
+  border-color: #112250 !important;
+  box-shadow: 0 2px 10px rgba(17, 34, 80, 0.3);
+}
+
+/* Coastal Theme (Muted Slate / Gold) */
+[data-theme="coastal"] .threeui-button {
+  color: #3F4F5F;
+  background: #E8DECF;
+  border: 1px solid #BE965B;
+}
+
+[data-theme="coastal"] .threeui-button:hover {
+  color: #1A2530;
+  background: #D8C6B0;
+  border-color: #8C6D3B;
+}
+
+[data-theme="coastal"] .threeui-button.active {
+  color: #FFFFFF !important;
+  background: #3F4F5F !important;
+  border-color: #3F4F5F !important;
 }
 
 .threeui-button__title {
   position: relative;
-  z-index: 4;
-}
-
-.threeui-button__circle {
-  position: absolute;
-  z-index: 3;
-  top: calc(50% - 100px);
-  left: calc(50% - 100px);
-  width: 200px;
-  height: 200px;
-}
-
-.threeui-button__circle::before,
-.threeui-button__circle::after {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  content: "";
-}
-
-.threeui-button__circle::before {
-  background: conic-gradient(from 180deg, rgba(255, 255, 255, 0.012) 180deg, rgba(255, 255, 255, 0.05) 360deg);
-  filter: blur(15px);
-  animation: threeui-button-circle 3.6s linear infinite;
-  transition: opacity 0.5s;
-}
-
-.threeui-button__circle::after {
-  inset: 30px;
-  background: rgba(255, 255, 255, 0.12);
-  opacity: 0;
-  filter: blur(5px);
-  transform: scale(0.5);
-  transition: opacity 0.5s, transform 0.7s;
-  -webkit-mask-image: radial-gradient(50% 50%, #000, rgba(23, 23, 23, 0));
-  mask-image: radial-gradient(50% 50%, #000, rgba(23, 23, 23, 0));
-}
-
-.threeui-button:hover .threeui-button__circle::before {
-  opacity: 0;
-}
-
-.threeui-button:hover .threeui-button__circle::after {
-  opacity: 1;
-  transform: scale(1);
+  z-index: 2;
 }
 
 .threeui-button:active {
-  transform: scale(0.96);
-}
-
-@keyframes threeui-button-circle {
-  0% { transform: translate(0) rotate(0); }
-  25% { transform: translateX(-30px) rotate(90deg); }
-  50% { transform: translate(0) rotate(180deg); }
-  75% { transform: translateX(30px) rotate(270deg); }
-  100% { transform: translate(0) rotate(360deg); }
+  transform: scale(0.97);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .threeui-button *,
-  .threeui-button *::before,
-  .threeui-button *::after {
-    animation: none !important;
+  .threeui-button {
     transition: none !important;
   }
 }
