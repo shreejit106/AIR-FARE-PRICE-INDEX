@@ -207,18 +207,45 @@ export const DEFAULT_HEATMAP: HeatmapData = {
 };
 
 export const DEFAULT_MOSPI: MospiRow[] = [
-  { date: "2024-01-01", cpi_index: 180.2, inflation_pct: 5.1 },
-  { date: "2024-02-01", cpi_index: 181.0, inflation_pct: 5.0 },
-  { date: "2024-03-01", cpi_index: 181.8, inflation_pct: 4.9 },
-  { date: "2024-04-01", cpi_index: 182.5, inflation_pct: 4.8 },
-  { date: "2024-05-01", cpi_index: 183.4, inflation_pct: 4.7 },
-  { date: "2024-06-01", cpi_index: 184.2, inflation_pct: 5.1 },
-  { date: "2024-07-01", cpi_index: 185.0, inflation_pct: 3.5 },
-  { date: "2024-08-01", cpi_index: 185.8, inflation_pct: 3.7 },
-  { date: "2024-09-01", cpi_index: 186.5, inflation_pct: 5.5 },
-  { date: "2024-10-01", cpi_index: 187.3, inflation_pct: 6.2 },
-  { date: "2024-11-01", cpi_index: 187.9, inflation_pct: 5.5 },
-  { date: "2024-12-01", cpi_index: 188.6, inflation_pct: 5.2 }
+  // 2022
+  { date: "2022-01-01", cpi_index: 165.0, inflation_pct: 6.0 },
+  { date: "2022-02-01", cpi_index: 165.4, inflation_pct: 6.1 },
+  { date: "2022-03-01", cpi_index: 166.1, inflation_pct: 6.9 },
+  { date: "2022-04-01", cpi_index: 167.3, inflation_pct: 7.8 },
+  { date: "2022-05-01", cpi_index: 168.0, inflation_pct: 7.0 },
+  { date: "2022-06-01", cpi_index: 168.7, inflation_pct: 7.0 },
+  { date: "2022-07-01", cpi_index: 169.5, inflation_pct: 6.7 },
+  { date: "2022-08-01", cpi_index: 170.2, inflation_pct: 7.0 },
+  { date: "2022-09-01", cpi_index: 171.4, inflation_pct: 7.4 },
+  { date: "2022-10-01", cpi_index: 172.1, inflation_pct: 6.8 },
+  { date: "2022-11-01", cpi_index: 172.5, inflation_pct: 5.9 },
+  { date: "2022-12-01", cpi_index: 172.9, inflation_pct: 5.7 },
+  // 2023
+  { date: "2023-01-01", cpi_index: 173.5, inflation_pct: 6.5 },
+  { date: "2023-02-01", cpi_index: 174.0, inflation_pct: 6.4 },
+  { date: "2023-03-01", cpi_index: 174.8, inflation_pct: 5.7 },
+  { date: "2023-04-01", cpi_index: 175.5, inflation_pct: 4.7 },
+  { date: "2023-05-01", cpi_index: 176.1, inflation_pct: 4.3 },
+  { date: "2023-06-01", cpi_index: 176.8, inflation_pct: 4.8 },
+  { date: "2023-07-01", cpi_index: 177.5, inflation_pct: 7.4 },
+  { date: "2023-08-01", cpi_index: 178.1, inflation_pct: 6.8 },
+  { date: "2023-09-01", cpi_index: 178.6, inflation_pct: 5.0 },
+  { date: "2023-10-01", cpi_index: 179.3, inflation_pct: 4.9 },
+  { date: "2023-11-01", cpi_index: 180.1, inflation_pct: 5.5 },
+  { date: "2023-12-01", cpi_index: 180.8, inflation_pct: 5.7 },
+  // 2024
+  { date: "2024-01-01", cpi_index: 181.5, inflation_pct: 5.1 },
+  { date: "2024-02-01", cpi_index: 182.0, inflation_pct: 5.1 },
+  { date: "2024-03-01", cpi_index: 182.7, inflation_pct: 4.9 },
+  { date: "2024-04-01", cpi_index: 183.5, inflation_pct: 4.8 },
+  { date: "2024-05-01", cpi_index: 184.4, inflation_pct: 4.7 },
+  { date: "2024-06-01", cpi_index: 185.3, inflation_pct: 5.1 },
+  { date: "2024-07-01", cpi_index: 186.2, inflation_pct: 3.5 },
+  { date: "2024-08-01", cpi_index: 187.1, inflation_pct: 3.7 },
+  { date: "2024-09-01", cpi_index: 188.0, inflation_pct: 5.5 },
+  { date: "2024-10-01", cpi_index: 188.9, inflation_pct: 6.2 },
+  { date: "2024-11-01", cpi_index: 189.7, inflation_pct: 5.5 },
+  { date: "2024-12-01", cpi_index: 190.5, inflation_pct: 5.2 }
 ];
 
 export const DEFAULT_ANOMALIES: any = {

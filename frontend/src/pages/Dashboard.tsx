@@ -715,7 +715,7 @@ const Dashboard: React.FC = () => {
                       xaxis:{
                         ...AX,
                         title:{text:'Year', font:{color:dark?'#94A3B8':'#334155', size:13}, standoff:14},
-                        tickformat:'%Y', dtick:'M24',
+                        tickformat:'%b %Y', dtick:'M6',
                         showspikes:true, spikedash:'dash',
                         spikecolor:dark?'#2D4A6E':'#CBD5E1', spikethickness:1, spikemode:'across',
                       },
