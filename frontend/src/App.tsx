@@ -6,6 +6,7 @@ import Methodology from './pages/MathsStats';
 import Analysts from './pages/Analysts';
 import Simulation from './pages/Simulation';
 import Fleet from './pages/Fleet';
+import References from './pages/References';
 import HudNav from './components/HudNav';
 
 type ThemeMode = 'light' | 'intermediate' | 'coastal' | 'dark';
@@ -27,6 +28,7 @@ const AppInner: React.FC = () => {
         <Route path="/analysts"    element={<Analysts />} />
         <Route path="/simulation"  element={<Simulation />} />
         <Route path="/fleet"       element={<Fleet />} />
+        <Route path="/references"  element={<References />} />
       </Routes>
     </div>
   );

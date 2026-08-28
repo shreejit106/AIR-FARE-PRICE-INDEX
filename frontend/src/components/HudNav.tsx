@@ -12,6 +12,7 @@ const TABS = [
   { label: 'Antitrust & HHI',       short: 'Antitrust',   path: '/analysts'    },
   { label: 'Fuel Simulator',        short: 'Simulation',  path: '/simulation'  },
   { label: 'Carrier Fleet',         short: 'Fleet',       path: '/fleet'       },
+  { label: 'Data & References',     short: 'References',  path: '/references'  },
 ];
 
 const API = API_BASE_URL;
