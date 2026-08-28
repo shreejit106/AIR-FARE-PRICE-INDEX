@@ -1,21 +1,17 @@
 import React, { useState } from 'react';
 import { useTheme } from '../App';
 import { 
-  Database, 
-  BookOpen, 
   ExternalLink, 
   Copy, 
   Check, 
   ShieldCheck, 
   Search, 
-  FileText, 
   Plane, 
   TrendingUp, 
   Scale, 
   Fuel, 
   MapPin,
-  Layers,
-  Sparkles
+  Layers
 } from 'lucide-react';
 
 interface DataSourceItem {
@@ -23,7 +19,7 @@ interface DataSourceItem {
   category: string;
   dataField: string;
   sourceEntity: string;
-  sourceType: 'Government' | 'Commercial Scraping' | 'Regulatory Agency' | 'Public Tariffs';
+  sourceType: 'Government Authority' | 'Live Commercial Ingestion' | 'Regulatory Agency' | 'Public OMC Tariff';
   collectionMethod: string;
   cadence: string;
   description: string;
@@ -52,7 +48,7 @@ const DATA_SOURCES: DataSourceItem[] = [
     category: 'Live Airfare & Booking Curves',
     dataField: 'Route Fare Quotes, Flight Numbers, Cabin Tiers (Economy/Business), Non-Stop vs 1-Stop',
     sourceEntity: 'MakeMyTrip, Ixigo, Goibibo, & Direct Carrier Portals (IndiGo, Air India, SpiceJet, Akasa)',
-    sourceType: 'Commercial Scraping',
+    sourceType: 'Live Commercial Ingestion',
     collectionMethod: 'Automated high-frequency scraping pipeline with exponential backoff & rate-limit throttling',
     cadence: 'Daily continuous ingestion across T+1, T+7, T+15, T+30, T+45 lead-time windows',
     description: 'Captures dynamic yield-management airfare matrices across the 80-route sovereign domestic basket, capturing both last-minute business fares and advance-purchase leisure fares.',
@@ -63,10 +59,10 @@ const DATA_SOURCES: DataSourceItem[] = [
   },
   {
     id: 'dgca-traffic',
-    category: 'Passenger Traffic & Weights',
+    category: 'Passenger Traffic & Route Weights',
     dataField: 'City-Pair Passenger Volumes (PAX), Quarterly Traffic Matrices, Market Share by Carrier',
     sourceEntity: 'Directorate General of Civil Aviation (DGCA), Ministry of Civil Aviation, Govt. of India',
-    sourceType: 'Government',
+    sourceType: 'Government Authority',
     collectionMethod: 'Direct parsing of DGCA Form A/B Quarterly Traffic Returns and Monthly Domestic Air Transport Reports',
     cadence: 'Quarterly weight re-anchoring with monthly traffic reconciliations',
     description: 'Provides official sovereign passenger volumes across all 80 domestic city-pairs to derive the modified Laspeyres/Lowe route weights w(r,0) = PAX_r / Σ PAX_k.',
@@ -80,7 +76,7 @@ const DATA_SOURCES: DataSourceItem[] = [
     category: 'Macroeconomic CPI Benchmark',
     dataField: 'Consumer Price Index (CPI) Transport & Communication Sub-Index (Base 2012=100)',
     sourceEntity: 'Ministry of Statistics and Programme Implementation (MOSPI), National Statistical Office (NSO)',
-    sourceType: 'Government',
+    sourceType: 'Government Authority',
     collectionMethod: 'Official monthly MOSPI press releases and NSO data portal ingestion',
     cadence: 'Monthly publication on the 12th of every month',
     description: 'Used as an independent macroeconomic benchmark to evaluate how APIx domestic airfare inflation correlates with broader national transport inflation.',
@@ -94,7 +90,7 @@ const DATA_SOURCES: DataSourceItem[] = [
     category: 'Aviation Fuel Tariffs',
     dataField: 'Aviation Turbine Fuel (ATF) Domestic Airport Refuelling Prices (₹/kL) across Metros',
     sourceEntity: 'Indian Oil Corporation Ltd (IOCL), Bharat Petroleum (BPCL), Hindustan Petroleum (HPCL)',
-    sourceType: 'Public Tariffs',
+    sourceType: 'Public OMC Tariff',
     collectionMethod: 'Public oil marketing company (OMC) aviation pricing tariff schedule ingestion',
     cadence: 'Fortnightly / 1st of every month pricing updates',
     description: 'Powers the APIx Fuel & Economic Shock Simulator to project airline operating cost sensitivity, break-even fare shifts, and fuel surcharge pass-through rates.',
@@ -122,7 +118,7 @@ const DATA_SOURCES: DataSourceItem[] = [
     category: 'Sovereign Geospatial Boundaries',
     dataField: 'Survey of India Sovereign State & Border Vector Geometries, AAI Geodetic Airport Coordinates',
     sourceEntity: 'Survey of India (SOI), Department of Science & Technology, Govt. of India',
-    sourceType: 'Government',
+    sourceType: 'Government Authority',
     collectionMethod: 'Official Survey of India digital administrative shapefiles',
     cadence: 'Static sovereign baseline (100% compliant boundary maps)',
     description: 'Guarantees full cartographic compliance with statutory Survey of India standards, depicting 100% integral Indian sovereign territory across all flight route heatmaps.',
@@ -302,7 +298,7 @@ const References: React.FC = () => {
 
   const apixBibtex = `@misc{apix2026index,
   title = {APIx: Sovereign Indian Airfare Price Index and Market Concentration Monitoring System},
-  author = {{Smart India Hackathon 2026 Team}},
+  author = {{Smart India Hackathon Technical Evaluation Team}},
   year = {2026},
   howpublished = {\\url{https://github.com/shreejit106/AIR-FARE-PRICE-INDEX}},
   note = {Built for Ministry of Civil Aviation, DGCA, and Competition Commission of India}
@@ -315,7 +311,7 @@ const References: React.FC = () => {
       {/* Header Banner */}
       <div style={{ marginBottom: 36 }}>
         <div style={{ fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: 2, color: 'var(--cyan)', marginBottom: 8 }}>
-          Transparency & Academic Rigor
+          Transparency & Verification
         </div>
         <h1 style={{ fontSize: '2.4rem', fontWeight: 900, letterSpacing: -1, color: 'var(--text)', margin: '0 0 10px 0' }}>
           Data Sources & Research References
@@ -325,7 +321,7 @@ const References: React.FC = () => {
         </p>
       </div>
 
-      {/* Main Tab Navigation */}
+      {/* Main Tab Navigation (Clean, Professional, No Emojis) */}
       <div style={{
         display: 'flex', 
         gap: 8, 
@@ -335,9 +331,9 @@ const References: React.FC = () => {
         overflowX: 'auto'
       }}>
         {[
-          { id: 'sources',    label: '🗄 Data Provenance Matrix', count: DATA_SOURCES.length },
-          { id: 'literature', label: '📚 Verified Research Literature', count: CITATIONS.length },
-          { id: 'citation',   label: '📜 How to Cite APIx', count: null },
+          { id: 'sources',    label: 'Data Provenance Matrix', count: DATA_SOURCES.length },
+          { id: 'literature', label: 'Verified Research Literature', count: CITATIONS.length },
+          { id: 'citation',   label: 'Citation & Attribution', count: null },
         ].map(t => (
           <button
             key={t.id}
@@ -346,9 +342,9 @@ const References: React.FC = () => {
               display: 'flex',
               alignItems: 'center',
               gap: 8,
-              padding: '12px 22px',
+              padding: '10px 22px',
               fontSize: '0.9rem',
-              fontWeight: 700,
+              fontWeight: 600,
               fontFamily: 'Inter, sans-serif',
               background: 'none',
               border: 'none',
@@ -368,7 +364,7 @@ const References: React.FC = () => {
                 fontSize: '0.72rem', 
                 padding: '2px 7px', 
                 borderRadius: 10, 
-                background: activeTab === t.id ? 'rgba(6,182,212,0.2)' : 'rgba(255,255,255,0.06)',
+                background: activeTab === t.id ? 'rgba(6,182,212,0.15)' : 'rgba(255,255,255,0.06)',
                 color: activeTab === t.id ? 'var(--cyan)' : 'var(--sub)'
               }}>
                 {t.count}
@@ -410,110 +406,93 @@ const References: React.FC = () => {
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 40 }}>
-            {filteredSources.map((item) => {
-              const Icon = item.icon;
-              return (
-                <div 
-                  key={item.id}
-                  className="card"
-                  style={{ 
-                    borderLeft: `4px solid ${item.color}`,
-                    padding: '22px 26px',
-                    transition: 'transform 0.15s ease, border-color 0.15s ease'
-                  }}
-                >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 12, marginBottom: 12 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                      <div style={{ 
-                        width: 42, 
-                        height: 42, 
-                        borderRadius: 10, 
-                        background: `${item.color}15`, 
-                        border: `1px solid ${item.color}35`,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        flexShrink: 0
+            {filteredSources.map((item) => (
+              <div 
+                key={item.id}
+                className="card"
+                style={{ 
+                  borderLeft: `4px solid ${item.color}`,
+                  padding: '22px 26px',
+                  transition: 'transform 0.15s ease, border-color 0.15s ease'
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 12, marginBottom: 12 }}>
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                      <h3 style={{ margin: 0, fontSize: '1.2rem', color: 'var(--text)', fontWeight: 800 }}>
+                        {item.category}
+                      </h3>
+                      <span style={{ 
+                        fontSize: '0.7rem', 
+                        fontWeight: 800, 
+                        padding: '3px 9px', 
+                        borderRadius: 12, 
+                        background: `${item.color}15`,
+                        color: item.color,
+                        border: `1px solid ${item.color}40`,
+                        fontFamily: 'var(--font-mono)'
                       }}>
-                        <Icon size={22} color={item.color} />
-                      </div>
-                      <div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-                          <h3 style={{ margin: 0, fontSize: '1.2rem', color: 'var(--text)', fontWeight: 800 }}>
-                            {item.category}
-                          </h3>
-                          <span style={{ 
-                            fontSize: '0.7rem', 
-                            fontWeight: 800, 
-                            padding: '3px 9px', 
-                            borderRadius: 12, 
-                            background: item.sourceType === 'Government' ? 'rgba(16,185,129,0.15)' : 'rgba(6,182,212,0.15)',
-                            color: item.sourceType === 'Government' ? 'var(--green)' : 'var(--cyan)',
-                            border: `1px solid ${item.sourceType === 'Government' ? 'var(--green)' : 'var(--cyan)'}40`
-                          }}>
-                            {item.sourceType}
-                          </span>
-                        </div>
-                        <div style={{ fontSize: '0.88rem', color: item.color, fontWeight: 600, marginTop: 3 }}>
-                          {item.sourceEntity}
-                        </div>
-                      </div>
+                        {item.sourceType}
+                      </span>
                     </div>
-
-                    {item.accessUrl && (
-                      <a 
-                        href={item.accessUrl} 
-                        target="_blank" 
-                        rel="noreferrer"
-                        style={{ 
-                          display: 'flex', 
-                          alignItems: 'center', 
-                          gap: 6, 
-                          color: 'var(--sub)', 
-                          fontSize: '0.8rem', 
-                          textDecoration: 'none',
-                          padding: '6px 12px',
-                          borderRadius: 6,
-                          background: 'var(--surface)',
-                          border: '1px solid var(--border)'
-                        }}
-                      >
-                        Source Portal <ExternalLink size={13} />
-                      </a>
-                    )}
+                    <div style={{ fontSize: '0.88rem', color: 'var(--sub)', fontWeight: 600, marginTop: 4 }}>
+                      Authority: <span style={{ color: 'var(--text)' }}>{item.sourceEntity}</span>
+                    </div>
                   </div>
 
-                  <div style={{ fontSize: '0.86rem', color: 'var(--sub)', lineHeight: 1.65, marginBottom: 14 }}>
-                    {item.description}
-                  </div>
+                  {item.accessUrl && (
+                    <a 
+                      href={item.accessUrl} 
+                      target="_blank" 
+                      rel="noreferrer"
+                      style={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: 6, 
+                        color: 'var(--sub)', 
+                        fontSize: '0.8rem', 
+                        textDecoration: 'none',
+                        padding: '6px 12px',
+                        borderRadius: 6,
+                        background: 'var(--surface)',
+                        border: '1px solid var(--border)'
+                      }}
+                    >
+                      Source Portal <ExternalLink size={13} />
+                    </a>
+                  )}
+                </div>
 
-                  <div style={{ 
-                    display: 'grid', 
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', 
-                    gap: 12,
-                    background: 'rgba(255,255,255,0.02)',
-                    padding: '14px',
-                    borderRadius: 8,
-                    border: '1px solid var(--border)'
-                  }}>
-                    <div>
-                      <div style={{ fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--sub)', marginBottom: 2 }}>Captured Data Variables</div>
-                      <div style={{ fontSize: '0.84rem', color: 'var(--text)', fontFamily: 'var(--font-mono)' }}>{item.dataField}</div>
-                    </div>
-                    <div>
-                      <div style={{ fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--sub)', marginBottom: 2 }}>Update Cadence & Ingestion</div>
-                      <div style={{ fontSize: '0.84rem', color: 'var(--text)' }}>{item.cadence}</div>
-                    </div>
-                    <div style={{ gridColumn: '1 / -1' }}>
-                      <div style={{ fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--sub)', marginBottom: 2 }}>Mathematical & Integrity Verification</div>
-                      <div style={{ fontSize: '0.84rem', color: 'var(--green)', display: 'flex', alignItems: 'center', gap: 6 }}>
-                        <ShieldCheck size={15} /> {item.verification}
-                      </div>
+                <div style={{ fontSize: '0.86rem', color: 'var(--sub)', lineHeight: 1.65, marginBottom: 14 }}>
+                  {item.description}
+                </div>
+
+                <div style={{ 
+                  display: 'grid', 
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', 
+                  gap: 12,
+                  background: 'rgba(255,255,255,0.02)',
+                  padding: '14px',
+                  borderRadius: 8,
+                  border: '1px solid var(--border)'
+                }}>
+                  <div>
+                    <div style={{ fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--sub)', marginBottom: 2 }}>Captured Data Variables</div>
+                    <div style={{ fontSize: '0.84rem', color: 'var(--text)', fontFamily: 'var(--font-mono)' }}>{item.dataField}</div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--sub)', marginBottom: 2 }}>Update Cadence & Ingestion</div>
+                    <div style={{ fontSize: '0.84rem', color: 'var(--text)' }}>{item.cadence}</div>
+                  </div>
+                  <div style={{ gridColumn: '1 / -1' }}>
+                    <div style={{ fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--sub)', marginBottom: 2 }}>Mathematical & Integrity Verification</div>
+                    <div style={{ fontSize: '0.84rem', color: 'var(--green)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <ShieldCheck size={15} /> {item.verification}
                     </div>
                   </div>
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
         </>
       )}
@@ -525,7 +504,7 @@ const References: React.FC = () => {
             <div>
               <div className="section-label" style={{ marginBottom: 4 }}>Verified Econometric & Statistical Literature</div>
               <p style={{ color: 'var(--sub)', fontSize: '0.86rem', margin: 0 }}>
-                Only confirmed real publications from the U.S. BLS, UK ONS, and peer-reviewed journals. No synthetic or unverified citations.
+                Confirmed real publications from the U.S. BLS, UK ONS, and peer-reviewed journals.
               </p>
             </div>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
@@ -650,7 +629,7 @@ const References: React.FC = () => {
         </>
       )}
 
-      {/* ─── TAB 3: HOW TO CITE APIx ─── */}
+      {/* ─── TAB 3: CITATION & ATTRIBUTION ─── */}
       {activeTab === 'citation' && (
         <div style={{ maxWidth: 840 }}>
           <div className="section-label">Official Citation & Technical Reference</div>
@@ -710,7 +689,7 @@ const References: React.FC = () => {
               color: 'var(--sub)',
               lineHeight: 1.6
             }}>
-              Smart India Hackathon Evaluation Committee. (2026). <em>APIx: Sovereign Indian Airfare Price Index and High-Frequency Market Monitoring Platform</em>. Ministry of Civil Aviation / Directorate General of Civil Aviation Technical Submission.
+              Smart India Hackathon Technical Evaluation Team. (2026). <em>APIx: Sovereign Indian Airfare Price Index and High-Frequency Market Monitoring Platform</em>. Ministry of Civil Aviation / Directorate General of Civil Aviation Technical Submission.
             </div>
           </div>
         </div>
