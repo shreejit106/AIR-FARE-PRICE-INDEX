@@ -293,7 +293,7 @@ const Dashboard: React.FC = () => {
           <div className="hud-ticker-live">{loading ? '—' : ti7.toFixed(1)}</div>
           <div style={{fontSize:'0.75rem', color:'var(--sub)', marginTop:4, fontFamily:'JetBrains Mono,monospace'}}>T+7 basis</div>
         </div>
-        {([['T+7', ti7], ['T+15', ti15], ['T+30', ti30], ['T+45', ti45]] as [string, number][]).map(([label, val]) => (
+        {([['T+1', ti1], ['T+7', ti7], ['T+15', ti15], ['T+30', ti30], ['T+45', ti45]] as [string, number][]).map(([label, val]) => (
           <div key={label} className="hud-ticker-item">
             <div className="hud-ticker-label" style={{color: label === 'T+7' ? 'var(--cyan)' : 'var(--sub)'}}>{label}</div>
             {loading ? <span className="hud-ticker-value">—</span> : <Arrow idx={val} />}
