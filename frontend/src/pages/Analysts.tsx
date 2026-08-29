@@ -316,7 +316,7 @@ export const Analysts: React.FC = () => {
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
               <span className="badge badge-cyan" style={{ fontSize: '0.72rem', letterSpacing: 1.5, textTransform: 'uppercase', padding: '4px 10px' }}>
-                🏛 DGCA & Policy Economists Portal
+                DGCA & Policy Economists Portal
               </span>
               <span className="badge" style={{ background: 'rgba(16, 185, 129, 0.15)', color: '#10B981', border: '1px solid rgba(16, 185, 129, 0.3)', fontSize: '0.72rem' }}>
                 ✓ Local Verified Engine • 80 Routes
@@ -442,7 +442,7 @@ export const Analysts: React.FC = () => {
         {/* Card 2: National HHI */}
         <div className="card" style={{ padding: 20, borderLeft: '4px solid #F59E0B' }}>
           <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--sub)', textTransform: 'uppercase', marginBottom: 4 }}>
-            🏢 National Market HHI
+            National Market HHI
           </div>
           <div style={{ fontSize: '2.1rem', fontWeight: 900, color: '#F59E0B', fontFamily: 'JetBrains Mono, monospace' }}>
             {competitionData ? competitionData.national_avg_hhi : '—'}
@@ -646,7 +646,7 @@ export const Analysts: React.FC = () => {
               Module 03 • Antitrust & Market Dominance
             </div>
             <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--text)', margin: '4px 0 0 0' }}>
-              🏢 Herfindahl-Hirschman Index (HHI) vs Price Gouging
+              Herfindahl-Hirschman Index (HHI) vs Price Gouging
             </h2>
           </div>
           <div style={{ display: 'flex', gap: 8 }}>
@@ -955,7 +955,7 @@ export const Analysts: React.FC = () => {
           {/* Export Card 4 */}
           <div className="card" style={{ padding: 18, background: dark ? '#0F1E33' : '#FFFFFF', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
-              <div style={{ fontWeight: 700, color: 'var(--text)', marginBottom: 2 }}>🏢 HHI Route Competition Matrix</div>
+              <div style={{ fontWeight: 700, color: 'var(--text)', marginBottom: 2 }}>HHI Route Competition Matrix</div>
               <div style={{ fontSize: '0.78rem', color: 'var(--sub)' }}>Antitrust metrics, carrier flight shares, and monopoly indices for all routes.</div>
             </div>
             <button 

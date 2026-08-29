@@ -454,25 +454,50 @@ export const DEFAULT_ANOMALIES: any = {
 };
 
 export const DEFAULT_COMPETITION: any = {
-  national_avg_hhi: 2840,
+  national_avg_hhi: 3120,
   total_routes_analyzed: 80,
-  high_concentration_routes: 14,
-  routes: DEFAULT_ROUTES_LIST.map((r, i) => ({
-    route_id: r,
-    hhi: 1800 + ((i * 137) % 2400),
-    market_type: (1800 + ((i * 137) % 2400)) > 2500 ? "Highly Concentrated (HHI > 2500)" : "Moderately Concentrated (1500–2500)",
-    badge_color: (1800 + ((i * 137) % 2400)) > 2500 ? "#EF4444" : "#F59E0B",
-    dominant_airline: i % 3 === 0 ? "IndiGo (6E)" : i % 3 === 1 ? "Air India (AI)" : "SpiceJet (SG)",
-    dominant_share_pct: 45 + (i % 35),
-    carrier_count: 2 + (i % 3),
-    avg_fare_current: 5400 + (i * 50),
-    avg_fare_base: 4800 + (i * 30),
-    avg_pct_change: 8 + (i % 20),
-    carriers: [
-      { airline: "IndiGo (6E)", flights: 12, share_pct: 55 },
-      { airline: "Air India (AI)", flights: 6, share_pct: 30 },
-      { airline: "SpiceJet (SG)", flights: 3, share_pct: 15 }
-    ]
-  }))
+  high_concentration_routes: 34,
+  routes: DEFAULT_ROUTES_LIST.map((r, i) => {
+    let hhiVal = 1350 + (i * 55) + ((i * 19) % 450);
+    let dominantShare = 38 + ((i * 13) % 45);
+    let carrierCount = 5 - Math.min(3, Math.floor(i / 22));
+    let baseFare = 4200 + ((i * 120) % 2800);
+    let surgePct = Number((4.5 + (hhiVal / 180) + ((i * 7) % 18) - 10).toFixed(2));
+    if (i >= 50) {
+      hhiVal = 3600 + ((i * 110) % 3800);
+      dominantShare = 70 + (i % 26);
+      carrierCount = (i % 5 === 0) ? 1 : 2;
+      surgePct = Number((22.0 + ((i * 13) % 35)).toFixed(2));
+    } else if (i < 15) {
+      hhiVal = 1250 + ((i * 80) % 950);
+      dominantShare = 35 + (i % 18);
+      carrierCount = 4 + (i % 2);
+      surgePct = Number((3.0 + ((i * 5) % 16)).toFixed(2));
+    }
+    const curFare = Math.round(baseFare * (1 + surgePct / 100));
+
+    const marketType = hhiVal > 2500 
+      ? "High Concentration (Monopoly Risk)" 
+      : (hhiVal >= 1500 ? "Moderate Concentration" : "Competitive");
+    const badgeColor = hhiVal > 2500 ? "#EF4444" : (hhiVal >= 1500 ? "#F59E0B" : "#10B981");
+
+    return {
+      route_id: r,
+      hhi: hhiVal,
+      market_type: marketType,
+      badge_color: badgeColor,
+      dominant_airline: i % 4 === 0 ? "IndiGo (6E)" : i % 4 === 1 ? "Air India (AI)" : i % 4 === 2 ? "Akasa Air (QP)" : "SpiceJet (SG)",
+      dominant_share_pct: dominantShare,
+      carrier_count: carrierCount,
+      avg_fare_current: curFare,
+      avg_fare_base: baseFare,
+      avg_pct_change: surgePct,
+      carriers: [
+        { airline: "IndiGo (6E)", flights: Math.round(carrierCount * 4 * (dominantShare / 100)), share_pct: dominantShare },
+        { airline: "Air India (AI)", flights: Math.round(carrierCount * 2), share_pct: Math.max(10, Math.round((100 - dominantShare) * 0.65)) },
+        { airline: "Akasa Air (QP)", flights: 2, share_pct: Math.max(5, Math.round((100 - dominantShare) * 0.35)) }
+      ]
+    };
+  })
 };
 

@@ -143,7 +143,6 @@ const Dashboard: React.FC = () => {
         setIndexData(idx);
         setLiveConnected(true);
       } else {
-        setIndexData(dynamicFallbackIndex);
         setLiveConnected(false);
       }
       if (summary && summary.length > 0) setRouteSummary(summary);
@@ -151,11 +150,10 @@ const Dashboard: React.FC = () => {
       if (mospi && mospi.length > 0) setMospiData(mospi);
       setLoading(false);
     }).catch(() => {
-      setIndexData(dynamicFallbackIndex);
       setLiveConnected(false);
       setLoading(false);
     });
-  }, [cabinClass, airlineParam, routeParam, dynamicFallbackIndex]);
+  }, [cabinClass, airlineParam, routeParam]);
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
