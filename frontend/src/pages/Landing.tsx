@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 interface ModuleItem {
@@ -61,19 +61,45 @@ const MODULES: ModuleItem[] = [
   },
 ];
 
-const HORIZONS_PREVIEW = [
-  { horizon: 'T+1', label: 'Last Minute', index: '138.40', change: '+38.40%', color: '#F87171' },
-  { horizon: 'T+7', label: 'Short Horizon', index: '114.20', change: '+14.20%', color: '#FBBF24' },
-  { horizon: 'T+15', label: 'Standard Lead', index: '105.80', change: '+5.80%', color: '#60A5FA' },
-  { horizon: 'T+30', label: 'Advance Leisure', index: '98.40', change: '-1.60%', color: '#34D399' },
-  { horizon: 'T+45', label: 'Base Booking', index: '86.50', change: '-13.50%', color: '#A78BFA' },
+import { API_BASE_URL } from '../config';
+
+const HORIZONS_DEFAULT = [
+  { horizon: 'T+1', label: 'Last Minute', index: '152.90', change: '+52.90%', color: '#F87171' },
+  { horizon: 'T+7', label: 'Short Horizon', index: '120.09', change: '+20.09%', color: '#FBBF24' },
+  { horizon: 'T+15', label: 'Standard Lead', index: '115.67', change: '+15.67%', color: '#60A5FA' },
+  { horizon: 'T+30', label: 'Advance Leisure', index: '113.86', change: '+13.86%', color: '#34D399' },
+  { horizon: 'T+45', label: 'Base Booking', index: '114.86', change: '+14.86%', color: '#A78BFA' },
 ];
 
 const Landing: React.FC = () => {
   const navigate = useNavigate();
   const [activeHorizon, setActiveHorizon] = useState('T+7');
+  const [horizonsData, setHorizonsData] = useState(HORIZONS_DEFAULT);
 
-  const activeData = HORIZONS_PREVIEW.find(h => h.horizon === activeHorizon) || HORIZONS_PREVIEW[1];
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/api/index`)
+      .then(res => res.ok ? res.json() : null)
+      .then(data => {
+        if (data && typeof data === 'object') {
+          setHorizonsData(prev => prev.map(h => {
+            const val = data[h.horizon];
+            if (val !== undefined) {
+              const num = Number(val);
+              const chg = num - 100;
+              return {
+                ...h,
+                index: num.toFixed(2),
+                change: `${chg >= 0 ? '+' : ''}${chg.toFixed(2)}%`
+              };
+            }
+            return h;
+          }));
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const activeData = horizonsData.find(h => h.horizon === activeHorizon) || horizonsData[1];
 
   return (
     <div className="apix-landing-root">
@@ -135,7 +161,7 @@ const Landing: React.FC = () => {
             <div className="apix-terminal-body">
               {/* Horizon Selector Tabs */}
               <div className="apix-horizon-tabs">
-                {HORIZONS_PREVIEW.map(h => (
+                {horizonsData.map(h => (
                   <button
                     key={h.horizon}
                     className={`apix-horizon-tab ${activeHorizon === h.horizon ? 'active' : ''}`}

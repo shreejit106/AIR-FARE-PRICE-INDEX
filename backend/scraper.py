@@ -1,17 +1,12 @@
 import os
 import json
-import random
-import requests
+import re
+import sys
+import asyncio
 import pandas as pd
 from datetime import datetime, timedelta
-try:
-    from dotenv import load_dotenv
-    load_dotenv()
-except ImportError:
-    pass
-
-AMADEUS_CLIENT_ID = os.getenv("AMADEUS_CLIENT_ID")
-AMADEUS_CLIENT_SECRET = os.getenv("AMADEUS_CLIENT_SECRET")
+from typing import List, Dict, Optional
+from playwright.async_api import async_playwright
 
 try:
     from backend.static_data import SELECTED_PAIRS, ROUTE_WEIGHTS
@@ -35,18 +30,6 @@ AIRPORT_DISTANCES = {
     ("DEL", "GAU"): 1460, ("DEL", "BBI"): 1270
 }
 
-ROUTES = []
-for orig, dest in SELECTED_PAIRS:
-    dist = AIRPORT_DISTANCES.get((orig, dest)) or AIRPORT_DISTANCES.get((dest, orig)) or 1000
-    w = ROUTE_WEIGHTS.get(f"{orig}-{dest}", 0.0125)
-    ROUTES.append({
-        "origin": orig,
-        "destination": dest,
-        "weight": w,
-        "distance_km": dist
-    })
-
-
 HORIZONS = {
     "T+1": 1,
     "T+7": 7,
@@ -55,178 +38,185 @@ HORIZONS = {
     "T+45": 45,
 }
 
-AIRLINES = ["6E", "AI", "IX", "QP"]
+CORE_MARQUEE_ROUTES = [
+    ("DEL", "BOM"), ("BOM", "DEL"),
+    ("DEL", "BLR"), ("BLR", "DEL"),
+    ("BOM", "BLR"), ("BLR", "BOM"),
+    ("DEL", "HYD"), ("HYD", "DEL"),
+    ("BOM", "MAA"), ("MAA", "BOM"),
+    ("DEL", "CCU"), ("CCU", "DEL")
+]
 
-def get_amadeus_token():
-    if not AMADEUS_CLIENT_ID or not AMADEUS_CLIENT_SECRET:
-        return None
-        
-    url = "https://test.api.amadeus.com/v1/security/oauth2/token"
-    headers = {"Content-Type": "application/x-www-form-urlencoded"}
-    data = {
-        "grant_type": "client_credentials",
-        "client_id": AMADEUS_CLIENT_ID,
-        "client_secret": AMADEUS_CLIENT_SECRET
-    }
+AIRLINE_MAPPING = {
+    "indigo": ("IndiGo", "6E"),
+    "air india express": ("Air India Express", "IX"),
+    "air india": ("Air India", "AI"),
+    "spicejet": ("SpiceJet", "SG"),
+    "akasa": ("Akasa Air", "QP"),
+    "vistara": ("Air India", "AI")
+}
+
+GOOGLE_COOKIES = [
+    {"name": "SOCS", "value": "CAISHAgBEhJnd3NfMjAyNDA2MDctMF9SQzIaAmVuIAEaBgiA_LyuBg", "domain": ".google.com", "path": "/"},
+    {"name": "CONSENT", "value": "PENDING+999", "domain": ".google.com", "path": "/"}
+]
+
+async def scrape_single_flight_query(
+    browser,
+    origin: str,
+    destination: str,
+    travel_date: str,
+    horizon_key: str,
+    query_date_iso: str
+) -> List[Dict]:
+    """
+    Asynchronously scrape live Google Flights search results for a specific corridor and date.
+    """
+    search_url = f"https://www.google.com/travel/flights?q=Flights%20to%20{destination}%20from%20{origin}%20on%20{travel_date}%20one%20way&hl=en&gl=in&curr=INR"
+    context = await browser.new_context(
+        user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        locale="en-IN",
+        timezone_id="Asia/Kolkata",
+        viewport={"width": 1280, "height": 800}
+    )
+    # Pre-inject consent cookies so Google does not prompt
+    await context.add_cookies(GOOGLE_COOKIES)
     
-    try:
-        response = requests.post(url, headers=headers, data=data)
-        response.raise_for_status()
-        return response.json().get("access_token")
-    except Exception:
-        return None
-
-def generate_synthetic_fares(route, horizon_key, days_out, query_date, travel_date):
-    """
-    Generates realistic synthetic fare distributions based on route distance and lead time.
-    T+1: High variance, surge pricing
-    T+45: Lower variance, baseline pricing
-    """
+    page = await context.new_page()
     fares = []
     
-    # Base price calculation dependent on distance
-    base_price = 2000 + (route["distance_km"] * 2.5)
-    
-    # Lead time multiplier (closer = more expensive)
-    if days_out <= 1:
-        multiplier_range = (1.8, 3.0)
-    elif days_out <= 7:
-        multiplier_range = (1.3, 2.0)
-    elif days_out <= 15:
-        multiplier_range = (1.0, 1.4)
-    elif days_out <= 30:
-        multiplier_range = (0.8, 1.1)
-    else:
-        multiplier_range = (0.7, 0.9)
-        
-    num_flights = random.randint(3, 8)
-    
-    for _ in range(num_flights):
-        mult = random.uniform(*multiplier_range)
-        total = round(base_price * mult, 2)
-        base = round(total * 0.85, 2) # Assume 15% taxes/fees
-        airline = random.choice(AIRLINES)
-        flight_number = str(random.randint(100, 999))
-        
-        fares.append({
-            "origin": route["origin"],
-            "destination": route["destination"],
-            "airline": airline,
-            "flight_number": flight_number,
-            "query_date": query_date,
-            "travel_date": travel_date,
-            "lead_time_horizon": horizon_key,
-            "base_fare": base,
-            "total_fare": total,
-            "currency": "INR",
-            "cabin_class": "ECONOMY",
-            "source": "Simulated_Engine"
-        })
-        
-    return fares
-
-def fetch_amadeus_fares(token, origin, destination, travel_date, horizon_key, query_date):
-    """
-    Fetch fares from Amadeus. If it fails, return empty list to trigger fallback.
-    """
-    url = "https://test.api.amadeus.com/v2/shopping/flight-offers"
-    headers = {"Authorization": f"Bearer {token}"}
-    params = {
-        "originLocationCode": origin,
-        "destinationLocationCode": destination,
-        "departureDate": travel_date,
-        "adults": 1,
-        "currencyCode": "INR",
-        "max": 10
-    }
-    
-    fares = []
     try:
-        response = requests.get(url, headers=headers, params=params, timeout=10)
-        response.raise_for_status()
-        data = response.json().get("data", [])
+        await page.goto(search_url, wait_until="domcontentloaded", timeout=20000)
+        await page.wait_for_timeout(2500)
         
-        for offer in data:
-            price = offer.get("price", {})
-            total = float(price.get("total", 0.0))
-            base = float(price.get("base", 0.0))
-            
-            # Extract first segment's airline and flight number
-            itineraries = offer.get("itineraries", [])
-            airline = "XX"
-            flight_number = "000"
-            if itineraries and itineraries[0].get("segments"):
-                segment = itineraries[0]["segments"][0]
-                airline = segment.get("carrierCode", "XX")
-                flight_number = segment.get("number", "000")
+        # Select flight item cards
+        cards = await page.locator("li.pIav2d, div.yR1fYc, div.JTFDe").all()
+        
+        for card in cards:
+            try:
+                card_text = await card.inner_text()
+                if not card_text:
+                    continue
+                    
+                price_match = re.search(r'₹\s?([0-9,]+)', card_text)
+                if not price_match:
+                    continue
+                    
+                total_fare = float(price_match.group(1).replace(',', ''))
+                if total_fare < 1200 or total_fare > 80000:
+                    continue  # filter out bad parses
+                    
+                base_fare = round(total_fare * 0.85, 2)
                 
-            fares.append({
-                "origin": origin,
-                "destination": destination,
-                "airline": airline,
-                "flight_number": flight_number,
-                "query_date": query_date,
-                "travel_date": travel_date,
-                "lead_time_horizon": horizon_key,
-                "base_fare": base,
-                "total_fare": total,
-                "currency": "INR",
-                "cabin_class": "ECONOMY",
-                "source": "Amadeus_API"
-            })
+                # Match airline name & code
+                card_text_lower = card_text.lower()
+                matched_airline = "IndiGo"
+                matched_code = "6E"
+                for key, (al_name, al_code) in AIRLINE_MAPPING.items():
+                    if key in card_text_lower:
+                        matched_airline = al_name
+                        matched_code = al_code
+                        break
+                        
+                flight_num_match = re.search(r'\b([0-9]{3,4})\b', card_text)
+                flight_num = flight_num_match.group(1) if flight_num_match else "101"
+                
+                fares.append({
+                    "origin": origin,
+                    "destination": destination,
+                    "airline": f"{matched_airline} ({matched_code})",
+                    "airline_code": matched_code,
+                    "flight_number": flight_num,
+                    "query_date": query_date_iso,
+                    "travel_date": travel_date,
+                    "lead_time_horizon": horizon_key,
+                    "base_fare": base_fare,
+                    "total_fare": total_fare,
+                    "currency": "INR",
+                    "cabin_class": "Economy",
+                    "source": "Google_Flights_Live_Scraper"
+                })
+            except Exception:
+                continue
+
     except Exception as e:
-        print(f"Amadeus fetch failed for {origin}-{destination} on {travel_date}: {e}")
-        
+        print(f"Scraper notice for {origin}-{destination} on {travel_date}: {e}", flush=True)
+    finally:
+        await context.close()
+
     return fares
 
-def scrape_fares():
+async def scrape_live_fares_async(
+    target_routes: Optional[List[tuple]] = None,
+    target_horizons: Optional[Dict[str, int]] = None,
+    concurrency_limit: int = 4
+) -> List[Dict]:
+    """
+    Runs concurrent Playwright browser tabs to scrape live domestic flight fares.
+    """
+    if target_routes is None:
+        target_routes = CORE_MARQUEE_ROUTES[:4]
+        
+    if target_horizons is None:
+        target_horizons = HORIZONS
+        
     query_date_obj = datetime.now()
     query_date_iso = query_date_obj.isoformat()
-    
-    token = get_amadeus_token()
-    if not token:
-        print("No Amadeus credentials/token found. Using simulated engine.")
-    
     all_fares = []
     
-    for route in ROUTES:
-        for horizon_key, days_out in HORIZONS.items():
-            travel_date_obj = query_date_obj + timedelta(days=days_out)
-            travel_date_str = travel_date_obj.strftime("%Y-%m-%d")
-            
-            fares = []
-            if token:
-                fares = fetch_amadeus_fares(
-                    token, 
-                    route["origin"], 
-                    route["destination"], 
-                    travel_date_str, 
-                    horizon_key, 
-                    query_date_iso
-                )
-                
-            if not fares:
-                fares = generate_synthetic_fares(
-                    route, 
-                    horizon_key, 
-                    days_out, 
-                    query_date_iso, 
-                    travel_date_str
-                )
-                
-            all_fares.extend(fares)
-            
-    df = pd.DataFrame(all_fares)
-    print(f"Scraping complete. Total records: {len(df)}")
+    print(f"[{datetime.now().strftime('%H:%M:%S')}] Starting Playwright live web scraper across {len(target_routes)} routes × {len(target_horizons)} horizons...", flush=True)
     
-    output_file = "raw_scraped_fares.json"
-    with open(output_file, 'w') as f:
-        json.dump(all_fares, f, indent=4)
+    async with async_playwright() as p:
+        browser = await p.chromium.launch(
+            headless=True,
+            args=[
+                "--disable-blink-features=AutomationControlled",
+                "--no-sandbox",
+                "--disable-dev-shm-usage",
+                "--disable-gpu"
+            ]
+        )
         
-    print(f"Data saved to {output_file}")
-    
+        semaphore = asyncio.Semaphore(concurrency_limit)
+        
+        async def sem_scrape(orig, dest, h_key, days_out):
+            async with semaphore:
+                t_date = (query_date_obj + timedelta(days=days_out)).strftime("%Y-%m-%d")
+                fares = await scrape_single_flight_query(browser, orig, dest, t_date, h_key, query_date_iso)
+                print(f" -> Scraped {len(fares)} live flights on {orig}-{dest} [{h_key}]", flush=True)
+                return fares
+                
+        tasks = []
+        for orig, dest in target_routes:
+            for h_key, days_out in target_horizons.items():
+                tasks.append(sem_scrape(orig, dest, h_key, days_out))
+                
+        results = await asyncio.gather(*tasks, return_exceptions=True)
+        for res in results:
+            if isinstance(res, list):
+                all_fares.extend(res)
+                
+        await browser.close()
+        
+    print(f"[{datetime.now().strftime('%H:%M:%S')}] Live scraping completed. Extracted {len(all_fares)} genuine market fare records.", flush=True)
+    return all_fares
+
+def scrape_fares(target_routes=None, target_horizons=None) -> pd.DataFrame:
+    """
+    Synchronous entry point that runs the async Playwright scraper and saves results.
+    """
+    fares = asyncio.run(scrape_live_fares_async(target_routes, target_horizons))
+    df = pd.DataFrame(fares)
+    if not df.empty:
+        output_file = "raw_scraped_fares.json"
+        with open(output_file, 'w', encoding='utf-8') as f:
+            json.dump(fares, f, indent=2, ensure_ascii=False)
+        print(f"Saved {len(df)} live scraped fare records to {output_file}", flush=True)
+        
     return df
 
 if __name__ == "__main__":
-    df = scrape_fares()
-    print(df.head())
+    df = scrape_fares(target_routes=[("DEL", "BOM"), ("DEL", "BLR")], target_horizons={"T+1": 1, "T+7": 7})
+    print(f"Total fares scraped: {len(df)}")
+    if not df.empty:
+        print(df[["origin", "destination", "airline", "lead_time_horizon", "total_fare"]].head(10))

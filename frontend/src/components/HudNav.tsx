@@ -89,7 +89,7 @@ const HudNav: React.FC = () => {
         {/* ── Desktop Actions (strictly hidden on screens <= 900px) ── */}
         <div className="hud-actions hud-actions-desktop">
           <GlassmorphismCTA onClick={handleSync} disabled={syncing}>
-            {syncing ? '↻ Syncing…' : 'Fetch Live Fares'}
+            {syncing ? '↻ Scraping Live Market…' : 'Fetch Live Fares'}
           </GlassmorphismCTA>
 
           <div ref={themeRef} style={{ position: 'relative' }}>

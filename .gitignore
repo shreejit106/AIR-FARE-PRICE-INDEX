@@ -58,3 +58,7 @@ frontend/build/
 backend/apix_data.db
 backend/raw_scraped_fares.json
 backend/exports/
+apix_data.db
+raw_scraped_fares.json
+exports/
+scratch/
