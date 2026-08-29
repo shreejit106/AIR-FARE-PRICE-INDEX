@@ -85,11 +85,11 @@ const ROUTE_WEIGHT_VALUES: number[] = (() => {
 })();
 
 export const DEFAULT_INDEX: Record<string, number> = {
-  "T+1": 138.40,
-  "T+7": 114.20,
-  "T+15": 105.80,
-  "T+30": 98.40,
-  "T+45": 86.50
+  "T+1": 152.90,
+  "T+7": 120.09,
+  "T+15": 115.67,
+  "T+30": 113.86,
+  "T+45": 114.86
 };
 
 export function computeDynamicIndex(
@@ -99,18 +99,18 @@ export function computeDynamicIndex(
   route: string,
   summaries: RouteSummary[] = DEFAULT_ROUTE_SUMMARIES
 ): Record<string, number> {
-  let baseT1 = 138.40;
-  let baseT7 = 114.20;
-  let baseT15 = 105.80;
-  let baseT30 = 98.40;
-  let baseT45 = 86.50;
+  let baseT1 = 152.90;
+  let baseT7 = 120.09;
+  let baseT15 = 115.67;
+  let baseT30 = 113.86;
+  let baseT45 = 114.86;
 
   if (cabinClass === 'Business') {
-    baseT1 = 164.20;
-    baseT7 = 129.50;
-    baseT15 = 117.80;
-    baseT30 = 104.20;
-    baseT45 = 92.60;
+    baseT1 = 178.40;
+    baseT7 = 138.50;
+    baseT15 = 126.80;
+    baseT30 = 118.20;
+    baseT45 = 112.60;
   }
 
   if (aggregation === 'Airline Specific' && airline !== 'all') {

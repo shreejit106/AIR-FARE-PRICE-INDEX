@@ -161,11 +161,11 @@ const Dashboard: React.FC = () => {
 
   /* ── Dynamic Index values (Instant update on filter change) ── */
   const activeIndex = (liveConnected && indexData) ? indexData : dynamicFallbackIndex;
-  const ti1  = activeIndex['T+1']  ?? 138.4;
-  const ti7  = activeIndex['T+7']  ?? 114.2;
-  const ti15 = activeIndex['T+15'] ?? 105.8;
-  const ti30 = activeIndex['T+30'] ?? 98.4;
-  const ti45 = activeIndex['T+45'] ?? 86.5;
+  const ti1  = activeIndex['T+1']  ?? 152.9;
+  const ti7  = activeIndex['T+7']  ?? 120.1;
+  const ti15 = activeIndex['T+15'] ?? 115.7;
+  const ti30 = activeIndex['T+30'] ?? 113.9;
+  const ti45 = activeIndex['T+45'] ?? 114.9;
 
   /* ── STABLE trend — seeded from the actual index values so never re-randomises on theme toggle ── */
   const { trendDates, trendVals, yMin, yMax, fillBase } = useMemo(() => {
