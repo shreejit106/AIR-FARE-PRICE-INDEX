@@ -69,10 +69,15 @@ function bezier(p1: [number,number], p2: [number,number], n = 22): [number,numbe
 }
 
 function pctColor(val: number): string {
-  const norm = Math.max(0, Math.min(1, (val+10)/40));
-  const r = norm < 0.5 ? Math.round(16 + norm*2*(239-16)) : 239;
-  const g = norm < 0.5 ? Math.round(185 + norm*2*(68-185)) : Math.round(68*(1-(norm-0.5)*2));
-  return `rgb(${r},${Math.max(0,g)},0)`;
+  // Realistic Aviation Inflation Bands:
+  // Deflation (< 0%): Emerald Green
+  // Mild Inflation (+0% to +12%): Warm Amber Gold
+  // Moderate Inflation (+12% to +22%): Vivid Orange
+  // High / Severe Surge (>= +22%): Intense Crimson Red
+  if (val < 0) return '#10B981';
+  if (val < 12) return '#F59E0B';
+  if (val < 22) return '#F97316';
+  return '#EF4444';
 }
 
 /* ─── Carrier strip data ────────────────────────────────────────────────── */
@@ -383,7 +388,7 @@ const Dashboard: React.FC = () => {
               <div>
                 <div className="section-label">Live Route Map — {routeSummary.length} Routes</div>
                 <div style={{fontSize:'0.8rem', color:'var(--sub)', marginBottom:10}}>
-                  🟢 deflating → 🔴 inflating · Arc thickness = passenger volume · Click for details
+                  🟡 Mild (+0–12%) · 🟠 Moderate (+12–22%) · 🔴 High Inflation (+22%+) · 🟢 Deflation (&lt;0%) · Arc width = DGCA Passenger Share
                 </div>
                 <div className="map-wrap">
                   <MapContainer center={[22.5,80]} zoom={5} style={{height:'100%',width:'100%'}} zoomControl>
