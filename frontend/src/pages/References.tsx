@@ -137,7 +137,7 @@ const CITATIONS: CitationItem[] = [
     publication: 'Government of India, MoSPI Technical Notes & CPI Release Series',
     year: 'Official Standard',
     category: 'Official Index Benchmark',
-    url: 'https://esankhyiki.mospi.gov.in/',
+    url: 'https://www.mospi.gov.in/sites/default/files/cpi/cpi_concept_methodology.pdf',
     keyFinding: 'Defines the national methodology for tracking transport services inflation under the COICOP framework, incorporating digital online platform data collection and HCES expenditure weighting.',
     apixUsage: 'Official macroeconomic benchmark: APIx tracks and cross-checks against MoSPI Transport & Communication CPI series.',
     bibtex: `@techreport{mospi_cpi_manual,
@@ -145,7 +145,7 @@ const CITATIONS: CitationItem[] = [
   title = {Consumer Price Index: Concepts, Definitions and Methodology for Transport Services},
   institution = {National Statistical Office (NSO), Government of India},
   year = {2024},
-  url = {https://esankhyiki.mospi.gov.in/}
+  url = {https://www.mospi.gov.in/sites/default/files/cpi/cpi_concept_methodology.pdf}
 }`
   },
   {
@@ -155,7 +155,7 @@ const CITATIONS: CitationItem[] = [
     publication: 'DGCA Annual Statistics & Civil Aviation Requirements (CAR Section 3 - Air Transport)',
     year: 'Regulatory Standard',
     category: 'Official Index Benchmark',
-    url: 'https://www.dgca.gov.in',
+    url: 'https://www.dgca.gov.in/digigov-portal/?page=4265/4260/servicename',
     keyFinding: 'Establishes statutory reporting of city-pair passenger traffic (Form A/B) and route-wise tariff band monitoring across 78+ domestic trunk corridors to prevent excessive fare surges.',
     apixUsage: 'Source of truth for APIx 80-route sovereign passenger weights w(r,0) and statutory regulatory compliance standards.',
     bibtex: `@techreport{dgca_traffic_handbook,
@@ -163,7 +163,7 @@ const CITATIONS: CitationItem[] = [
   title = {Handbook of Civil Aviation Statistics and Tariff Monitoring Unit Directives},
   institution = {Ministry of Civil Aviation, Government of India},
   year = {2024},
-  url = {https://www.dgca.gov.in}
+  url = {https://www.dgca.gov.in/digigov-portal/?page=4265/4260/servicename}
 }`
   },
   {
@@ -173,7 +173,7 @@ const CITATIONS: CitationItem[] = [
     publication: 'Rajya Sabha Secretariat, Parliament of India',
     year: 'Parliamentary Report',
     category: 'Econometric Precedent',
-    url: 'https://sansad.in',
+    url: 'https://sansad.in/rs/committees/standing-committees',
     keyFinding: 'Examines algorithmic surge pricing, emergency booking spikes, and market concentration; emphasizes the urgent need for high-frequency empirical airfare monitoring to safeguard consumer interests.',
     apixUsage: 'Direct policy justification for APIx: provides statutory mandate for high-frequency lead-time (T+1 to T+45) price index tracking.',
     bibtex: `@techreport{parliament_airfare_report328,
@@ -182,7 +182,7 @@ const CITATIONS: CitationItem[] = [
   institution = {Parliament of India, Rajya Sabha Secretariat},
   year = {2023},
   number = {Report No. 328},
-  url = {https://sansad.in}
+  url = {https://sansad.in/rs/committees/standing-committees}
 }`
   },
   {
@@ -192,7 +192,7 @@ const CITATIONS: CitationItem[] = [
     publication: 'Government of India, Competition Commission of India Policy Research',
     year: 'Market Study',
     category: 'Econometric Precedent',
-    url: 'https://www.cci.gov.in',
+    url: 'https://www.cci.gov.in/market-research/market-studies',
     keyFinding: 'Quantifies route-level Herfindahl-Hirschman Index (HHI) concentration across Indian domestic airline routes and evaluates algorithmic pricing coordination risks in highly concentrated corridors.',
     apixUsage: 'Theoretical and empirical foundation for the APIx Antitrust & HHI Policy Portal (/analysts).',
     bibtex: `@techreport{cci_aviation_study,
@@ -200,7 +200,7 @@ const CITATIONS: CitationItem[] = [
   title = {Market Study on the Civil Aviation Sector in India: Market Power, Concentration and Dynamic Pricing},
   institution = {Competition Commission of India, Government of India},
   year = {2022},
-  url = {https://www.cci.gov.in}
+  url = {https://www.cci.gov.in/market-research/market-studies}
 }`
   },
   {
@@ -288,7 +288,7 @@ const CITATIONS: CitationItem[] = [
     publication: 'UK Office for National Statistics Methodology Series',
     year: '2020',
     category: 'Index Theory',
-    url: 'https://www.ons.gov.uk',
+    url: 'https://www.ons.gov.uk/economy/inflationandpriceindices/methodologies/consumerpriceindicestechnicalmanual2019',
     keyFinding: 'Rigorous mathematical proof that real-world operational price indices with periodically updated quantity weights operate as Lowe Indices rather than pure textbook Laspeyres indices.',
     apixUsage: 'Provides theoretical rigor for APIx\'s quarterly DGCA weight re-anchoring framework.',
     bibtex: `@manual{ons_cpi_manual,
@@ -296,7 +296,7 @@ const CITATIONS: CitationItem[] = [
   title = {Consumer Price Indices Technical Manual: Appendix on Formulae used to calculate CPI},
   organization = {UK Office for National Statistics},
   year = {2020},
-  url = {https://www.ons.gov.uk}
+  url = {https://www.ons.gov.uk/economy/inflationandpriceindices/methodologies/consumerpriceindicestechnicalmanual2019}
 }`
   },
   {

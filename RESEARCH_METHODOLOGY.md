@@ -313,25 +313,25 @@ In accordance with rigorous academic and econometric standards, the following me
 1. **Ministry of Statistics and Programme Implementation (MoSPI), Government of India**  
    *Consumer Price Index: Concepts, Definitions and Methodology for Transport Services (COICOP Framework)*  
    Publication: National Statistical Office (NSO), MoSPI, Government of India.  
-   Resource Link: `https://esankhyiki.mospi.gov.in/` / `https://mospi.gov.in/cpi`  
+   Resource Link: `https://www.mospi.gov.in/sites/default/files/cpi/cpi_concept_methodology.pdf`  
    *Context:* Statutory methodology for tracking transport services inflation and digital airfare price collection in India.
 
 2. **Directorate General of Civil Aviation (DGCA), Ministry of Civil Aviation, Government of India**  
    *Handbook of Civil Aviation Statistics & Tariff Monitoring Unit (TMU) Operational Directives (Rule 135, Aircraft Rules, 1937)*  
    Publication: Ministry of Civil Aviation, Government of India.  
-   Resource Link: `https://www.dgca.gov.in`  
+   Resource Link: `https://www.dgca.gov.in/digigov-portal/?page=4265/4260/servicename`  
    *Context:* Statutory reporting of domestic city-pair passenger traffic (Form A/B) and route tariff monitoring across 78+ trunk routes.
 
 3. **Parliament of India — Department-Related Parliamentary Standing Committee on Transport, Tourism & Culture**  
    *Report on Fixing of Airfares and Issues Related to Dynamic Pricing in Civil Aviation Sector (Report No. 328)*  
    Publication: Parliament of India, Rajya Sabha Secretariat.  
-   Resource Link: `https://sansad.in`  
+   Resource Link: `https://sansad.in/rs/committees/standing-committees`  
    *Context:* Parliamentary evaluation of algorithmic surge pricing, emergency booking markups, and recommendations for national airfare benchmarking.
 
 4. **Competition Commission of India (CCI), Government of India**  
    *Market Study on the Civil Aviation Sector in India: Market Power, Concentration and Dynamic Pricing*  
    Publication: Competition Commission of India Policy Research Series.  
-   Resource Link: `https://www.cci.gov.in`  
+   Resource Link: `https://www.cci.gov.in/market-research/market-studies`  
    *Context:* Antitrust analysis of route-level concentration (HHI), capacity discipline, and algorithmic pricing coordination.
 
 ### International Econometric Precedents & Statistical Theory
@@ -358,15 +358,18 @@ In accordance with rigorous academic and econometric standards, the following me
 
 9. **UK Office for National Statistics (ONS)**  
    *Consumer Price Indices Technical Manual (Methodology Appendix: Formulae used to calculate CPI and RPI)*  
-   Publication: UK Office for National Statistics, Methodology & Guidance (Lowe vs. Laspeyres distinction).
+   Publication: UK Office for National Statistics, Methodology & Guidance (Lowe vs. Laspeyres distinction).  
+   Resource Link: `https://www.ons.gov.uk/economy/inflationandpriceindices/methodologies/consumerpriceindicestechnicalmanual2019`
 
 10. **John W. Tukey (1977)**  
     *Exploratory Data Analysis*  
-    Publication: Addison-Wesley Series in Behavioral Science, Reading, Mass. (IQR Inner Fences).
+    Publication: Addison-Wesley Series in Behavioral Science, Reading, Mass. (IQR Inner Fences).  
+    Resource Link: `https://archive.org/details/exploratorydataa00tuke`
 
 11. **Frank R. Hampel (1974)**  
     *"The Influence Curve and its Role in Robust Estimation"*  
-    Publication: *Journal of the American Statistical Association*, Vol. 69, No. 346, pp. 383–393 (MAD Scale Estimator).
+    Publication: *Journal of the American Statistical Association*, Vol. 69, No. 346, pp. 383–393 (MAD Scale Estimator).  
+    Resource Link: `https://www.jstor.org/stable/2285666`
 
 ---
 *Document Version: 1.2.0 — Grounded in Government of India Aviation Governance & International Econometrics*
