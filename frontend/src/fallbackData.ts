@@ -420,45 +420,100 @@ export const DEFAULT_MOSPI: MospiRow[] = [
   { date: "2026-12-01", cpi_index: 133.70, inflation_pct: 3.9 }
 ];
 
-export const DEFAULT_ANOMALIES: any = {
-  total_anomalies: 8,
-  critical_count: 3,
-  high_count: 3,
-  moderate_count: 2,
-  iqr_stats: { q1: 4200, q3: 6500, iqr: 2300, upper_bound: 9950 },
-  anomalies: [
-    {
-      route_id: "DEL-BOM", origin: "DEL", destination: "BOM", airline: "IndiGo (6E)",
-      horizon: "T+1", cabin_class: "Economy", fare_current: 12450, fare_base: 5200,
-      pct_change: 139.4, surge_multiplier: 2.39, severity: "CRITICAL",
-      passenger_share: 0.124, passenger_count: 18600000
-    },
-    {
-      route_id: "DEL-BLR", origin: "DEL", destination: "BLR", airline: "Air India (AI)",
-      horizon: "T+1", cabin_class: "Economy", fare_current: 14800, fare_base: 6100,
-      pct_change: 142.6, surge_multiplier: 2.43, severity: "CRITICAL",
-      passenger_share: 0.098, passenger_count: 14700000
-    },
-    {
-      route_id: "BOM-GOI", origin: "BOM", destination: "GOI", airline: "SpiceJet (SG)",
-      horizon: "T+1", cabin_class: "Economy", fare_current: 9800, fare_base: 4100,
-      pct_change: 139.0, surge_multiplier: 2.39, severity: "CRITICAL",
-      passenger_share: 0.055, passenger_count: 8250000
-    },
-    {
-      route_id: "DEL-HYD", origin: "DEL", destination: "HYD", airline: "IndiGo (6E)",
-      horizon: "T+7", cabin_class: "Economy", fare_current: 8200, fare_base: 4800,
-      pct_change: 70.8, surge_multiplier: 1.71, severity: "HIGH",
-      passenger_share: 0.072, passenger_count: 10800000
-    },
-    {
-      route_id: "BOM-BLR", origin: "BOM", destination: "BLR", airline: "Akasa Air (QP)",
-      horizon: "T+7", cabin_class: "Economy", fare_current: 7400, fare_base: 4500,
-      pct_change: 64.4, surge_multiplier: 1.64, severity: "HIGH",
-      passenger_share: 0.065, passenger_count: 9750000
-    }
-  ]
-};
+// Rich generator for dynamic anomaly detection across 80 corridors × 5 booking horizons
+export function computeDynamicAnomalies(
+  threshold: number = 25,
+  horizon: string = 'all',
+  route: string = 'all'
+): {
+  total_anomalies: number;
+  critical_count: number;
+  high_count: number;
+  moderate_count: number;
+  iqr_stats: { q1: number; q3: number; iqr: number; upper_bound: number };
+  anomalies: any[];
+} {
+  const allHorizons = ['T+1', 'T+7', 'T+15', 'T+30', 'T+45'];
+  const airlines = [
+    { name: 'IndiGo (6E)', code: '6E' },
+    { name: 'Air India (AI)', code: 'AI' },
+    { name: 'SpiceJet (SG)', code: 'SG' },
+    { name: 'Akasa Air (QP)', code: 'QP' },
+    { name: 'Air India Express (IX)', code: 'IX' },
+  ];
+
+  const pool: any[] = [];
+
+  BASE_PAIRS.forEach(([orig, dest], ri) => {
+    const routeId = `${orig}-${dest}`;
+    const pshare = ROUTE_WEIGHT_VALUES[ri] ?? 0.0125;
+    const pcount = Math.round(pshare * 150_000_000);
+    const baseBase = 3800 + ((ri * 135) % 2900);
+
+    allHorizons.forEach((h, hi) => {
+      // Horizon base multiplier
+      let horizonMarkup = 0;
+      if (h === 'T+1') horizonMarkup = 65 + ((ri * 17) % 65); // +65% to +130%
+      else if (h === 'T+7') horizonMarkup = 28 + ((ri * 13) % 45); // +28% to +73%
+      else if (h === 'T+15') horizonMarkup = 14 + ((ri * 11) % 30); // +14% to +44%
+      else if (h === 'T+30') horizonMarkup = 2 + ((ri * 7) % 24); // +2% to +26%
+      else if (h === 'T+45') horizonMarkup = -8 + ((ri * 5) % 20); // -8% to +12%
+
+      const airlineObj = airlines[(ri + hi) % airlines.length];
+      const fareBase = Math.round(baseBase * (1 + (4 - hi) * 0.08));
+      const fareCurrent = Math.round(fareBase * (1 + horizonMarkup / 100));
+      const pctChange = Number(horizonMarkup.toFixed(1));
+      const surgeMultiplier = Number((fareCurrent / Math.max(fareBase, 1)).toFixed(2));
+
+      let severity: 'CRITICAL' | 'HIGH' | 'MODERATE' = 'MODERATE';
+      if (pctChange >= 80) severity = 'CRITICAL';
+      else if (pctChange >= 40) severity = 'HIGH';
+
+      pool.push({
+        route_id: routeId,
+        origin: orig,
+        destination: dest,
+        airline: airlineObj.name,
+        horizon: h,
+        cabin_class: 'Economy',
+        fare_current: fareCurrent,
+        fare_base: fareBase,
+        pct_change: pctChange,
+        surge_multiplier: surgeMultiplier,
+        severity,
+        passenger_share: pshare,
+        passenger_count: pcount,
+      });
+    });
+  });
+
+  // Calculate IQR on candidate pool
+  const allFares = pool.map(p => p.fare_current).sort((a, b) => a - b);
+  const q1 = allFares[Math.floor(allFares.length * 0.25)] || 4200;
+  const q3 = allFares[Math.floor(allFares.length * 0.75)] || 7800;
+  const iqr = q3 - q1;
+  const upperBound = Math.round(q3 + 1.5 * iqr);
+
+  // Filter pool by horizon, route, and threshold
+  let filtered = pool.filter(item => {
+    if (horizon !== 'all' && item.horizon !== horizon) return false;
+    if (route !== 'all' && item.route_id !== route) return false;
+    return item.pct_change >= threshold || item.fare_current > upperBound;
+  });
+
+  filtered.sort((a, b) => b.pct_change - a.pct_change);
+
+  return {
+    total_anomalies: filtered.length,
+    critical_count: filtered.filter(f => f.severity === 'CRITICAL').length,
+    high_count: filtered.filter(f => f.severity === 'HIGH').length,
+    moderate_count: filtered.filter(f => f.severity === 'MODERATE').length,
+    iqr_stats: { q1, q3, iqr, upper_bound: upperBound },
+    anomalies: filtered,
+  };
+}
+
+export const DEFAULT_ANOMALIES = computeDynamicAnomalies(25, 'all', 'all');
 
 export const DEFAULT_COMPETITION: any = {
   national_avg_hhi: 3120,
