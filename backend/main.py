@@ -67,32 +67,24 @@ app.add_middleware(
 
 # ─── MoSPI Benchmark Data ───────────────────────────────────────────────────
 def _build_mospi():
-    dates = []
-    d = datetime(2010, 1, 1)
-    end = datetime.today().replace(day=1) - timedelta(days=1)
-    while d <= end:
-        dates.append(d)
-        if d.month == 12:
-            d = d.replace(year=d.year + 1, month=1)
-        else:
-            d = d.replace(month=d.month + 1)
-    idx = []
-    cur = 95.0
-    for d in dates:
-        if d.year == 2012:
-            cur = 100.0
-        if d.year == 2020 and d.month in [4, 5, 6, 7]:
-            cur -= 3.2
-        elif d.year in [2022, 2023]:
-            cur += 1.4
-        else:
-            cur += 0.4
-        idx.append(round(cur, 3))
-    result = []
-    for i, (d, v) in enumerate(zip(dates, idx)):
-        infl = round((v / idx[i - 12] - 1) * 100, 3) if i >= 12 else 0.0
-        result.append({"date": d.strftime("%Y-%m-%d"), "cpi_index": v, "inflation_pct": infl})
-    return result
+    for p in ["backend/mospi_data.json", "mospi_data.json", "../mospi_data.json", "cpi_out.json"]:
+        if os.path.exists(p):
+            try:
+                with open(p, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                    if isinstance(data, list) and data:
+                        return data
+            except Exception as e:
+                print(f"Error loading {p}: {e}")
+    # Fallback default
+    return [
+        {"date": "2010-01-01", "cpi_index": 82.76, "inflation_pct": 11.2},
+        {"date": "2012-01-01", "cpi_index": 100.0, "inflation_pct": 7.6},
+        {"date": "2020-01-01", "cpi_index": 161.54, "inflation_pct": 7.6},
+        {"date": "2022-01-01", "cpi_index": 181.42, "inflation_pct": 6.0},
+        {"date": "2024-01-01", "cpi_index": 205.02, "inflation_pct": 5.1},
+        {"date": "2026-01-01", "cpi_index": 225.08, "inflation_pct": 4.4},
+    ]
 
 _MOSPI = _build_mospi()
 

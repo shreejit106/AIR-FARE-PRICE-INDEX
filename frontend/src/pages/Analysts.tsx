@@ -287,39 +287,63 @@ export const Analysts: React.FC = () => {
       const month = dt.getMonth() + 1; // 1 to 12
       const cpi = d.inflation_pct;
 
-      // Natural Indian aviation seasonal cycles:
-      // Summer travel surge in May (month 5), June (month 6)
-      // Festival / Diwali / Winter surge in Oct (month 10), Nov (month 11), Dec (month 12)
-      // Monsoon lull in July-Aug (months 7, 8)
-      const seasonalWave = (
-        Math.sin(((month - 3) / 12) * 2 * Math.PI) * 1.8 +
-        (month === 5 || month === 6 ? 1.5 : 0) +
-        (month === 10 || month === 11 || month === 12 ? 2.2 : 0) -
-        (month === 7 || month === 8 ? 1.4 : 0)
-      ) * horizonVolatility;
+      // Realistic Indian civil aviation monthly seasonality (DGCA traffic cycle)
+      // May-Jun: Summer school holidays | Oct-Dec: Durga Puja, Diwali, New Year | Jul-Aug: Monsoon slump
+      const monthlySeasonalOffsets: Record<number, number> = {
+        1: -1.2,
+        2: -0.8,
+        3: 0.4,
+        4: 1.2,
+        5: 2.4,
+        6: 2.0,
+        7: -2.5,
+        8: -2.2,
+        9: -0.4,
+        10: 2.8,
+        11: 3.4,
+        12: 3.8
+      };
+      const seasonal = (monthlySeasonalOffsets[month] ?? 0.0) * horizonVolatility;
 
-      let baseAirfareRate: number;
+      let airfareRate: number;
 
-      if (year < 2020) {
-        // Pre-pandemic normal steady transport inflation
-        baseAirfareRate = cpi * 1.15 * horizonFactor + seasonalWave * 0.7 + routeOffset;
+      if (year >= 2010 && year <= 2013) {
+        // High inflation macro era (double digit food/fuel): Airfare tracks headline CPI
+        airfareRate = cpi * 1.05 * horizonFactor + seasonal + routeOffset;
+      } else if (year >= 2014 && year <= 2016) {
+        // Global Crude Crash (Brent dropped from $115 to $28/bbl): ATF plummeted, airline price wars triggered low/deflationary fares
+        airfareRate = (cpi * 0.35 * horizonFactor) - 1.8 + seasonal * 0.6 + routeOffset;
+      } else if (year >= 2017 && year <= 2018) {
+        // Normalization & post-GST transition: Airfares track CPI closely
+        airfareRate = cpi * 1.02 * horizonFactor + seasonal + routeOffset;
+      } else if (year === 2019) {
+        // April 2019: Jet Airways collapse (120 aircraft grounded, 15% domestic capacity vanished) -> acute fare surge
+        const jetAirwaysShock = month >= 4 && month <= 9 ? 8.5 : 2.5;
+        airfareRate = cpi * horizonFactor + jetAirwaysShock + seasonal + routeOffset;
       } else if (year === 2020) {
-        // COVID-19 nationwide travel grounding and demand shock
+        // COVID-19 nationwide travel lockdown and demand freeze
         if (month >= 3 && month <= 6) {
-          baseAirfareRate = -4.5 + (month - 3) * 0.5; // Complete lockdown
+          airfareRate = -4.5 + (month - 3) * 0.6; // Complete grounding
         } else {
-          baseAirfareRate = -2.2 + ((month - 6) * 0.8); // Graded resumption
+          airfareRate = -1.8 + (month - 6) * 0.7; // Graded resumption under fare caps
         }
       } else if (year === 2021) {
-        // Rebound recovery phase
-        baseAirfareRate = cpi * 0.95 + ((month / 12) * 3.5) * horizonFactor + seasonalWave * 0.8 + routeOffset;
+        // Rebound recovery phase under MoCA lower/upper fare bands
+        airfareRate = cpi * 0.92 + (month >= 9 ? 3.2 : 0.8) * horizonFactor + seasonal * 0.8 + routeOffset;
+      } else if (year === 2022) {
+        // Post-pandemic revenge travel + ATF fuel prices doubled (>1.4L/kL) + MoCA fare caps lifted in Aug 2022 -> Major surge
+        const atfSurge = month >= 4 ? 6.8 : 3.5;
+        airfareRate = (cpi * 1.30 * horizonFactor) + atfSurge + seasonal + routeOffset;
+      } else if (year === 2023) {
+        // May 2023: Go First bankruptcy (54 Airbus A320s grounded) -> Acute summer capacity crunch on key corridors
+        const goFirstShock = month >= 5 && month <= 8 ? 6.2 : 2.0;
+        airfareRate = (cpi * 1.15 * horizonFactor) + goFirstShock + seasonal + routeOffset;
       } else {
-        // Post-2022: Jet Fuel (ATF) surge, capacity discipline, post-pandemic travel boom
-        const atfSurgeFactor = year === 2022 ? 3.5 : (year === 2023 ? 2.8 : (year === 2024 ? 2.2 : 1.8));
-        baseAirfareRate = (cpi * 1.35 * horizonFactor) + atfSurgeFactor + seasonalWave + routeOffset;
+        // 2024–2026: Fleet expansion (Air India & IndiGo aircraft deliveries), steady dynamic tracking with MoSPI CPI
+        airfareRate = cpi * 1.08 * horizonFactor + seasonal + routeOffset;
       }
 
-      return parseFloat(baseAirfareRate.toFixed(2));
+      return parseFloat(airfareRate.toFixed(2));
     });
 
     return [
