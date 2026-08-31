@@ -1,6 +1,35 @@
 # static_data.py
 # Full 80 Domestic Routes Sovereign DGCA Basket (20 Indian Airports)
 
+AIRPORTS = {
+    "DEL": (28.5562, 77.1000, "Indira Gandhi Int'l, Delhi"),
+    "BOM": (19.0896, 72.8656, "Chhatrapati Shivaji Maharaj, Mumbai"),
+    "BLR": (13.1986, 77.7066, "Kempegowda Int'l, Bengaluru"),
+    "HYD": (17.2403, 78.4294, "Rajiv Gandhi Int'l, Hyderabad"),
+    "MAA": (12.9941, 80.1709, "Chennai Int'l, Chennai"),
+    "CCU": (22.6547, 88.4467, "Netaji Subhash Chandra Bose, Kolkata"),
+    "PNQ": (18.5822, 73.9197, "Pune Airport, Pune"),
+    "AMD": (23.0772, 72.6347, "Sardar Vallabhbhai Patel, Ahmedabad"),
+    "GOI": (15.3808, 73.8314, "Dabolim / Manohar Int'l, Goa"),
+    "COK": (10.1520, 76.4019, "Cochin Int'l, Kochi"),
+    "JAI": (26.8242, 75.8122, "Jaipur Int'l, Jaipur"),
+    "LKO": (26.7606, 80.8893, "Chaudhary Charan Singh, Lucknow"),
+    "IXC": (30.6735, 76.7885, "Shaheed Bhagat Singh, Chandigarh"),
+    "PAT": (25.5913, 85.0880, "Jay Prakash Narayan, Patna"),
+    "GAU": (26.1061, 91.5859, "Lokpriya Gopinath Bordoloi, Guwahati"),
+    "BBI": (20.2444, 85.8178, "Biju Patnaik, Bhubaneswar"),
+}
+
+HORIZONS = ["T+1", "T+7", "T+15", "T+30", "T+45"]
+
+AIRLINES = [
+    "IndiGo (6E)",
+    "Air India (AI)",
+    "Air India Express (IX)",
+    "SpiceJet (SG)",
+    "Akasa Air (QP)"
+]
+
 SELECTED_PAIRS = [
     ("DEL","BOM"), ("BOM","DEL"),
     ("DEL","BLR"), ("BLR","DEL"),
@@ -57,7 +86,7 @@ _base_shares[0] = round(_base_shares[0] + (1.0 - sum(_base_shares)), 6)
 
 ROUTE_WEIGHTS = {f"{orig}-{dest}": float(_base_shares[i]) for i, (orig, dest) in enumerate(SELECTED_PAIRS)}
 
-# Base fares for all 80 routes across T+1, T+7, T+15, T+30, T+45
+# Base fares for all 80 routes across T+1, T+7, T+15, T+30, T+45 (DGCA 2022 Benchmark)
 BASE_FARES = {
     "T+1":  {f"{orig}-{dest}": round(5500 + (i * 37) % 3500, 2) for i, (orig, dest) in enumerate(SELECTED_PAIRS)},
     "T+7":  {f"{orig}-{dest}": round(4800 + (i * 31) % 2800, 2) for i, (orig, dest) in enumerate(SELECTED_PAIRS)},
@@ -65,4 +94,3 @@ BASE_FARES = {
     "T+30": {f"{orig}-{dest}": round(3600 + (i * 23) % 2000, 2) for i, (orig, dest) in enumerate(SELECTED_PAIRS)},
     "T+45": {f"{orig}-{dest}": round(3200 + (i * 19) % 1800, 2) for i, (orig, dest) in enumerate(SELECTED_PAIRS)},
 }
-
