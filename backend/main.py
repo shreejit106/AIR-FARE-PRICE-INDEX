@@ -78,12 +78,13 @@ def _build_mospi():
                 print(f"Error loading {p}: {e}")
     # Fallback default
     return [
-        {"date": "2010-01-01", "cpi_index": 82.76, "inflation_pct": 11.2},
-        {"date": "2012-01-01", "cpi_index": 100.0, "inflation_pct": 7.6},
-        {"date": "2020-01-01", "cpi_index": 161.54, "inflation_pct": 7.6},
-        {"date": "2022-01-01", "cpi_index": 181.42, "inflation_pct": 6.0},
-        {"date": "2024-01-01", "cpi_index": 205.02, "inflation_pct": 5.1},
-        {"date": "2026-01-01", "cpi_index": 225.08, "inflation_pct": 4.4},
+        {"date": "2010-01-01", "cpi_index": 56.30, "inflation_pct": 5.0},
+        {"date": "2012-01-01", "cpi_index": 67.50, "inflation_pct": 6.0},
+        {"date": "2016-01-01", "cpi_index": 84.80, "inflation_pct": 5.5},
+        {"date": "2020-01-01", "cpi_index": 100.0, "inflation_pct": 3.8},
+        {"date": "2022-01-01", "cpi_index": 96.45, "inflation_pct": 4.2},
+        {"date": "2024-01-01", "cpi_index": 121.85, "inflation_pct": 5.2},
+        {"date": "2026-01-01", "cpi_index": 130.45, "inflation_pct": 6.0},
     ]
 
 _MOSPI = _build_mospi()

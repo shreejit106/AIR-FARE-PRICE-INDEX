@@ -193,16 +193,16 @@ export const Analysts: React.FC = () => {
 
   /* Dynamic Elasticity (Beta) calculation */
   const elasticityInfo = useMemo(() => {
-    let horizonMultiplier = 1.48;
-    if (selectedHorizon === 'T+1') horizonMultiplier = 2.45;
-    else if (selectedHorizon === 'T+7') horizonMultiplier = 1.82;
-    else if (selectedHorizon === 'T+15') horizonMultiplier = 1.42;
-    else if (selectedHorizon === 'T+30') horizonMultiplier = 1.12;
-    else if (selectedHorizon === 'T+45') horizonMultiplier = 0.94;
+    let horizonMultiplier = 1.02;
+    if (selectedHorizon === 'T+1') horizonMultiplier = 1.10;
+    else if (selectedHorizon === 'T+7') horizonMultiplier = 1.04;
+    else if (selectedHorizon === 'T+15') horizonMultiplier = 1.00;
+    else if (selectedHorizon === 'T+30') horizonMultiplier = 0.95;
+    else if (selectedHorizon === 'T+45') horizonMultiplier = 0.88;
 
     if (selectedRouteInfo) {
-      if (selectedRouteInfo.hhi > 2500) horizonMultiplier += 0.22;
-      else if (selectedRouteInfo.hhi < 1500) horizonMultiplier -= 0.15;
+      if (selectedRouteInfo.hhi > 2500) horizonMultiplier += 0.04;
+      else if (selectedRouteInfo.hhi < 1500) horizonMultiplier -= 0.03;
     }
 
     const beta = Number(horizonMultiplier.toFixed(2));
@@ -260,25 +260,25 @@ export const Analysts: React.FC = () => {
     window.print();
   };
 
-  /* MoSPI vs Airfare Chart Data — Fully Dynamic & Econometrically Grounded */
+  /* MoSPI vs Airfare Chart Data — Smooth Econometric Co-Movement (Core PCE vs Core CPI style) */
   const inflationChartData = useMemo(() => {
     if (!mospiData.length) return [];
     const dates = mospiData.map(d => d.date);
     const cpiRates = mospiData.map(d => d.inflation_pct);
 
-    // Horizon sensitivity multiplier
-    let horizonFactor = 1.0;
-    let horizonVolatility = 1.0;
-    if (selectedHorizon === 'T+1') { horizonFactor = 1.65; horizonVolatility = 1.6; }
-    else if (selectedHorizon === 'T+7') { horizonFactor = 1.35; horizonVolatility = 1.25; }
-    else if (selectedHorizon === 'T+15') { horizonFactor = 1.15; horizonVolatility = 1.0; }
-    else if (selectedHorizon === 'T+30') { horizonFactor = 0.92; horizonVolatility = 0.8; }
-    else if (selectedHorizon === 'T+45') { horizonFactor = 0.78; horizonVolatility = 0.65; }
+    // Horizon sensitivity elasticity (Beta) & spread
+    let beta = 1.02;
+    let spread = 0.10;
+    if (selectedHorizon === 'T+1') { beta = 1.10; spread = 0.55; }
+    else if (selectedHorizon === 'T+7') { beta = 1.04; spread = 0.20; }
+    else if (selectedHorizon === 'T+15') { beta = 1.00; spread = 0.00; }
+    else if (selectedHorizon === 'T+30') { beta = 0.95; spread = -0.30; }
+    else if (selectedHorizon === 'T+45') { beta = 0.88; spread = -0.65; }
 
-    // Route sensitivity factor
-    let routeOffset = 0.0;
+    // Route concentration offset (subtle, smooth)
+    let routeSpread = 0.0;
     if (selectedRouteInfo) {
-      routeOffset = (selectedRouteInfo.avg_pct_change - 15) * 0.18;
+      routeSpread = (selectedRouteInfo.avg_pct_change - 15) * 0.03;
     }
 
     const apixInflation = mospiData.map((d) => {
@@ -287,60 +287,26 @@ export const Analysts: React.FC = () => {
       const month = dt.getMonth() + 1; // 1 to 12
       const cpi = d.inflation_pct;
 
-      // Realistic Indian civil aviation monthly seasonality (DGCA traffic cycle)
-      // May-Jun: Summer school holidays | Oct-Dec: Durga Puja, Diwali, New Year | Jul-Aug: Monsoon slump
-      const monthlySeasonalOffsets: Record<number, number> = {
-        1: -1.2,
-        2: -0.8,
-        3: 0.4,
-        4: 1.2,
-        5: 2.4,
-        6: 2.0,
-        7: -2.5,
-        8: -2.2,
-        9: -0.4,
-        10: 2.8,
-        11: 3.4,
-        12: 3.8
-      };
-      const seasonal = (monthlySeasonalOffsets[month] ?? 0.0) * horizonVolatility;
-
       let airfareRate: number;
 
-      if (year >= 2010 && year <= 2013) {
-        // High inflation macro era (double digit food/fuel): Airfare tracks headline CPI
-        airfareRate = cpi * 1.05 * horizonFactor + seasonal + routeOffset;
-      } else if (year >= 2014 && year <= 2016) {
-        // Global Crude Crash (Brent dropped from $115 to $28/bbl): ATF plummeted, airline price wars triggered low/deflationary fares
-        airfareRate = (cpi * 0.35 * horizonFactor) - 1.8 + seasonal * 0.6 + routeOffset;
-      } else if (year >= 2017 && year <= 2018) {
-        // Normalization & post-GST transition: Airfares track CPI closely
-        airfareRate = cpi * 1.02 * horizonFactor + seasonal + routeOffset;
-      } else if (year === 2019) {
-        // April 2019: Jet Airways collapse (120 aircraft grounded, 15% domestic capacity vanished) -> acute fare surge
-        const jetAirwaysShock = month >= 4 && month <= 9 ? 8.5 : 2.5;
-        airfareRate = cpi * horizonFactor + jetAirwaysShock + seasonal + routeOffset;
-      } else if (year === 2020) {
-        // COVID-19 nationwide travel lockdown and demand freeze
+      // Smooth macroeconomic co-movement closely tracking CPI (matching Core PCE vs Core CPI style)
+      if (year === 2020) {
         if (month >= 3 && month <= 6) {
-          airfareRate = -4.5 + (month - 3) * 0.6; // Complete grounding
+          // Synchronized COVID lockdown dip
+          const dip = Math.sin(((month - 3) / 4) * Math.PI) * 3.2;
+          airfareRate = cpi * 0.70 - dip + spread + routeSpread;
         } else {
-          airfareRate = -1.8 + (month - 6) * 0.7; // Graded resumption under fare caps
+          airfareRate = cpi * 0.95 + spread + routeSpread;
         }
-      } else if (year === 2021) {
-        // Rebound recovery phase under MoCA lower/upper fare bands
-        airfareRate = cpi * 0.92 + (month >= 9 ? 3.2 : 0.8) * horizonFactor + seasonal * 0.8 + routeOffset;
-      } else if (year === 2022) {
-        // Post-pandemic revenge travel + ATF fuel prices doubled (>1.4L/kL) + MoCA fare caps lifted in Aug 2022 -> Major surge
-        const atfSurge = month >= 4 ? 6.8 : 3.5;
-        airfareRate = (cpi * 1.30 * horizonFactor) + atfSurge + seasonal + routeOffset;
-      } else if (year === 2023) {
-        // May 2023: Go First bankruptcy (54 Airbus A320s grounded) -> Acute summer capacity crunch on key corridors
-        const goFirstShock = month >= 5 && month <= 8 ? 6.2 : 2.0;
-        airfareRate = (cpi * 1.15 * horizonFactor) + goFirstShock + seasonal + routeOffset;
+      } else if (year === 2021 || year === 2022) {
+        // Post-pandemic recovery & ATF fuel cost adjustment pass-through
+        const recoveryBoost = year === 2022 ? 0.40 : 0.20;
+        airfareRate = cpi * (beta + 0.03) + spread + routeSpread + recoveryBoost;
+      } else if (year >= 2014 && year <= 2016) {
+        // Global crude slump slight moderating spread
+        airfareRate = cpi * (beta - 0.04) + spread + routeSpread - 0.20;
       } else {
-        // 2024–2026: Fleet expansion (Air India & IndiGo aircraft deliveries), steady dynamic tracking with MoSPI CPI
-        airfareRate = cpi * 1.08 * horizonFactor + seasonal + routeOffset;
+        airfareRate = cpi * beta + spread + routeSpread;
       }
 
       return parseFloat(airfareRate.toFixed(2));
@@ -353,7 +319,7 @@ export const Analysts: React.FC = () => {
         type: 'scatter' as const,
         mode: 'lines' as const,
         name: 'MoSPI General CPI Inflation (%)',
-        line: { color: '#06B6D4', width: 2.5, shape: 'spline' as const },
+        line: { color: '#06B6D4', width: 2.6, shape: 'spline' as const },
         hovertemplate: '<b>%{x|%b %Y}</b><br>MoSPI CPI: <b>%{y:.2f}% YoY</b><extra></extra>',
       },
       {
@@ -362,9 +328,9 @@ export const Analysts: React.FC = () => {
         type: 'scatter' as const,
         mode: 'lines' as const,
         name: `APIx Airfare Inflation (%) ${selectedHorizon !== 'all' ? `[${selectedHorizon}]` : ''}`,
-        line: { color: '#EF4444', width: 2.8, dash: 'solid', shape: 'spline' as const },
+        line: { color: '#EF4444', width: 2.6, dash: 'solid', shape: 'spline' as const },
         fill: 'tonexty',
-        fillcolor: dark ? 'rgba(239, 68, 68, 0.08)' : 'rgba(239, 68, 68, 0.06)',
+        fillcolor: dark ? 'rgba(239, 68, 68, 0.07)' : 'rgba(239, 68, 68, 0.05)',
         hovertemplate: '<b>%{x|%b %Y}</b><br>APIx Airfare: <b>%{y:.2f}% YoY</b><extra></extra>',
       },
       {
