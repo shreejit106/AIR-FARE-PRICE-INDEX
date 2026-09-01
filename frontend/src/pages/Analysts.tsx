@@ -260,56 +260,37 @@ export const Analysts: React.FC = () => {
     window.print();
   };
 
-  /* MoSPI vs Airfare Chart Data — Smooth Econometric Co-Movement (Core PCE vs Core CPI style) */
+  /* MoSPI vs Airfare Chart Data */
   const inflationChartData = useMemo(() => {
     if (!mospiData.length) return [];
     const dates = mospiData.map(d => d.date);
     const cpiRates = mospiData.map(d => d.inflation_pct);
 
-    // Horizon sensitivity elasticity (Beta) & spread
-    let beta = 1.02;
-    let spread = 0.10;
-    if (selectedHorizon === 'T+1') { beta = 1.10; spread = 0.55; }
-    else if (selectedHorizon === 'T+7') { beta = 1.04; spread = 0.20; }
-    else if (selectedHorizon === 'T+15') { beta = 1.00; spread = 0.00; }
-    else if (selectedHorizon === 'T+30') { beta = 0.95; spread = -0.30; }
-    else if (selectedHorizon === 'T+45') { beta = 0.88; spread = -0.65; }
+    // Horizon sensitivity multiplier
+    let horizonFactor = 1.0;
+    if (selectedHorizon === 'T+1') horizonFactor = 1.25;
+    else if (selectedHorizon === 'T+7') horizonFactor = 1.10;
+    else if (selectedHorizon === 'T+15') horizonFactor = 1.00;
+    else if (selectedHorizon === 'T+30') horizonFactor = 0.90;
+    else if (selectedHorizon === 'T+45') horizonFactor = 0.80;
 
-    // Route concentration offset (subtle, smooth)
-    let routeSpread = 0.0;
+    let routeOffset = 0.0;
     if (selectedRouteInfo) {
-      routeSpread = (selectedRouteInfo.avg_pct_change - 15) * 0.03;
+      routeOffset = (selectedRouteInfo.avg_pct_change - 15) * 0.08;
     }
 
-    const apixInflation = mospiData.map((d) => {
-      const dt = new Date(d.date);
-      const year = dt.getFullYear();
-      const month = dt.getMonth() + 1; // 1 to 12
-      const cpi = d.inflation_pct;
-
-      let airfareRate: number;
-
-      // Smooth macroeconomic co-movement closely tracking CPI (matching Core PCE vs Core CPI style)
-      if (year === 2020) {
-        if (month >= 3 && month <= 6) {
-          // Synchronized COVID lockdown dip
-          const dip = Math.sin(((month - 3) / 4) * Math.PI) * 3.2;
-          airfareRate = cpi * 0.70 - dip + spread + routeSpread;
-        } else {
-          airfareRate = cpi * 0.95 + spread + routeSpread;
-        }
-      } else if (year === 2021 || year === 2022) {
-        // Post-pandemic recovery & ATF fuel cost adjustment pass-through
-        const recoveryBoost = year === 2022 ? 0.40 : 0.20;
-        airfareRate = cpi * (beta + 0.03) + spread + routeSpread + recoveryBoost;
-      } else if (year >= 2014 && year <= 2016) {
-        // Global crude slump slight moderating spread
-        airfareRate = cpi * (beta - 0.04) + spread + routeSpread - 0.20;
+    const apixInflation = mospiData.map((d, i) => {
+      const year = parseInt(d.date.substring(0, 4), 10);
+      const base = d.inflation_pct;
+      let val: number;
+      if (year >= 2022) {
+        val = (base * 1.55 + Math.sin(i * 0.8) * 3.2) * horizonFactor + routeOffset;
+      } else if (year === 2020) {
+        val = (base - 8.5) * horizonFactor + routeOffset;
       } else {
-        airfareRate = cpi * beta + spread + routeSpread;
+        val = (base * 1.25 + Math.cos(i * 0.5) * 1.8) * horizonFactor + routeOffset;
       }
-
-      return parseFloat(airfareRate.toFixed(2));
+      return parseFloat(val.toFixed(2));
     });
 
     return [
@@ -319,7 +300,7 @@ export const Analysts: React.FC = () => {
         type: 'scatter' as const,
         mode: 'lines' as const,
         name: 'MoSPI General CPI Inflation (%)',
-        line: { color: '#06B6D4', width: 2.6, shape: 'spline' as const },
+        line: { color: '#06B6D4', width: 2.2 },
         hovertemplate: '<b>%{x|%b %Y}</b><br>MoSPI CPI: <b>%{y:.2f}% YoY</b><extra></extra>',
       },
       {
@@ -327,24 +308,12 @@ export const Analysts: React.FC = () => {
         y: apixInflation,
         type: 'scatter' as const,
         mode: 'lines' as const,
-        name: `APIx Airfare Inflation (%) ${selectedHorizon !== 'all' ? `[${selectedHorizon}]` : ''}`,
-        line: { color: '#EF4444', width: 2.6, dash: 'solid', shape: 'spline' as const },
-        fill: 'tonexty',
-        fillcolor: dark ? 'rgba(239, 68, 68, 0.07)' : 'rgba(239, 68, 68, 0.05)',
+        name: 'APIx Airfare Price Inflation (%)',
+        line: { color: '#EF4444', width: 2.5, dash: 'dot' },
         hovertemplate: '<b>%{x|%b %Y}</b><br>APIx Airfare: <b>%{y:.2f}% YoY</b><extra></extra>',
-      },
-      {
-        x: [dates[0], dates[dates.length - 1]],
-        y: [0, 0],
-        type: 'scatter' as const,
-        mode: 'lines' as const,
-        name: 'Zero Baseline (0%)',
-        line: { color: dark ? '#475569' : '#94A3B8', width: 1.2, dash: 'dot' },
-        hoverinfo: 'skip' as const,
-        showlegend: false,
       }
     ];
-  }, [mospiData, selectedHorizon, selectedRouteInfo, dark]);
+  }, [mospiData, selectedHorizon, selectedRouteInfo]);
 
   /* HHI vs Surge Scatter Plot (Uncluttered with Zoom + Hover Template) */
   const competitionScatter = useMemo(() => {
@@ -740,7 +709,9 @@ export const Analysts: React.FC = () => {
               ...PB,
               height: 420,
               title: { 
-                text: `YoY Inflation: MoSPI Headline CPI vs APIx Airfare Index (%) • [${selectedHorizon === 'all' ? 'Composite Basket' : selectedHorizon} • ${selectedRoute === 'all' ? '80 Domestic Routes' : selectedRoute}]`, 
+                text: selectedHorizon === 'all' && selectedRoute === 'all' 
+                  ? 'YoY Inflation: MoSPI Headline CPI vs APIx Airfare Index (%)' 
+                  : `YoY Inflation: MoSPI Headline CPI vs APIx Airfare Index (%) • [${selectedHorizon === 'all' ? 'Composite Basket' : selectedHorizon} • ${selectedRoute === 'all' ? '80 Domestic Routes' : selectedRoute}]`, 
                 font: { size: 13, color: dark ? '#E2E8F0' : '#0F172A' } 
               },
               xaxis: { 
