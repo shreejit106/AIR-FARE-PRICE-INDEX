@@ -249,11 +249,18 @@ def calculate_route_summaries(df_clean: pd.DataFrame, rep_fares: pd.DataFrame) -
 
         if rid in rep_by_route:
             r_df = rep_by_route[rid]
-            # Laspeyres price relative across horizons: mean of (P_t / P_0 * 100)
-            route_idx = round(float(r_df["price_relative"].mean()), 2)
-            avg_pct = round(route_idx - 100.0, 2)
-            cur_fare_avg = round(float(r_df["representative_fare"].mean()), 2)
-            base_fare_avg = round(float(r_df["base_fare"].mean()), 2)
+            # T+7 is the sovereign headline benchmark horizon across APIx
+            t7_row = r_df[r_df["lead_time_horizon"] == "T+7"]
+            if not t7_row.empty:
+                route_idx = round(float(t7_row.iloc[0]["price_relative"]), 2)
+                avg_pct = round(route_idx - 100.0, 2)
+                cur_fare_avg = round(float(t7_row.iloc[0]["representative_fare"]), 2)
+                base_fare_avg = round(float(t7_row.iloc[0]["base_fare"]), 2)
+            else:
+                route_idx = round(float(r_df["price_relative"].mean()), 2)
+                avg_pct = round(route_idx - 100.0, 2)
+                cur_fare_avg = round(float(r_df["representative_fare"].mean()), 2)
+                base_fare_avg = round(float(r_df["base_fare"].mean()), 2)
         else:
             route_idx = 100.0
             avg_pct = 0.0
