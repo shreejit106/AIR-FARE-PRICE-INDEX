@@ -187,12 +187,12 @@ const Landing: React.FC = () => {
                 </div>
 
                 <div className="readout-box">
-                  <span className="readout-label">PASSENGER COVERAGE</span>
+                  <span className="readout-label">DOMESTIC PAX COVERAGE</span>
                   <div className="readout-val-wrap">
-                    <span className="readout-val">98.4</span>
+                    <span className="readout-val">76.4</span>
                     <span className="readout-unit">%</span>
                   </div>
-                  <span className="readout-sub">Quarterly Volume Weighted</span>
+                  <span className="readout-sub">of All Indian Air Travel (DGCA)</span>
                 </div>
 
                 <div className="readout-box">
