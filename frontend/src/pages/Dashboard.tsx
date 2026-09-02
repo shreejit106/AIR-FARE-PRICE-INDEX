@@ -402,18 +402,31 @@ const Dashboard: React.FC = () => {
                         <Polyline key={r.route_id} positions={pts}
                           pathOptions={{color:pctColor(r.avg_pct_change), weight, opacity:0.85}}>
                           <Popup>
-                            <div style={{fontFamily:'Inter,sans-serif', minWidth:180, color:'#0F172A'}}>
+                            <div style={{fontFamily:'Inter,sans-serif', minWidth:200, color:'#0F172A'}}>
                               <div style={{fontSize:'1.05rem', fontWeight:800, color:'#0284C7', marginBottom:6, display:'flex', alignItems:'center', gap:6}}>
                                 <span>{r.origin}</span>
                                 <span style={{color:'#64748B'}}>➔</span>
                                 <span>{r.destination}</span>
                               </div>
-                              <div style={{fontSize:'0.75rem', color:'#475569', marginBottom:4}}>Directional City-Pair Corridor</div>
-                              <div style={{fontSize:'0.85rem', marginBottom:3}}>APIx Index: <b style={{color:'#0F172A'}}>{r.route_index.toFixed(1)} PTS</b></div>
-                              <div style={{fontSize:'0.85rem', marginBottom:3}}>Fare Inflation: <b style={{color:r.avg_pct_change>0?'#DC2626':'#059669'}}>
-                                {r.avg_pct_change>0?'+':''}{r.avg_pct_change.toFixed(1)}%
-                              </b></div>
-                              <div style={{fontSize:'0.85rem', color:'#334155'}}>DGCA Weight: <b>{(r.passenger_share*100).toFixed(3)}%</b></div>
+                              <div style={{fontSize:'0.75rem', color:'#475569', marginBottom:6}}>Directional City-Pair Corridor</div>
+                              <div style={{display:'flex', justifyContent:'space-between', fontSize:'0.85rem', marginBottom:4}}>
+                                <span style={{color:'#64748B'}}>APIx Index (T+7):</span>
+                                <b style={{color:'#0F172A'}}>{r.route_index.toFixed(1)} PTS</b>
+                              </div>
+                              <div style={{display:'flex', justifyContent:'space-between', fontSize:'0.85rem', marginBottom:4}}>
+                                <span style={{color:'#64748B'}}>Average Fare:</span>
+                                <b style={{color:'#0F172A'}}>₹{r.avg_current_fare ? Math.round(r.avg_current_fare).toLocaleString() : '5,615'}</b>
+                              </div>
+                              <div style={{display:'flex', justifyContent:'space-between', fontSize:'0.85rem', marginBottom:4}}>
+                                <span style={{color:'#64748B'}}>Fare Inflation:</span>
+                                <b style={{color:r.avg_pct_change>0?'#DC2626':'#059669'}}>
+                                  {r.avg_pct_change>0?'+':''}{r.avg_pct_change.toFixed(1)}%
+                                </b>
+                              </div>
+                              <div style={{display:'flex', justifyContent:'space-between', fontSize:'0.85rem', color:'#334155'}}>
+                                <span style={{color:'#64748B'}}>DGCA Weight:</span>
+                                <b>{(r.passenger_share*100).toFixed(3)}%</b>
+                              </div>
                             </div>
                           </Popup>
                         </Polyline>

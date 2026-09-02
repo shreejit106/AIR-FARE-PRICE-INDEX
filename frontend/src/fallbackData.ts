@@ -6,6 +6,7 @@ export interface RouteSummary {
   origin: string; destination: string;
   origin_lat: number; origin_lon: number;
   dest_lat: number; dest_lon: number;
+  avg_current_fare?: number; avg_base_fare?: number;
 }
 
 export interface HeatmapData {
@@ -134,13 +135,13 @@ export function computeDynamicIndex(
   if (aggregation === 'Route Specific' && route !== 'all') {
     const rSummary = summaries.find(s => s.route_id === route);
     if (rSummary) {
-      const delta = rSummary.avg_pct_change - 14.2;
+      const rIdx = rSummary.route_index;
       return {
-        'T+1': Number((baseT1 + delta * 1.35).toFixed(2)),
-        'T+7': Number((baseT7 + delta).toFixed(2)),
-        'T+15': Number((baseT15 + delta * 0.75).toFixed(2)),
-        'T+30': Number((baseT30 + delta * 0.5).toFixed(2)),
-        'T+45': Number((baseT45 + delta * 0.3).toFixed(2)),
+        'T+1': Number((rIdx + 19.34).toFixed(2)),
+        'T+7': Number(rIdx.toFixed(2)),
+        'T+15': Number((rIdx - 5.74).toFixed(2)),
+        'T+30': Number((rIdx - 12.48).toFixed(2)),
+        'T+45': Number((rIdx - 18.35).toFixed(2)),
       };
     }
   }
