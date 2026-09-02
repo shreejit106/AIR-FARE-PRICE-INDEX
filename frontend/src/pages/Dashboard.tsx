@@ -69,15 +69,19 @@ function bezier(p1: [number,number], p2: [number,number], n = 22): [number,numbe
 }
 
 function pctColor(val: number): string {
-  // Realistic Aviation Inflation Bands:
+  // Multi-tier nuanced color spectrum for realistic corridor surge visualization:
   // Deflation (< 0%): Emerald Green
-  // Mild Inflation (+0% to +12%): Warm Amber Gold
-  // Moderate Inflation (+12% to +22%): Vivid Orange
-  // High / Severe Surge (>= +22%): Intense Crimson Red
+  // Mild / Baseline (+0% to +23.0%): Warm Amber Gold
+  // Elevated Inflation (+23.0% to +25.0%): Vibrant Coral Orange
+  // High Inflation (+25.0% to +26.5%): Vivid Rose Salmon
+  // Critical Surge (+26.5% to +28.0%): Intense Crimson Red
+  // Peak Monopoly Surge (>= +28.0%): Deep Ruby Wine
   if (val < 0) return '#10B981';
-  if (val < 12) return '#F59E0B';
-  if (val < 22) return '#F97316';
-  return '#EF4444';
+  if (val < 23.0) return '#F59E0B';
+  if (val < 25.0) return '#FB923C';
+  if (val < 26.5) return '#F43F5E';
+  if (val < 28.0) return '#DC2626';
+  return '#9F1239';
 }
 
 /* ─── Carrier strip data ────────────────────────────────────────────────── */
@@ -206,7 +210,10 @@ const Dashboard: React.FC = () => {
   }, [mospiData, baseYear, baseMonth]);
 
   const top5 = useMemo(() =>
-    [...routeSummary].sort((a, b) => b.avg_pct_change - a.avg_pct_change).slice(0, 5),
+    [...routeSummary]
+      .filter(r => r.avg_pct_change > 0)
+      .sort((a, b) => b.avg_pct_change - a.avg_pct_change)
+      .slice(0, 5),
     [routeSummary]
   );
 
@@ -396,7 +403,7 @@ const Dashboard: React.FC = () => {
               <div>
                 <div className="section-label">Live Route Map — {routeSummary.length} Routes</div>
                 <div style={{fontSize:'0.8rem', color:'var(--sub)', marginBottom:10}}>
-                  🟡 Mild (+0–12%) · 🟠 Moderate (+12–22%) · 🔴 High Inflation (+22%+) · 🟢 Deflation (&lt;0%) · Arc width = DGCA Passenger Share
+                  🟡 Moderate (+0–23%) · 🟠 Elevated (+23–25%) · 🌸 High (+25–26.5%) · 🔴 Critical (+26.5–28%) · 🍷 Peak Surge (&gt;28%) · Arc width = DGCA Share
                 </div>
                 <div className="map-wrap">
                   <MapContainer center={[22.5,80]} zoom={5} style={{height:'100%',width:'100%'}} zoomControl>

@@ -245,7 +245,7 @@ def get_route_summary(
 
     clean_df: pd.DataFrame = _PIPELINE_STATE.get("clean_df", pd.DataFrame())
     
-    if cabin_class_str.lower() == "economy" and airline_str == "all" and route_str == "all":
+    if cabin_class_str.lower() == "economy" and airline_str == "all":
         return _PIPELINE_STATE.get("route_summaries", [])
 
     filtered_df = clean_df.copy()
@@ -254,8 +254,6 @@ def get_route_summary(
             filtered_df = filtered_df[filtered_df["cabin_class"].str.lower() == cabin_class_str.lower()]
         if airline_str != "all":
             filtered_df = filtered_df[filtered_df["airline"] == airline_str]
-        if route_str != "all":
-            filtered_df = filtered_df[filtered_df["route_id"] == route_str]
 
     filtered_rep = calculate_representative_fares(filtered_df)
     return calculate_route_summaries(filtered_df, filtered_rep)
