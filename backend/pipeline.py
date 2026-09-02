@@ -439,7 +439,7 @@ def calculate_anomalies(
         cur = float(row["total_fare"])
         cab = row.get("cabin_class", "Economy")
         
-        base = float(row.get("base_fare") or BASE_FARES.get(h, {}).get(rid, 5000.0))
+        base = float(BASE_FARES.get(h, {}).get(rid, 5000.0))
         if cab == "Business":
             base = round(base * 3.2, 2)
             

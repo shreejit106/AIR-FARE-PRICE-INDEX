@@ -69,19 +69,17 @@ function bezier(p1: [number,number], p2: [number,number], n = 22): [number,numbe
 }
 
 function pctColor(val: number): string {
-  // Multi-tier nuanced color spectrum for realistic corridor surge visualization:
+  // Professional 4-tier regulatory inflation bands:
   // Deflation (< 0%): Emerald Green
-  // Mild / Baseline (+0% to +23.0%): Warm Amber Gold
-  // Elevated Inflation (+23.0% to +25.0%): Vibrant Coral Orange
-  // High Inflation (+25.0% to +26.5%): Vivid Rose Salmon
-  // Critical Surge (+26.5% to +28.0%): Intense Crimson Red
-  // Peak Monopoly Surge (>= +28.0%): Deep Ruby Wine
+  // Mild (+0% to +23.0%): Warm Amber Gold
+  // Moderate (+23.0% to +25.5%): Warm Coral Orange
+  // Elevated (+25.5% to +27.5%): Vibrant Crimson Red
+  // High Surge (>= +27.5%): Deep Crimson Red
   if (val < 0) return '#10B981';
   if (val < 23.0) return '#F59E0B';
-  if (val < 25.0) return '#FB923C';
-  if (val < 26.5) return '#F43F5E';
-  if (val < 28.0) return '#DC2626';
-  return '#9F1239';
+  if (val < 25.5) return '#FB923C';
+  if (val < 27.5) return '#EF4444';
+  return '#DC2626';
 }
 
 /* ─── Carrier strip data ────────────────────────────────────────────────── */
@@ -403,7 +401,7 @@ const Dashboard: React.FC = () => {
               <div>
                 <div className="section-label">Live Route Map — {routeSummary.length} Routes</div>
                 <div style={{fontSize:'0.8rem', color:'var(--sub)', marginBottom:10}}>
-                  🟡 Moderate (+0–23%) · 🟠 Elevated (+23–25%) · 🌸 High (+25–26.5%) · 🔴 Critical (+26.5–28%) · 🍷 Peak Surge (&gt;28%) · Arc width = DGCA Share
+                  🟡 Mild (+0–23%) · 🟠 Moderate (+23–25.5%) · 🔴 Elevated (+25.5–27.5%) · 🔺 High Surge (&gt;27.5%) · Arc width = DGCA Share
                 </div>
                 <div className="map-wrap">
                   <MapContainer center={[22.5,80]} zoom={5} style={{height:'100%',width:'100%'}} zoomControl>

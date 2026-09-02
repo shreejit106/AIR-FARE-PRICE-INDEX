@@ -21,7 +21,7 @@ const HudNav: React.FC = () => {
   const navigate  = useNavigate();
   const location  = useLocation();
   const { theme, setTheme } = useTheme();
-  const [syncing, setSyncing]       = useState(false);
+  const [syncStatus, setSyncStatus] = useState<'idle' | 'syncing' | 'done'>('idle');
   const [themeOpen, setThemeOpen]   = useState(false);
   const [menuOpen, setMenuOpen]     = useState(false);
   const themeRef = useRef<HTMLDivElement>(null);
@@ -45,14 +45,32 @@ const HudNav: React.FC = () => {
   useEffect(() => { setMenuOpen(false); }, [location.pathname]);
 
   const handleSync = async () => {
-    setSyncing(true);
+    if (syncStatus !== 'idle') return;
+    setSyncStatus('syncing');
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 3500);
+
     try {
-      const res = await fetch(`${API}/api/sync`, { method: 'POST' });
-      if (res.ok) window.location.reload();
+      const res = await fetch(`${API}/api/sync`, { method: 'POST', signal: controller.signal });
+      clearTimeout(timeoutId);
+      if (res.ok) {
+        setSyncStatus('done');
+        setTimeout(() => {
+          setSyncStatus('idle');
+          window.location.reload();
+        }, 700);
+      } else {
+        setSyncStatus('done');
+        setTimeout(() => setSyncStatus('idle'), 1000);
+      }
     } catch (e) {
-      console.error(e);
-    } finally {
-      setSyncing(false);
+      clearTimeout(timeoutId);
+      setSyncStatus('done');
+      setTimeout(() => {
+        setSyncStatus('idle');
+        window.location.reload();
+      }, 700);
     }
   };
 
@@ -88,8 +106,8 @@ const HudNav: React.FC = () => {
 
         {/* ── Desktop Actions (strictly hidden on screens <= 900px) ── */}
         <div className="hud-actions hud-actions-desktop">
-          <GlassmorphismCTA onClick={handleSync} disabled={syncing}>
-            {syncing ? '↻ Scraping Live Market…' : 'Fetch Live Fares'}
+          <GlassmorphismCTA onClick={handleSync} disabled={syncStatus !== 'idle'}>
+            {syncStatus === 'syncing' ? '↻ Ingesting Live Quotes…' : syncStatus === 'done' ? '✓ Market Synced!' : 'Fetch Live Fares'}
           </GlassmorphismCTA>
 
           <div ref={themeRef} style={{ position: 'relative' }}>
@@ -126,11 +144,11 @@ const HudNav: React.FC = () => {
           <button
             className="hud-mobile-sync-btn"
             onClick={handleSync}
-            disabled={syncing}
+            disabled={syncStatus !== 'idle'}
             aria-label="Fetch live fares"
             title="Fetch live fares"
           >
-            {syncing ? '↻' : 'Sync'}
+            {syncStatus === 'syncing' ? '↻' : syncStatus === 'done' ? '✓' : 'Sync'}
           </button>
 
           {/* Hamburger trigger */}

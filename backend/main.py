@@ -6,6 +6,7 @@ import numpy as np
 import os
 import json
 import sqlite3
+import threading
 import pandas as pd
 
 try:
@@ -312,33 +313,20 @@ def get_analyst_competition():
     return _PIPELINE_STATE.get("competition", {"routes": [], "national_avg_hhi": 2850.0, "total_routes_analyzed": 80, "high_concentration_routes": 40})
 
 
-@app.post("/api/sync")
-def sync_live_data():
-    """
-    Triggers real-time Playwright web scraper across Indian domestic flight routes,
-    pipes newly scraped flights through the IQR cleaning and median pipeline,
-    persists records to SQLite and JSON, and recalculates the true Sovereign APIx Index.
-    """
+def _async_scrape_job():
     global _RAW_DATA_STORAGE
     try:
-        print(f"[{datetime.now().strftime('%H:%M:%S')}] Triggering live Playwright scraper...")
+        print(f"[{datetime.now().strftime('%H:%M:%S')}] Background live scraper started...")
         df_new_scrapes = scrape_fares(target_routes=CORE_MARQUEE_ROUTES)
-        new_records = []
         if not df_new_scrapes.empty:
             new_records = df_new_scrapes.to_dict(orient="records")
             _RAW_DATA_STORAGE.extend(new_records)
-            
-            # Re-run full pipeline
             refresh_pipeline_state(_RAW_DATA_STORAGE)
-            
-            # Export to JSON
             try:
                 with open("raw_scraped_fares.json", "w", encoding="utf-8") as f:
                     json.dump(_RAW_DATA_STORAGE, f, indent=2)
             except Exception as e:
                 print(f"Failed to persist raw_scraped_fares.json: {e}")
-
-            # Export to SQLite
             try:
                 conn = sqlite3.connect("backend/apix_data.db")
                 df_new_scrapes["scrape_timestamp"] = datetime.now().isoformat()
@@ -346,23 +334,33 @@ def sync_live_data():
                 conn.close()
             except Exception as e:
                 print(f"Failed to append to SQLite: {e}")
-
-        return {
-            "status": "success",
-            "message": f"Real-time web scraper executed successfully. Processed {len(new_records)} live market flights through the true Laspeyres pipeline.",
-            "timestamp": _LAST_SCRAPE_INFO["timestamp"],
-            "total_records": len(_PIPELINE_STATE.get("clean_df", [])),
-            "live_index": _PIPELINE_STATE.get("apix_index", {})
-        }
+            print(f"[{datetime.now().strftime('%H:%M:%S')}] Background scrape completed: {len(new_records)} fares.")
     except Exception as e:
-        print(f"Sync error: {e}")
-        return {
-            "status": "error",
-            "message": f"Live scraping encountered an issue: {str(e)}",
-            "timestamp": _LAST_SCRAPE_INFO["timestamp"],
-            "total_records": len(_PIPELINE_STATE.get("clean_df", [])),
-            "live_index": _PIPELINE_STATE.get("apix_index", {})
-        }
+        print(f"Background scrape job error: {e}")
+
+
+@app.post("/api/sync")
+def sync_live_data():
+    """
+    Asynchronously triggers real-time web scraper across Indian domestic flight routes,
+    pipes newly scraped flights through the IQR cleaning and median pipeline,
+    and immediately returns 200 OK so the frontend never freezes.
+    """
+    global _RAW_DATA_STORAGE
+    # Immediately refresh pipeline state
+    refresh_pipeline_state(_RAW_DATA_STORAGE)
+
+    # Dispatch live scraping job to background daemon thread
+    t = threading.Thread(target=_async_scrape_job, daemon=True)
+    t.start()
+
+    return {
+        "status": "success",
+        "message": "Live market scraper dispatched across Indian carriers (IndiGo, Air India, SpiceJet, Akasa). Pipeline refreshed.",
+        "timestamp": datetime.now().isoformat(),
+        "total_records": len(_RAW_DATA_STORAGE),
+        "live_index": _PIPELINE_STATE.get("apix_index", {})
+    }
 
 
 @app.get("/api/analysts/export/{dataset}")
