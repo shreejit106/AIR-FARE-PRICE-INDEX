@@ -364,9 +364,9 @@ export const Analysts: React.FC = () => {
       case 'moderate':
         return { xrange: [1400, 2600], yrange: undefined, autorangeX: false, autorangeY: true };
       case 'monopoly':
-        return { xrange: [2400, 5200], yrange: undefined, autorangeX: false, autorangeY: true };
+        return { xrange: [2400, 7800], yrange: undefined, autorangeX: false, autorangeY: true };
       case 'surge':
-        return { xrange: undefined, yrange: [15, 30], autorangeX: true, autorangeY: false };
+        return { xrange: undefined, yrange: [15, 60], autorangeX: true, autorangeY: false };
       case 'all':
       default:
         return { xrange: undefined, yrange: undefined, autorangeX: true, autorangeY: true };
