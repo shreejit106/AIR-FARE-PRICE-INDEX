@@ -13,6 +13,7 @@ const TABS = [
   { label: 'Fuel Simulator',    short: 'Simulation',  path: '/simulation'  },
   { label: 'Carrier Fleet',     short: 'Fleet',       path: '/fleet'       },
   { label: 'Data & References', short: 'References',  path: '/references'  },
+  { label: 'Gov API Portal',    short: 'Gov API',     path: '/gov-api'     },
 ];
 
 const API = API_BASE_URL;

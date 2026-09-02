@@ -7,6 +7,7 @@ import Analysts from './pages/Analysts';
 import Simulation from './pages/Simulation';
 import Fleet from './pages/Fleet';
 import References from './pages/References';
+import GovAPI from './pages/GovAPI';
 import HudNav from './components/HudNav';
 
 type ThemeMode = 'light' | 'intermediate' | 'coastal' | 'dark';
@@ -29,6 +30,7 @@ const AppInner: React.FC = () => {
         <Route path="/simulation"  element={<Simulation />} />
         <Route path="/fleet"       element={<Fleet />} />
         <Route path="/references"  element={<References />} />
+        <Route path="/gov-api"      element={<GovAPI />} />
       </Routes>
     </div>
   );
