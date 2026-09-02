@@ -469,7 +469,7 @@ const Dashboard: React.FC = () => {
                     </div>
                   </div>
                   <div style={{display:'flex', gap:10, alignItems:'center', flexShrink:0}}>
-                    {[['#10B981','Deflating (< 0%)'],['#EAB308','Neutral (0–15%)'],['#EF4444','Inflating (> 15%)']].map(([c,l]) => (
+                    {[['#10B981','Advance Discount (0–12%)'],['#EAB308','Standard Inflation (12–25%)'],['#EF4444','Surge (> 25%)']].map(([c,l]) => (
                       <div key={String(l)} style={{display:'flex', alignItems:'center', gap:5, fontSize:'0.78rem', color:'var(--sub)'}}>
                         <div style={{width:13, height:13, borderRadius:2, background:String(c)}} />
                         {l}
@@ -500,14 +500,14 @@ const Dashboard: React.FC = () => {
                         textfont: { color:'white', size:11, family:'JetBrains Mono, monospace' },
                         colorscale: [
                           [0,    '#10B981'],
-                          [0.25, '#22C55E'],
-                          [0.45, '#84CC16'],
-                          [0.55, '#EAB308'],
-                          [0.7,  '#F97316'],
-                          [0.85, '#EF4444'],
+                          [0.2,  '#22C55E'],
+                          [0.35, '#84CC16'],
+                          [0.5,  '#EAB308'],
+                          [0.65, '#F97316'],
+                          [0.8,  '#EF4444'],
                           [1,    '#DC2626'],
                         ],
-                        zmin: -10, zmax: 30,
+                        zmin: 0, zmax: 55,
                         showscale: true,
                         colorbar: {
                           title:{ text:'% Change', side:'right' as const, font:{color: dark?'#94A3B8':'#334155', size:12} },

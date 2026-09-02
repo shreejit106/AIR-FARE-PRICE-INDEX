@@ -94,7 +94,7 @@ _LAST_SCRAPE_INFO = {
     "timestamp": datetime.now().isoformat(),
     "records_scraped": 0,
     "status": "Initialized from Live Datasets",
-    "engine": "Playwright Headless Chromium Scraper"
+    "engine": "Multi-Airline Direct Scraper (IndiGo · Air India · SpiceJet · Akasa · AIExpress)"
 }
 
 _RAW_DATA_STORAGE: List[Dict] = []
@@ -102,15 +102,21 @@ _PIPELINE_STATE: Dict[str, Any] = {}
 
 def load_initial_dataset() -> List[Dict]:
     """
-    Loads raw flight records from raw_scraped_fares.json and SQLite database.
+    Loads raw flight records from raw_scraped_fares.json only.
+
+    NOTE: The SQLite fares_history table is intentionally skipped on startup.
+    It stores denormalized pipeline-output rows (with pre-computed base fares and
+    pct_change values) rather than raw scraped fares, so mixing them with the JSON
+    records corrupts the pipeline's median and Laspeyres calculations.
+    SQLite is still used for appending new /api/sync scrape results going forward.
     """
     records = []
-    
-    # Try locating raw_scraped_fares.json
+
+    # Load real scraped fares from JSON (primary source)
     json_paths = [
         "raw_scraped_fares.json",
         "backend/raw_scraped_fares.json",
-        "../raw_scraped_fares.json"
+        "../raw_scraped_fares.json",
     ]
     for p in json_paths:
         if os.path.exists(p):
@@ -124,31 +130,8 @@ def load_initial_dataset() -> List[Dict]:
             except Exception as e:
                 print(f"Error loading {p}: {e}")
 
-    # Try loading from SQLite fares_history
-    db_paths = [
-        "backend/apix_data.db",
-        "apix_data.db",
-        "../apix_data.db"
-    ]
-    for db_p in db_paths:
-        if os.path.exists(db_p):
-            try:
-                conn = sqlite3.connect(db_p)
-                df_hist = pd.read_sql("SELECT * FROM fares_history", conn)
-                conn.close()
-                if not df_hist.empty:
-                    # Standardize columns
-                    if "fare_current" in df_hist.columns and "total_fare" not in df_hist.columns:
-                        df_hist["total_fare"] = df_hist["fare_current"]
-                    if "horizon" in df_hist.columns and "lead_time_horizon" not in df_hist.columns:
-                        df_hist["lead_time_horizon"] = df_hist["horizon"]
-                    records.extend(df_hist.to_dict(orient="records"))
-                    print(f"Loaded {len(df_hist)} records from SQLite database {db_p}")
-                    break
-            except Exception as e:
-                print(f"Error reading SQLite {db_p}: {e}")
-
     return records
+
 
 def refresh_pipeline_state(raw_data: List[Dict]):
     """
