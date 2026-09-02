@@ -294,9 +294,17 @@ const Dashboard: React.FC = () => {
       {/* ── HUD Ticker ── */}
       <div className="hud-ticker">
         <div className="hud-ticker-item">
-          <div className="hud-ticker-label">APIx Live</div>
+          <div className="hud-ticker-label">
+            {aggregation === 'Route Specific' && routeFilter !== 'all'
+              ? `Corridor: ${routeFilter}`
+              : aggregation === 'Airline Specific' && airlineFilter !== 'all'
+              ? `Carrier: ${airlineFilter.split(' ')[0]}`
+              : 'National Sovereign APIx'}
+          </div>
           <div className="hud-ticker-live">{loading ? '—' : ti7.toFixed(1)}</div>
-          <div style={{fontSize:'0.75rem', color:'var(--sub)', marginTop:4, fontFamily:'JetBrains Mono,monospace'}}>T+7 basis</div>
+          <div style={{fontSize:'0.75rem', color:'var(--sub)', marginTop:4, fontFamily:'JetBrains Mono,monospace'}}>
+            {aggregation === 'Overall Industry' ? 'All-India Weighted (T+7)' : 'T+7 Lead Time'}
+          </div>
         </div>
         {([['T+1', ti1], ['T+7', ti7], ['T+15', ti15], ['T+30', ti30], ['T+45', ti45]] as [string, number][]).map(([label, val]) => (
           <div key={label} className="hud-ticker-item">
@@ -402,31 +410,66 @@ const Dashboard: React.FC = () => {
                         <Polyline key={r.route_id} positions={pts}
                           pathOptions={{color:pctColor(r.avg_pct_change), weight, opacity:0.85}}>
                           <Popup>
-                            <div style={{fontFamily:'Inter,sans-serif', minWidth:200, color:'#0F172A'}}>
-                              <div style={{fontSize:'1.05rem', fontWeight:800, color:'#0284C7', marginBottom:6, display:'flex', alignItems:'center', gap:6}}>
+                            <div style={{fontFamily:'Inter,sans-serif', minWidth:220, color:'#0F172A'}}>
+                              <div style={{fontSize:'1.05rem', fontWeight:800, color:'#0284C7', marginBottom:3, display:'flex', alignItems:'center', gap:6}}>
                                 <span>{r.origin}</span>
                                 <span style={{color:'#64748B'}}>➔</span>
                                 <span>{r.destination}</span>
                               </div>
-                              <div style={{fontSize:'0.75rem', color:'#475569', marginBottom:6}}>Directional City-Pair Corridor</div>
-                              <div style={{display:'flex', justifyContent:'space-between', fontSize:'0.85rem', marginBottom:4}}>
-                                <span style={{color:'#64748B'}}>APIx Index (T+7):</span>
-                                <b style={{color:'#0F172A'}}>{r.route_index.toFixed(1)} PTS</b>
+                              <div style={{fontSize:'0.72rem', color:'#64748B', marginBottom:8, textTransform:'uppercase', letterSpacing:0.5, fontWeight:700}}>
+                                Directional City-Pair Corridor
                               </div>
-                              <div style={{display:'flex', justifyContent:'space-between', fontSize:'0.85rem', marginBottom:4}}>
-                                <span style={{color:'#64748B'}}>Average Fare:</span>
-                                <b style={{color:'#0F172A'}}>₹{r.avg_current_fare ? Math.round(r.avg_current_fare).toLocaleString() : '5,615'}</b>
+
+                              <div style={{background:'#F1F5F9', padding:'8px 10px', borderRadius:6, marginBottom:8}}>
+                                <div style={{display:'flex', justifyContent:'space-between', fontSize:'0.82rem', marginBottom:3}}>
+                                  <span style={{color:'#475569'}}>Corridor Index (T+7):</span>
+                                  <b style={{color:'#0F172A', fontFamily:'JetBrains Mono,monospace'}}>{r.route_index.toFixed(1)} PTS</b>
+                                </div>
+                                <div style={{display:'flex', justifyContent:'space-between', fontSize:'0.82rem', marginBottom:3}}>
+                                  <span style={{color:'#475569'}}>Corridor Fare Inflation:</span>
+                                  <b style={{color:r.avg_pct_change>0?'#DC2626':'#059669', fontFamily:'JetBrains Mono,monospace'}}>
+                                    {r.avg_pct_change>0?'+':''}{r.avg_pct_change.toFixed(1)}%
+                                  </b>
+                                </div>
+                                <div style={{display:'flex', justifyContent:'space-between', fontSize:'0.82rem'}}>
+                                  <span style={{color:'#475569'}}>National APIx Benchmark:</span>
+                                  <span style={{color:'#0284C7', fontWeight:700, fontFamily:'JetBrains Mono,monospace'}}>125.3 PTS</span>
+                                </div>
                               </div>
-                              <div style={{display:'flex', justifyContent:'space-between', fontSize:'0.85rem', marginBottom:4}}>
-                                <span style={{color:'#64748B'}}>Fare Inflation:</span>
-                                <b style={{color:r.avg_pct_change>0?'#DC2626':'#059669'}}>
-                                  {r.avg_pct_change>0?'+':''}{r.avg_pct_change.toFixed(1)}%
-                                </b>
+
+                              <div style={{display:'flex', justifyContent:'space-between', fontSize:'0.8rem', color:'#475569', marginBottom:3}}>
+                                <span>Representative Fare:</span>
+                                <b style={{color:'#0F172A'}}>₹{r.avg_current_fare ? Math.round(r.avg_current_fare).toLocaleString() : '5,572'}</b>
                               </div>
-                              <div style={{display:'flex', justifyContent:'space-between', fontSize:'0.85rem', color:'#334155'}}>
-                                <span style={{color:'#64748B'}}>DGCA Weight:</span>
-                                <b>{(r.passenger_share*100).toFixed(3)}%</b>
+                              <div style={{display:'flex', justifyContent:'space-between', fontSize:'0.8rem', color:'#475569', marginBottom:10}}>
+                                <span>DGCA Traffic Weight:</span>
+                                <b style={{color:'#0F172A'}}>{(r.passenger_share*100).toFixed(3)}%</b>
                               </div>
+
+                              <button
+                                onClick={() => {
+                                  setAggregation('Route Specific');
+                                  setRouteFilter(r.route_id);
+                                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                                }}
+                                style={{
+                                  width: '100%',
+                                  padding: '7px 0',
+                                  background: '#0284C7',
+                                  color: '#FFFFFF',
+                                  border: 'none',
+                                  borderRadius: 6,
+                                  fontSize: '0.78rem',
+                                  fontWeight: 700,
+                                  cursor: 'pointer',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  gap: 5
+                                }}
+                              >
+                                Filter Dashboard to {r.route_id} ➔
+                              </button>
                             </div>
                           </Popup>
                         </Polyline>
