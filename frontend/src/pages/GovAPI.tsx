@@ -4,101 +4,26 @@ import { API_BASE_URL } from '../config';
 const B = API_BASE_URL;
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   OFFICIAL SOVEREIGN SEALS & VECTOR LOGOS (HIGH PRECISION SVG)
+   OFFICIAL STATE EMBLEM OF INDIA (ASHOKA LION CAPITAL)
 ═══════════════════════════════════════════════════════════════════════════ */
 
-// 1. NSO / MoSPI: State Emblem of India (Ashoka Lion Capital) + Data Roundel
-const NsoLogo: React.FC<{ size?: number }> = ({ size = 64 }) => (
-  <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="50" cy="50" r="48" fill="#0f172a" stroke="#cbd5e1" strokeWidth="2" />
-    <circle cx="50" cy="50" r="44" stroke="#d97706" strokeWidth="1.5" strokeDasharray="3 2" />
-    {/* Ashoka Pillar / Emblem Stylized */}
-    <path d="M50 18 L55 28 L45 28 Z" fill="#fbbf24" />
-    <rect x="42" y="28" width="16" height="12" rx="2" fill="#d97706" />
-    <circle cx="50" cy="34" r="3" fill="#0f172a" stroke="#fbbf24" strokeWidth="1" />
-    {/* Statistical Graph bars */}
-    <rect x="28" y="58" width="8" height="18" rx="1.5" fill="#38bdf8" />
-    <rect x="40" y="48" width="8" height="28" rx="1.5" fill="#fbbf24" />
-    <rect x="52" y="53" width="8" height="23" rx="1.5" fill="#38bdf8" />
-    <rect x="64" y="42" width="8" height="34" rx="1.5" fill="#f59e0b" />
-    {/* Base plinth */}
-    <line x1="22" y1="78" x2="78" y2="78" stroke="#cbd5e1" strokeWidth="2.5" strokeLinecap="round" />
-    <text x="50" y="88" textAnchor="middle" fill="#94a3b8" fontSize="6.5" fontWeight="700" letterSpacing="0.8">MoSPI · NSO</text>
-  </svg>
-);
-
-// 2. RBI: Reserve Bank of India Seal (Palm Tree & Tiger Roundel)
-const RbiLogo: React.FC<{ size?: number }> = ({ size = 64 }) => (
-  <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="50" cy="50" r="48" fill="#064e3b" stroke="#34d399" strokeWidth="2" />
-    <circle cx="50" cy="50" r="43" stroke="#fef08a" strokeWidth="1" />
-    {/* Palm Tree trunk and fronds */}
-    <path d="M50 38 Q50 62 52 68 L48 68 Q49 52 50 38" fill="#fef08a" />
-    <path d="M50 38 Q38 30 32 36 Q42 38 50 40" fill="#fef08a" />
-    <path d="M50 38 Q62 30 68 36 Q58 38 50 40" fill="#fef08a" />
-    <path d="M50 38 Q42 22 46 18 Q50 26 50 38" fill="#fef08a" />
-    <path d="M50 38 Q58 22 54 18 Q50 26 50 38" fill="#fef08a" />
-    {/* Prowling Tiger Silhouette */}
-    <path d="M30 62 Q36 56 46 58 Q56 56 64 62 Q66 66 62 67 Q54 64 44 65 Q36 67 30 62 Z" fill="#fef08a" />
-    <line x1="24" y1="70" x2="76" y2="70" stroke="#a7f3d0" strokeWidth="2" strokeLinecap="round" />
-    <text x="50" y="84" textAnchor="middle" fill="#ecfdf5" fontSize="7" fontWeight="800" letterSpacing="1">RESERVE BANK OF INDIA</text>
-  </svg>
-);
-
-// 3. DGCA: Directorate General of Civil Aviation (Wings + Ashoka Emblem)
-const DgcaLogo: React.FC<{ size?: number }> = ({ size = 64 }) => (
-  <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="50" cy="50" r="48" fill="#1e293b" stroke="#cbd5e1" strokeWidth="2" />
-    <circle cx="50" cy="50" r="44" stroke="#38bdf8" strokeWidth="1.2" />
-    {/* Golden Aviation Wings */}
-    <path d="M50 45 C35 32 18 36 12 46 C24 47 38 46 50 50 Z" fill="#f59e0b" />
-    <path d="M50 45 C65 32 82 36 88 46 C76 47 62 46 50 50 Z" fill="#f59e0b" />
-    {/* Aircraft Center Silhouette */}
-    <path d="M50 26 L53 44 L66 52 L66 56 L53 53 L53 62 L57 66 L57 69 L50 67 L43 69 L43 66 L47 62 L47 53 L34 56 L34 52 L47 44 Z" fill="#ffffff" />
-    {/* Circular Chakra at Base */}
-    <circle cx="50" cy="50" r="5" fill="none" stroke="#0284c7" strokeWidth="1.5" />
-    <text x="50" y="84" textAnchor="middle" fill="#e2e8f0" fontSize="7.5" fontWeight="800" letterSpacing="1.2">DGCA · INDIA</text>
-  </svg>
-);
-
-// 4. MoCA: Ministry of Civil Aviation (Sovereign Wings & Ashoka Lion)
-const MocaLogo: React.FC<{ size?: number }> = ({ size = 64 }) => (
-  <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="50" cy="50" r="48" fill="#1e1b4b" stroke="#818cf8" strokeWidth="2" />
-    <circle cx="50" cy="50" r="44" stroke="#fbbf24" strokeWidth="1.2" strokeDasharray="4 2" />
-    {/* Sovereign Wing Arch */}
-    <path d="M50 32 C30 20 15 28 14 44 C26 40 40 38 50 42 C60 38 74 40 86 44 C85 28 70 20 50 32 Z" fill="#fbbf24" />
-    {/* Ashoka Lion Symbol */}
-    <rect x="44" y="44" width="12" height="16" rx="2" fill="#e0e7ff" />
-    <circle cx="50" cy="50" r="3" fill="#1e1b4b" stroke="#fbbf24" strokeWidth="1" />
-    {/* Tricolour Base Accent */}
-    <line x1="30" y1="67" x2="70" y2="67" stroke="#ea580c" strokeWidth="2" />
-    <line x1="30" y1="70" x2="70" y2="70" stroke="#ffffff" strokeWidth="2" />
-    <line x1="30" y1="73" x2="70" y2="73" stroke="#16a34a" strokeWidth="2" />
-    <text x="50" y="86" textAnchor="middle" fill="#e0e7ff" fontSize="7" fontWeight="800" letterSpacing="1">MINISTRY OF CIVIL AVIATION</text>
-  </svg>
-);
-
-// 5. CCI: Competition Commission of India (Scales of Justice & Antitrust Roundel)
-const CciLogo: React.FC<{ size?: number }> = ({ size = 64 }) => (
-  <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="50" cy="50" r="48" fill="#4c0519" stroke="#f43f5e" strokeWidth="2" />
-    <circle cx="50" cy="50" r="44" stroke="#fecdd3" strokeWidth="1" />
-    {/* Scales of Justice Balance Beam */}
-    <line x1="50" y1="22" x2="50" y2="66" stroke="#fbbf24" strokeWidth="2.5" />
-    <line x1="28" y1="34" x2="72" y2="34" stroke="#fbbf24" strokeWidth="3" strokeLinecap="round" />
-    {/* Left Scale Pan */}
-    <line x1="28" y1="34" x2="22" y2="48" stroke="#fecdd3" strokeWidth="1.2" />
-    <line x1="28" y1="34" x2="34" y2="48" stroke="#fecdd3" strokeWidth="1.2" />
-    <path d="M20 48 Q28 54 36 48 Z" fill="#fbbf24" />
-    {/* Right Scale Pan */}
-    <line x1="72" y1="34" x2="66" y2="48" stroke="#fecdd3" strokeWidth="1.2" />
-    <line x1="72" y1="34" x2="78" y2="48" stroke="#fecdd3" strokeWidth="1.2" />
-    <path d="M64 48 Q72 54 80 48 Z" fill="#fbbf24" />
-    {/* Plinth */}
-    <path d="M42 66 L58 66 L62 72 L38 72 Z" fill="#fbbf24" />
-    <text x="50" y="85" textAnchor="middle" fill="#ffe4e6" fontSize="6.5" fontWeight="800" letterSpacing="0.8">COMPETITION COMMISSION</text>
-  </svg>
+export const NationalEmblem: React.FC<{ height?: number; width?: number; style?: React.CSSProperties }> = ({
+  height = 64,
+  width,
+  style = {}
+}) => (
+  <img
+    src="/emblem.png"
+    alt="State Emblem of India - Satyameva Jayate"
+    style={{
+      height: height,
+      width: width ? width : 'auto',
+      maxHeight: height,
+      objectFit: 'contain',
+      display: 'block',
+      ...style
+    }}
+  />
 );
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -110,10 +35,10 @@ interface MinistryInfo {
   badge: string;
   name: string;
   ministry: string;
+  department: string;
   key: string;
   tagline: string;
   issued: string;
-  LogoComponent: React.FC<{ size?: number }>;
   overview: string;
   workflow: { step: number; title: string; desc: string }[];
   endpoints: { path: string; desc: string; freq: string }[];
@@ -131,15 +56,15 @@ const MINISTRIES: MinistryInfo[] = [
     id: 'nso',
     badge: 'NSO',
     name: 'National Statistical Office',
-    ministry: 'Ministry of Statistics & Programme Implementation (MoSPI)',
+    ministry: 'Ministry of Statistics & Programme Implementation',
+    department: 'Government of India',
     key: 'NSO-APIX-2026-GOV-7f3a91bc',
     tagline: 'Consumer Price Index (CPI) Transport Calibration & National Accounts',
     issued: '01 Sep 2026',
-    LogoComponent: NsoLogo,
-    overview: `The National Statistical Office (NSO) under MoSPI is the sovereign authority for national accounts and price indices in India. The APIx platform serves as the direct data feed for calibrating the Air Transport Sub-Index of the Consumer Price Index (CPI-Urban).
+    overview: `The National Statistical Office (NSO) under the Ministry of Statistics & Programme Implementation (MoSPI) is the sovereign authority for national accounts, macro aggregates, and official price indices in India. The APIx sovereign data pipeline provides direct, certified feeds for calibrating the Air Transport Sub-Index of the Consumer Price Index (CPI-Urban).
 
-Methodology Integration:
-• Advance Purchase Horizon: NSO consumes the T+7 economy fare index as the headline proxy, representing typical consumer booking patterns.
+Methodology & Integration Standards:
+• Advance Purchase Horizon: NSO consumes the T+7 economy fare index as the headline proxy, representing typical consumer booking patterns in the domestic market.
 • Regional Reconstruction: Per-corridor Laspeyres price relatives are ingested to calculate state-wise transportation cost pressures across 80 high-density routes.
 • National Accounts Integration: Automated daily pipelines export CSV tables directly into the MoSPI Data Integration Platform (MDIP).`,
     workflow: [
@@ -242,11 +167,11 @@ syncNsoPipeline();`,
     id: 'rbi',
     badge: 'RBI',
     name: 'Reserve Bank of India',
-    ministry: 'Monetary Policy & Research Department (MPCRD)',
+    ministry: 'Monetary Policy & Research Department',
+    department: 'Central Bank of India',
     key: 'RBI-APIX-2026-GOV-4d8e52fa',
     tagline: 'Monetary Policy Committee (MPC) Inflation Dashboard & Leading Indicator',
     issued: '01 Sep 2026',
-    LogoComponent: RbiLogo,
     overview: `The Monetary Policy Department of the Reserve Bank of India utilizes the APIx sovereign index as an empirical leading indicator of core service sector inflation.
 
 Monetary Surveillance Use-Cases:
@@ -337,11 +262,11 @@ fetchRbiDashboard();`,
     id: 'dgca',
     badge: 'DGCA',
     name: 'Directorate General of Civil Aviation',
-    ministry: 'Ministry of Civil Aviation, Government of India',
+    ministry: 'Ministry of Civil Aviation',
+    department: 'Government of India',
     key: 'DGCA-APIX-2026-GOV-2c1b73de',
     tagline: 'Tariff Surveillance Cell & Price Gouging Enforcement Radar',
     issued: '01 Sep 2026',
-    LogoComponent: DgcaLogo,
     overview: `The Directorate General of Civil Aviation (DGCA) Tariff Surveillance Cell (TSC) uses APIx to enforce fair pricing rules under the Aircraft Rules 1937 and DGCA Tariff Guidelines.
 
 Enforcement Capabilities:
@@ -438,11 +363,11 @@ runDgcaSurveillance();`,
     id: 'moca',
     badge: 'MoCA',
     name: 'Ministry of Civil Aviation',
-    ministry: 'MoCA Secretariat, Government of India',
+    ministry: 'MoCA Secretariat',
+    department: 'Government of India',
     key: 'MOCA-APIX-2026-GOV-9e4f61aa',
     tagline: 'National Civil Aviation Policy (NCAP) 2016 & Regional Connectivity (UDAN)',
     issued: '01 Sep 2026',
-    LogoComponent: MocaLogo,
     overview: `The Ministry of Civil Aviation (MoCA) Secretariat maintains sovereign oversight over the National Civil Aviation Policy (NCAP 2016) and the Regional Connectivity Scheme (UDAN).
 
 Policy Applications:
@@ -531,11 +456,11 @@ fetchMocaStatus();`,
     id: 'cci',
     badge: 'CCI',
     name: 'Competition Commission of India',
-    ministry: 'Ministry of Corporate Affairs, Government of India',
+    ministry: 'Ministry of Corporate Affairs',
+    department: 'Government of India',
     key: 'CCI-APIX-2026-GOV-6b2d84ef',
     tagline: 'Antitrust Enforcement, Merger Combinations & Abuse of Dominance Review',
     issued: '01 Sep 2026',
-    LogoComponent: CciLogo,
     overview: `The Competition Commission of India (CCI) utilizes APIx market concentration analytics under the Competition Act 2002 (as amended 2023).
 
 Antitrust Inquiries:
@@ -628,7 +553,7 @@ fetchCciSurveillance();`,
 ];
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   MAIN COMPONENT — INSTITUTIONAL THEME
+   MAIN COMPONENT — EXECUTIVE SOVEREIGN DESIGN
 ═══════════════════════════════════════════════════════════════════════════ */
 
 const GovAPI: React.FC = () => {
@@ -641,7 +566,6 @@ const GovAPI: React.FC = () => {
   const [schemaOpen, setSchemaOpen] = useState<boolean>(false);
 
   const current = MINISTRIES.find(m => m.id === activeId) || MINISTRIES[0];
-  const Logo = current.LogoComponent;
 
   const copyKey = () => {
     navigator.clipboard.writeText(current.key).catch(() => {});
@@ -667,35 +591,43 @@ const GovAPI: React.FC = () => {
   return (
     <div style={{ minHeight: '100vh', background: '#f1f5f9', color: '#0f172a', fontFamily: "'Inter', system-ui, sans-serif" }}>
 
-      {/* ── Official Sovereign Banner ────────────────────────────────────────── */}
+      {/* ── Official Sovereign Banner with National Emblem ───────────────────── */}
       <header style={{ background: '#091e3a', borderBottom: '3px solid #d97706', color: '#ffffff', padding: '24px 32px' }}>
-        <div style={{ maxWidth: 1280, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
-              <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', background: '#1e3a5f', border: '1px solid #3b82f6', color: '#93c5fd', padding: '3px 12px', borderRadius: 4 }}>
-                Sovereign Government Gateway
-              </span>
-              <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', background: '#14532d', border: '1px solid #22c55e', color: '#86efac', padding: '3px 12px', borderRadius: 4 }}>
-                GODL-India v1.0 Licensed
-              </span>
-              <span style={{ fontSize: 11, fontWeight: 700, color: '#f59e0b' }}>
-                REST API v2.1.0
-              </span>
+        <div style={{ maxWidth: 1280, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 20 }}>
+          
+          <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+            {/* National Emblem in Header */}
+            <div style={{ background: '#ffffff', padding: '6px', borderRadius: 8, boxShadow: '0 2px 6px rgba(0,0,0,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <NationalEmblem height={68} />
             </div>
-            <h1 style={{ fontSize: '28px', fontWeight: 900, margin: '0 0 6px', letterSpacing: '-0.02em', color: '#ffffff' }}>
-              APIx Sovereign Government Data Access Portal
-            </h1>
-            <p style={{ fontSize: '14px', color: '#cbd5e1', margin: 0, maxWidth: 840, lineHeight: 1.6 }}>
-              Restricted data distribution interface operated by the Ministry of Civil Aviation (MoCA) for the National Statistical Office (MoSPI), Reserve Bank of India, DGCA, and Competition Commission of India.
-            </p>
+
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
+                <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', background: '#1e3a5f', border: '1px solid #3b82f6', color: '#93c5fd', padding: '3px 10px', borderRadius: 4 }}>
+                  Government of India
+                </span>
+                <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', background: '#14532d', border: '1px solid #22c55e', color: '#86efac', padding: '3px 10px', borderRadius: 4 }}>
+                  GODL-India v1.0 Licensed
+                </span>
+                <span style={{ fontSize: 11, fontWeight: 700, color: '#f59e0b' }}>
+                  REST API v2.1.0
+                </span>
+              </div>
+              <h1 style={{ fontSize: '26px', fontWeight: 900, margin: '0 0 4px', letterSpacing: '-0.02em', color: '#ffffff' }}>
+                APIx Sovereign Government Data Access Portal
+              </h1>
+              <p style={{ fontSize: '13.5px', color: '#cbd5e1', margin: 0, maxWidth: 840, lineHeight: 1.5 }}>
+                Official National Gateway operated by the Ministry of Civil Aviation (MoCA) for the National Statistical Office (MoSPI), Reserve Bank of India, DGCA, and Competition Commission of India.
+              </p>
+            </div>
           </div>
 
-          <div style={{ textAlign: 'right', borderLeft: '1px solid #1e3a5f', paddingLeft: 24 }}>
+          <div style={{ textAlign: 'right', borderLeft: '1px solid #1e3a5f', paddingLeft: 20 }}>
             <div style={{ fontSize: '11px', color: '#94a3b8', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Base API Host</div>
             <code style={{ fontSize: '13px', color: '#38bdf8', fontWeight: 700, fontFamily: 'monospace' }}>{B}</code>
             <div style={{ marginTop: 6 }}>
               <a href={`${B}/docs`} target="_blank" rel="noreferrer" style={{ fontSize: '12px', color: '#fbbf24', textDecoration: 'none', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-                OpenAPI Specification (Swagger) ↗
+                OpenAPI / Swagger UI ↗
               </a>
             </div>
           </div>
@@ -706,16 +638,16 @@ const GovAPI: React.FC = () => {
       <div style={{ maxWidth: 1280, margin: '0 auto', display: 'flex', minHeight: 'calc(100vh - 150px)', padding: '24px 0' }}>
 
         {/* ── Left Ministry Navigation ────────────────────────────────────── */}
-        <aside style={{ width: 280, flexShrink: 0, paddingRight: 24 }}>
+        <aside style={{ width: 290, flexShrink: 0, paddingRight: 24 }}>
           <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: 8, overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
-            <div style={{ background: '#0f172a', color: '#ffffff', padding: '12px 16px', fontSize: '12px', fontWeight: 800, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-              Authorized Sovereign Entities
+            <div style={{ background: '#0f172a', color: '#ffffff', padding: '12px 16px', fontSize: '12px', fontWeight: 800, letterSpacing: '0.08em', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: 8 }}>
+              <NationalEmblem height={18} style={{ filter: 'brightness(0) invert(1)' }} />
+              <span>Sovereign Ministries</span>
             </div>
 
             <nav style={{ padding: '8px' }}>
               {MINISTRIES.map(m => {
                 const isSelected = activeId === m.id;
-                const MinLogo = m.LogoComponent;
                 return (
                   <button
                     key={m.id}
@@ -733,19 +665,23 @@ const GovAPI: React.FC = () => {
                       padding: '12px 14px',
                       display: 'flex',
                       alignItems: 'center',
-                      gap: 12,
+                      gap: 14,
                       background: isSelected ? '#f8fafc' : 'transparent',
                       borderRadius: 6,
-                      marginBottom: 4,
+                      marginBottom: 6,
                       transition: 'background 0.15s ease'
                     }}
                   >
-                    <div style={{ flexShrink: 0 }}>
-                      <MinLogo size={42} />
+                    {/* Official National Emblem for Each Ministry */}
+                    <div style={{ flexShrink: 0, background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 4, padding: '4px', width: 36, height: 48, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <NationalEmblem height={40} />
                     </div>
+
                     <div style={{ minWidth: 0 }}>
-                      <div style={{ fontSize: '14px', fontWeight: 800, color: '#0f172a', lineHeight: 1.3 }}>{m.name}</div>
-                      <div style={{ fontSize: '11px', color: '#64748b', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', marginTop: 2 }}>{m.badge} · {m.ministry.split(',')[0]}</div>
+                      <div style={{ fontSize: '13.5px', fontWeight: 800, color: '#0f172a', lineHeight: 1.3 }}>{m.name}</div>
+                      <div style={{ fontSize: '11px', color: '#64748b', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', marginTop: 2 }}>
+                        {m.badge} · {m.ministry.split(',')[0]}
+                      </div>
                     </div>
                   </button>
                 );
@@ -757,7 +693,7 @@ const GovAPI: React.FC = () => {
             <div style={{ fontWeight: 800, color: '#0f172a', marginBottom: 6, textTransform: 'uppercase', fontSize: '11px', letterSpacing: '0.05em' }}>
               Security & Authentication
             </div>
-            All requests to <code>/gov/v1/</code> require a valid pre-issued key passed in the <strong style={{ color: '#0f172a' }}>X-Gov-API-Key</strong> HTTP header.
+            All requests to <code>/gov/v1/</code> require a valid sovereign key passed in the <strong style={{ color: '#0f172a' }}>X-Gov-API-Key</strong> HTTP header.
           </div>
         </aside>
 
@@ -766,23 +702,25 @@ const GovAPI: React.FC = () => {
 
           {/* 1. Ministry Header Card */}
           <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: 8, padding: '24px', marginBottom: 24, boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 20, flexWrap: 'wrap' }}>
-              <div style={{ flexShrink: 0 }}>
-                <Logo size={72} />
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 24, flexWrap: 'wrap' }}>
+              
+              {/* Prominent High-Resolution National Emblem */}
+              <div style={{ flexShrink: 0, background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 6, padding: '8px 12px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 4px rgba(0,0,0,0.04)' }}>
+                <NationalEmblem height={84} />
               </div>
 
               <div style={{ flex: 1, minWidth: 260 }}>
-                <div style={{ display: 'inline-block', fontSize: '11px', fontWeight: 800, color: '#091e3a', background: '#e2e8f0', padding: '2px 8px', borderRadius: 4, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 6 }}>
-                  {current.badge} Sovereign Authority
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: '11px', fontWeight: 800, color: '#091e3a', background: '#e2e8f0', padding: '3px 8px', borderRadius: 4, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 6 }}>
+                  <span>{current.badge} · Sovereign Authority</span>
                 </div>
                 <h2 style={{ fontSize: '24px', fontWeight: 900, color: '#0f172a', margin: '0 0 4px', letterSpacing: '-0.01em' }}>
                   {current.name}
                 </h2>
-                <div style={{ fontSize: '13px', fontWeight: 600, color: '#475569', marginBottom: 6 }}>
-                  {current.ministry}
+                <div style={{ fontSize: '13.5px', fontWeight: 600, color: '#334155', marginBottom: 4 }}>
+                  {current.ministry} · {current.department}
                 </div>
-                <div style={{ fontSize: '13px', color: '#0f172a', fontWeight: 500 }}>
-                  Primary Mandate: <strong>{current.tagline}</strong>
+                <div style={{ fontSize: '13px', color: '#0f172a', fontWeight: 500, marginTop: 4 }}>
+                  Primary Statutory Mandate: <strong>{current.tagline}</strong>
                 </div>
               </div>
 
